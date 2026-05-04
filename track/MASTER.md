@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 55 |
+| verified | 56 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 41 |
+| not_started | 40 |
 
 ---
 
@@ -159,7 +159,7 @@ P3 = 후속 확장
 
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
-| SDK-001 | not_started | P0 | SDK | `LocalCodingAgentAdapter` interface 정의 | adapter 교체 가능한 타입이 있다 |
+| SDK-001 | verified | P0 | SDK | `LocalCodingAgentAdapter` interface 정의 | adapter 교체 가능한 타입이 있다 |
 | SDK-002 | not_started | P0 | SDK | `CodingRunInput` 타입 정의 | runId/issue/workspace/systemInstruction 등이 포함된다 |
 | SDK-003 | not_started | P0 | SDK | `CodingAgentEvent` 타입 정의 | message/tool/file/command/test/done 이벤트 타입이 있다 |
 | SDK-004 | not_started | P0 | SDK | Claude Agent SDK adapter skeleton | start/cancel 메서드 구조가 있다 |

@@ -1,0 +1,30 @@
+# SDK-001 Validation Evidence
+
+Task: SDK-001 — LocalCodingAgentAdapter Interface
+Date: 2026-05-04 18:36:01 KST
+Branch: poc/SDK-001-local-coding-agent-adapter
+
+## Commands
+
+1. `pnpm --filter @dabeehive/shared exec tsc -p tsconfig.json --noEmit`
+   - Result: failed
+   - Output: `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "tsc" not found`
+   - Notes: shared package has no local `tsc` executable; no package dependency was added because dependency additions are outside this task.
+
+2. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: shared package typecheck completed using the existing server workspace TypeScript executable.
+
+3. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+4. `rg "LocalCodingAgentAdapter|LocalCodingAgentStartRequest|LocalCodingAgentRunHandle|LocalCodingAgentCancelRequest|agent-sdk" packages/shared/src track/tasks/SDK-001-local-coding-agent-adapter.md`
+   - Result: passed
+   - Notes: found adapter interface, request/handle types, and shared index export.
+
+## Scope Notes
+
+- Added type definitions only; no SDK adapter implementation was created.
+- No custom AI code editing engine, shell loop, patch loop, or provider-specific logic was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.
