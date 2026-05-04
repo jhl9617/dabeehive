@@ -25,8 +25,21 @@ declare module "vscode" {
     getTreeItem(element: T): T;
   }
 
+  export interface StatusBarItem extends Disposable {
+    command?: string;
+    text: string;
+    tooltip?: string;
+    hide(): void;
+    show(): void;
+  }
+
   export interface WorkspaceConfiguration {
     get<T>(section: string, defaultValue: T): T;
+  }
+
+  export enum StatusBarAlignment {
+    Left = 1,
+    Right = 2
   }
 
   export type Thenable<T> = PromiseLike<T>;
@@ -39,6 +52,12 @@ declare module "vscode" {
   }
 
   export namespace window {
+    function createStatusBarItem(
+      id: string,
+      alignment?: StatusBarAlignment,
+      priority?: number
+    ): StatusBarItem;
+
     function registerTreeDataProvider<T>(
       viewId: string,
       treeDataProvider: TreeDataProvider<T>

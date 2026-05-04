@@ -1,0 +1,40 @@
+Task ID: EXT-005
+Status: verified
+Completed At: 2026-05-04 18:09:37 KST
+
+Validation commands:
+- pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+  Result: passed
+  Notes: Extension source typechecked using the existing workspace TypeScript install.
+
+- pnpm --filter @dabeehive/vscode-extension compile
+  Result: passed
+  Notes: Extension package compile script emitted ignored dist output.
+
+- mocked status bar refresh smoke
+  Command: node -e "(async () => { const Module = require('module'); const original = Module._load; const commands = new Map(); const statusItems = []; let shouldFail = false; Module._load = (request, parent, isMain) => request === 'vscode' ? { StatusBarAlignment: { Left: 1, Right: 2 }, commands: { registerCommand: (command, callback) => { commands.set(command, callback); return { dispose() {} }; } }, window: { createStatusBarItem: (id) => { const item = { id, text: '', tooltip: '', command: undefined, shown: 0, show() { this.shown += 1; }, hide() {}, dispose() {} }; statusItems.push(item); return item; }, registerTreeDataProvider: () => ({ dispose() {} }), showInputBox: async () => 'secret-token', showInformationMessage: async () => undefined, showWarningMessage: async () => undefined }, workspace: { getConfiguration: () => ({ get: (key, fallback) => key === 'serverUrl' ? 'http://orchestrator.local' : fallback }) } } : original(request, parent, isMain); global.fetch = async () => { if (shouldFail) throw new Error('offline'); return { ok: true, status: 200, json: async () => ({ data: { status: 'ok', service: 'dabeehive-orchestrator', checkedAt: '2026-05-04T00:00:00.000Z' } }) }; }; const extension = require('./apps/vscode-extension/dist/extension.js'); const context = { subscriptions: [], secrets: { store: async () => undefined, get: async () => 'secret-token', delete: async () => undefined } }; extension.activate(context); if (context.subscriptions.length !== 7) process.exit(1); if (statusItems[0].text !== 'Dabeehive: Disconnected') process.exit(1); await commands.get('dabeehive.refresh')(); if (statusItems[0].text !== 'Dabeehive: Connected') process.exit(1); shouldFail = true; await commands.get('dabeehive.refresh')(); if (statusItems[0].text !== 'Dabeehive: Disconnected') process.exit(1); extension.deactivate(); })().catch(() => process.exit(1));"
+  Result: passed
+  Notes: Initial disconnected state, successful refresh connected state, and failed refresh disconnected state were verified.
+
+- pnpm lint
+  Result: passed
+  Notes: basic lint passed.
+
+- source rg checks
+  Result: passed
+  Notes: Found `createStatusBarItem`, `StatusBarAlignment`, status bar command wiring, and connected/disconnected labels.
+
+Changed files:
+- apps/vscode-extension/src/extension.ts
+- apps/vscode-extension/src/vscode.d.ts
+- track/MASTER.md
+- track/CURRENT.md
+- track/CHANGELOG.md
+- track/tasks/EXT-005-status-bar.md
+- track/logs/2026-05-04-EXT-005.md
+- track/evidence/EXT-005/validation.txt
+
+Out of scope / not validated:
+- Real VS Code Extension Host launch was not run in this task.
+- Tree data loading remains deferred.
+- The unrelated working tree deletion docs/codex-implementation-rules.md was not touched.

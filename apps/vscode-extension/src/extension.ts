@@ -10,6 +10,7 @@ const VIEW_IDS = [
 ] as const;
 const API_TOKEN_SECRET_KEY = "dabeehive.apiToken";
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
+const REFRESH_COMMAND = "dabeehive.refresh";
 
 const emptyTreeProvider: vscode.TreeDataProvider<never> = {
   getChildren: () => [],
@@ -17,9 +18,13 @@ const emptyTreeProvider: vscode.TreeDataProvider<never> = {
 };
 
 export function activate(context: ExtensionContext): void {
+  const statusBarItem = createConnectionStatusBarItem();
+  setConnectionStatus(statusBarItem, "disconnected");
+  context.subscriptions.push(statusBarItem);
+
   context.subscriptions.push(
-    vscode.commands.registerCommand("dabeehive.refresh", () =>
-      refreshOrchestrator(context)
+    vscode.commands.registerCommand(REFRESH_COMMAND, () =>
+      refreshOrchestrator(context, statusBarItem)
     )
   );
   context.subscriptions.push(
@@ -89,16 +94,47 @@ async function clearApiToken(context: ExtensionContext): Promise<void> {
   await vscode.window.showInformationMessage("Dabeehive API token cleared.");
 }
 
-async function refreshOrchestrator(context: ExtensionContext): Promise<void> {
+async function refreshOrchestrator(
+  context: ExtensionContext,
+  statusBarItem: vscode.StatusBarItem
+): Promise<void> {
   try {
     const client = await createOrchestratorClient(context);
     const health = await client.getHealth();
+    setConnectionStatus(statusBarItem, "connected");
     await vscode.window.showInformationMessage(
       `Dabeehive orchestrator is ${health.status}.`
     );
   } catch {
+    setConnectionStatus(statusBarItem, "disconnected");
     await vscode.window.showWarningMessage("Dabeehive orchestrator request failed.");
   }
+}
+
+function createConnectionStatusBarItem(): vscode.StatusBarItem {
+  const statusBarItem = vscode.window.createStatusBarItem(
+    "dabeehive.status",
+    vscode.StatusBarAlignment.Left,
+    100
+  );
+  statusBarItem.command = REFRESH_COMMAND;
+
+  return statusBarItem;
+}
+
+function setConnectionStatus(
+  statusBarItem: vscode.StatusBarItem,
+  status: "connected" | "disconnected"
+): void {
+  if (status === "connected") {
+    statusBarItem.text = "Dabeehive: Connected";
+    statusBarItem.tooltip = "Connected to Dabeehive Orchestrator";
+  } else {
+    statusBarItem.text = "Dabeehive: Disconnected";
+    statusBarItem.tooltip = "Dabeehive Orchestrator is not connected";
+  }
+
+  statusBarItem.show();
 }
 
 function getServerUrl(): string {
