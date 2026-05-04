@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | EXT-003 | verified | Added VS Code SecretStorage API token set/clear commands, activation registrations, `getApiToken` helper, and local type shim updates without writing tokens to settings/config/globalState. | Extension typecheck, package compile, mocked SecretStorage smoke, root lint, and no-settings-token-write source checks passed. |
 | 2026-05-04 | EXT-002 | verified | Added VS Code Activity Bar contribution, Issues/Runs/Approvals views, `Dabeehive: Refresh` command, passive activation registrations, icon asset, and local VS Code type shim updates. | Extension typecheck, package compile, mocked activation smoke, root lint, and manifest/source smoke checks passed. |
 | 2026-05-04 | EXT-001 | verified | Added minimal VS Code extension scaffold with manifest activation metadata, compile path, passive activate/deactivate entrypoints, and a local VS Code type shim without adding package dependencies. | Extension typecheck, package compile, activation smoke, root lint, and manifest/source smoke checks passed. |
 | 2026-05-04 | MCP-008 | verified | Added authenticated MCP `artifact.create` and `artifact.get` tools backed by Prisma artifact create/detail operations, with Zod input schemas, content-or-uri validation, ISO serialization, and controlled artifact errors. | Next.js build, TypeScript noEmit, root lint, MCP `tools/list` smoke, and invalid `artifact.create` content-or-uri smoke passed. |

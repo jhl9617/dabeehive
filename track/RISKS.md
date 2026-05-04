@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | VS Code extension token handling could leak API tokens if written to settings or logs. | High | Store tokens only through SecretStorage, do not log token values, do not add settings writes, and validate with source checks. | open | EXT-003 |
 | 2026-05-04 | MCP artifact.create can store diff/test/log content before redaction and storage policy exist. | High | Validate artifact type and payload size, require content or uri, keep external storage and PR behavior out of scope, and defer auth/redaction enforcement to later tasks. | open | MCP-008 |
 | 2026-05-04 | MCP approval request/respond tools can create or finalize human approval records before workflow policy and role enforcement exist. | High | Require MCP Bearer auth, validate inputs, keep workflow continuation out of scope, map known DB errors, and defer role/scope enforcement to later auth/workflow tasks. | open | MCP-007 |
 | 2026-05-04 | MCP run.append_event can ingest sensitive SDK tool, command, file, or test metadata before redaction policy exists. | High | Validate normalized event types and payload size, keep status transitions out of scope, require MCP Bearer auth, and defer redaction/policy enforcement to later auth/workflow tasks. | open | MCP-006 |

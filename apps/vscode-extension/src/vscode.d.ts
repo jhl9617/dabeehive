@@ -4,7 +4,20 @@ declare module "vscode" {
   }
 
   export interface ExtensionContext {
+    secrets: SecretStorage;
     subscriptions: Disposable[];
+  }
+
+  export interface SecretStorage {
+    delete(key: string): Thenable<void>;
+    get(key: string): Thenable<string | undefined>;
+    store(key: string, value: string): Thenable<void>;
+  }
+
+  export interface InputBoxOptions {
+    ignoreFocusOut?: boolean;
+    password?: boolean;
+    prompt?: string;
   }
 
   export interface TreeDataProvider<T> {
@@ -26,5 +39,11 @@ declare module "vscode" {
       viewId: string,
       treeDataProvider: TreeDataProvider<T>
     ): Disposable;
+
+    function showInformationMessage(message: string): Thenable<string | undefined>;
+    function showInputBox(
+      options?: InputBoxOptions
+    ): Thenable<string | undefined>;
+    function showWarningMessage(message: string): Thenable<string | undefined>;
   }
 }

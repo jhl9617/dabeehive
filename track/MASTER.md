@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 47 |
+| verified | 48 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 49 |
+| not_started | 48 |
 
 ---
 
@@ -138,7 +138,7 @@ P3 = 후속 확장
 |---|---|---:|---|---|---|
 | EXT-001 | verified | P0 | Extension | VS Code Extension scaffold 생성 | extension host에서 activate 된다 |
 | EXT-002 | verified | P0 | Extension | contributes commands/views 설정 | Activity Bar와 기본 command가 보인다 |
-| EXT-003 | not_started | P0 | Extension | SecretStorage token 저장 구현 | API token이 settings.json에 저장되지 않는다 |
+| EXT-003 | verified | P0 | Extension | SecretStorage token 저장 구현 | API token이 settings.json에 저장되지 않는다 |
 | EXT-004 | not_started | P0 | Extension | Orchestrator REST client 작성 | serverUrl/token 기반 API 호출이 가능하다 |
 | EXT-005 | not_started | P0 | Extension | 연결 상태 status bar 구현 | connected/disconnected가 표시된다 |
 | EXT-006 | not_started | P0 | Extension | Projects/Issues Tree 구현 | 프로젝트/이슈 목록이 표시된다 |

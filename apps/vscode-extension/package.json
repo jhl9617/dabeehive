@@ -12,6 +12,8 @@
   "activationEvents": [
     "onStartupFinished",
     "onCommand:dabeehive.refresh",
+    "onCommand:dabeehive.setApiToken",
+    "onCommand:dabeehive.clearApiToken",
     "onView:dabeehive.views.issues",
     "onView:dabeehive.views.runs",
     "onView:dabeehive.views.approvals"
@@ -24,6 +26,16 @@
       {
         "command": "dabeehive.refresh",
         "title": "Dabeehive: Refresh",
+        "category": "Dabeehive"
+      },
+      {
+        "command": "dabeehive.setApiToken",
+        "title": "Dabeehive: Set API Token",
+        "category": "Dabeehive"
+      },
+      {
+        "command": "dabeehive.clearApiToken",
+        "title": "Dabeehive: Clear API Token",
         "category": "Dabeehive"
       }
     ],
