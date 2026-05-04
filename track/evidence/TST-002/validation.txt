@@ -1,0 +1,69 @@
+TST-002 validation evidence
+Date: 2026-05-04 20:14:24 KST
+Branch: poc/TST-002-db-migrate-seed
+
+Local DB target used for validation:
+DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+- Prisma schema loaded from prisma/schema.prisma.
+- The schema is valid.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+- Prisma Client v6.19.3 generated under ignored node_modules.
+- Prisma emitted a deprecation warning for package.json#prisma seed config; it does not fail Prisma 6 validation.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script
+Result: PASS
+Summary:
+- Initial PostgreSQL SQL was generated from the current Prisma schema.
+- The generated SQL was saved as apps/server/prisma/migrations/20260504201000_init/migration.sql.
+
+Command: node -c apps/server/prisma/seed.cjs
+Result: PASS
+Summary:
+- Seed script syntax is valid.
+
+Command: initdb -D /private/tmp/dabeehive-tst-002-pg-20260504-2010 -A trust
+Result: FAILED / LOCAL DB BLOCKER
+Summary:
+- initdb is installed from libpq, but the postgres server binary is missing from the same installation.
+- Error summary: program "postgres" is needed by initdb but was not found.
+
+Command: docker ps --format ...
+Result: FAILED / LOCAL DB BLOCKER
+Summary:
+- Docker CLI is installed, but the Docker daemon socket is unavailable.
+- Error summary: failed to connect to the docker API at unix:///Users/jongha/.docker/run/docker.sock.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma migrate deploy --schema prisma/schema.prisma
+Result: BLOCKED
+Summary:
+- Prisma loaded the datasource for localhost:55432.
+- No local PostgreSQL server was reachable, so migration apply could not be verified.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma db seed --schema prisma/schema.prisma
+Result: BLOCKED
+Summary:
+- Prisma invoked the configured seed command: node prisma/seed.cjs.
+- The seed attempted prisma.user.upsert().
+- Prisma could not reach database server at localhost:55432, so demo data was not inserted in this environment.
+
+Command: pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Status:
+- TST-002 is implemented, not verified.
+- Migration and seed support are present.
+- Full DB-backed migrate/seed verification requires a reachable local PostgreSQL database or running Docker daemon.

@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | TST-002 introduces an initial Prisma migration artifact and demo seed entrypoint during validation. | Medium | Generate and apply only against a temporary local PostgreSQL instance, keep production DB access out of scope, and record the exact commands/evidence before marking verified. | open | TST-002 |
 | 2026-05-04 | Secret redaction helper exists before every log, event, and artifact write/read path is wired through it. | High | Keep SEC-003 helper dependency-free and reusable, validate common token patterns now, and require follow-up tasks to apply redaction at SDK event, command, and artifact boundaries. | open | SEC-003 |
 | 2026-05-04 | Bearer auth verification scans active API token hashes because the PoC token model has no lookup prefix or scope model yet. | High | Keep SEC-002 as a shared verifier and MCP wiring only, reject expired tokens, store no plaintext tokens, and defer route-wide REST enforcement, scopes, roles, and indexed token lookup to follow-up security tasks. | open | SEC-002 |
 | 2026-05-04 | API token hash utility exists before Bearer auth middleware, token rotation, and scope checks are connected. | High | Store only scrypt hash payloads, verify with timing-safe comparison, keep plaintext token storage out of scope, and complete SEC-002/SEC-003 before relying on tokens for full access control. | open | SEC-001 |
