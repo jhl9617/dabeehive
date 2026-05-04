@@ -1,6 +1,10 @@
 {
   "name": "dabeehive-orchestrator-poc",
   "private": true,
+  "scripts": {
+    "format:check": "node scripts/lint-basic.mjs",
+    "lint": "node scripts/lint-basic.mjs"
+  },
   "packageManager": "pnpm@10.23.0",
   "engines": {
     "node": ">=22"

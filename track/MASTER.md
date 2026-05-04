@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 8 |
+| verified | 9 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 88 |
+| not_started | 87 |
 
 ---
 
@@ -50,7 +50,7 @@ P3 = 후속 확장
 | FND-001 | verified | P0 | Foundation | repository package manager 결정 | lockfile과 package manager가 하나로 정리된다 |
 | FND-002 | verified | P0 | Foundation | workspace 구조 생성 | `apps/server`, `apps/vscode-extension`, `packages/shared` 또는 동등 구조가 존재한다 |
 | FND-003 | verified | P0 | Foundation | TypeScript base config 생성 | 공통 tsconfig와 app별 tsconfig가 존재한다 |
-| FND-004 | not_started | P0 | Foundation | lint/format 기본 설정 | lint 명령이 실행 가능하다 |
+| FND-004 | verified | P0 | Foundation | lint/format 기본 설정 | lint 명령이 실행 가능하다 |
 | FND-005 | not_started | P0 | Foundation | 공통 타입 package 생성 | shared package에서 API/domain 타입을 export한다 |
 | FND-006 | not_started | P1 | Foundation | environment example 작성 | `.env.example`에 필요한 placeholder가 있다 |
 | FND-007 | not_started | P1 | Foundation | README PoC 실행 방법 작성 | 로컬 실행 순서가 문서화된다 |

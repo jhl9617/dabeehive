@@ -1,0 +1,58 @@
+# FND-004 Validation Evidence
+
+Date: 2026-05-04 14:42:03 KST
+Branch: poc/FND-004-lint-format
+
+## Commands
+
+### pnpm lint
+
+First run:
+
+- Exit code: 1
+- Result: failed because newly created `FND-004` task/log placeholders contained trailing whitespace.
+
+Second run after fixing placeholders:
+
+- Exit code: 0
+- Result:
+
+```txt
+basic lint passed
+```
+
+### pnpm run format:check
+
+First run:
+
+- Exit code: 1
+- Result: same trailing whitespace issue as `pnpm lint`.
+
+Second run after fixing placeholders:
+
+- Exit code: 0
+- Result:
+
+```txt
+basic lint passed
+```
+
+### rg '"lint"|"format:check"' package.json
+
+Exit code: 0
+Result: root package scripts are present.
+
+### rg "root = true|indent_style|insert_final_newline" .editorconfig
+
+Exit code: 0
+Result: basic formatting policy is present.
+
+### rg "FND-004 \| in_progress|Task ID: FND-004|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/FND-004-lint-format.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
+
+## Notes
+
+- No package dependencies were added.
+- Unrelated working tree deletion of `docs/codex-implementation-rules.md` was not staged or modified for this task.
