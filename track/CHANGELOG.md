@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | TST-001 | verified | Validated the server TypeScript no-emit check and repository lint command after the PoC implementation sequence. | `pnpm --filter @dabeehive/server exec tsc --noEmit` and `pnpm lint` passed. |
 | 2026-05-04 | SEC-003 | verified | Added reusable secret redaction helper for Bearer tokens, assignment-style secrets, URL credentials, sensitive object keys, nested arrays/objects, and circular references. | Server typecheck, secret redaction smoke via existing TypeScript compiler API, root lint, and source/risk checks passed. |
 | 2026-05-04 | SEC-002 | verified | Added DB-backed Bearer auth helpers, REST wrapper support, and MCP token verification against stored API token hashes with approval/risk records. | Server typecheck, Bearer auth smoke via existing TypeScript compiler API, root lint, and source/risk checks passed. |
 | 2026-05-04 | SEC-001 | verified | Added server API token hash/verify utility using versioned scrypt payloads, random salt, and timing-safe derived-key comparison; recorded residual auth risk. | Server typecheck, API token hash smoke via existing TypeScript compiler API, root lint, and source/risk checks passed. |

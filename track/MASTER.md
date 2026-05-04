@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 77 |
+| verified | 78 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 19 |
+| not_started | 18 |
 
 ---
 
@@ -239,7 +239,7 @@ P3 = 후속 확장
 
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
-| TST-001 | not_started | P0 | Test | server typecheck/lint 통과 | type/lint 명령이 성공한다 |
+| TST-001 | verified | P0 | Test | server typecheck/lint 통과 | type/lint 명령이 성공한다 |
 | TST-002 | not_started | P0 | Test | DB migrate/seed 검증 | demo data가 생성된다 |
 | TST-003 | not_started | P0 | Test | REST happy path 검증 | project→issue→run→approval 흐름이 동작한다 |
 | TST-004 | not_started | P0 | Test | MCP smoke 검증 | 핵심 MCP tools 호출이 성공한다 |
