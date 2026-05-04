@@ -1,0 +1,29 @@
+# SDK-009 Validation Evidence
+
+Task: SDK-009 — Run Cancellation Handling
+Date: 2026-05-04 19:03:11 KST
+Branch: poc/SDK-009-run-cancellation-handling
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: shared package typecheck completed with no output.
+
+2. run cancellation smoke via `pnpm --filter @dabeehive/server exec node`
+   - Result: passed
+   - Notes: used the existing server TypeScript dependency to transpile `run-cancellation.ts`, executed `dispatchRunCancellation()`, and verified a fake adapter received the normalized cancel command.
+
+3. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+4. `rg "dispatchRunCancellation|buildRunCancellationCommand|RunCancellationCommand|adapter.cancel|run-cancellation" packages/shared/src track/tasks/SDK-009-run-cancellation-handling.md`
+   - Result: passed
+   - Notes: found dispatcher, command builder/type, adapter cancel call, task references, and shared export.
+
+## Scope Notes
+
+- Added deterministic cancellation dispatch helper only; no real SDK process cancellation was added.
+- No API route, database write, workflow state transition, VS Code command, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.
