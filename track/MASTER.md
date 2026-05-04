@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 16 |
+| verified | 17 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 80 |
+| not_started | 79 |
 
 ---
 
@@ -76,7 +76,7 @@ P3 = 후속 확장
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
 | DB-001 | verified | P0 | DB | Prisma 설치 및 schema 초기화 | `prisma/schema.prisma`가 존재한다 |
-| DB-002 | not_started | P0 | DB | User/ApiToken 모델 정의 | 사용자와 API token hash 저장 구조가 있다 |
+| DB-002 | verified | P0 | DB | User/ApiToken 모델 정의 | 사용자와 API token hash 저장 구조가 있다 |
 | DB-003 | not_started | P0 | DB | Project 모델 정의 | repo/workspace 연결 필드가 있다 |
 | DB-004 | not_started | P0 | DB | Issue 모델 정의 | title/body/status/priority/project 관계가 있다 |
 | DB-005 | not_started | P0 | DB | Document 모델 정의 | PRD/ADR/Spec 저장이 가능하다 |

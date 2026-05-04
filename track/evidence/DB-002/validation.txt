@@ -1,0 +1,78 @@
+# DB-002 Validation Evidence
+
+Task: DB-002 — User/ApiToken 모델 정의
+Date: 2026-05-04 15:21:52 KST
+Branch: poc/DB-002-user-api-token-models
+
+## Scope
+
+- Added `User` model.
+- Added `ApiToken` model.
+- Added user-token relation with cascade delete.
+- Stored only `tokenHash`; no plaintext token field was added.
+- No migrations, auth middleware, token generation, or production secrets were added.
+
+## Commands
+
+### `DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma`
+
+Result: Passed
+
+Key output:
+
+```txt
+Prisma schema loaded from prisma/schema.prisma
+The schema at prisma/schema.prisma is valid
+```
+
+### `DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma`
+
+Result: Passed
+
+Key output:
+
+```txt
+Prisma schema loaded from prisma/schema.prisma
+Generated Prisma Client (v6.19.3)
+```
+
+### `pnpm --filter @dabeehive/server build`
+
+Result: Passed
+
+Key output:
+
+```txt
+▲ Next.js 15.5.15
+✓ Compiled successfully in 723ms
+✓ Generating static pages (4/4)
+```
+
+### `pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result: Passed
+
+Key output:
+
+```txt
+No output; command exited 0.
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Key output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+## Notes
+
+- Generated Prisma client output is under ignored `node_modules` and is not committed.
+- DB schema approval/risk was recorded before implementation.
+- Existing unrelated working tree deletion remains unstaged: `docs/codex-implementation-rules.md`.
