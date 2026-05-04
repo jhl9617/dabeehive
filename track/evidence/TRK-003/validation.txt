@@ -1,0 +1,41 @@
+# TRK-003 Validation Evidence
+
+Date: 2026-05-04 14:22:57 KST
+Branch: poc/TRK-003-docs-prd
+
+## Commands
+
+### test -f docs/prd.md
+
+Exit code: 0
+Result: `docs/prd.md` exists.
+
+### rg "Orchestrator|Next.js|MCP|Prisma|수용 기준" docs/prd.md
+
+Exit code: 0
+Result: `docs/prd.md` contains expected PoC PRD terms and sections.
+
+### cmp -s docs/prd.md track/context/prd.md
+
+Exit code: 0
+Result: `docs/prd.md` is byte-for-byte identical to `track/context/prd.md`.
+
+### rg "TRK-003 \| in_progress|Task ID: TRK-003|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/TRK-003-docs-prd.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
+
+### shasum -a 256 docs/prd.md track/context/prd.md
+
+Exit code: 0
+Result:
+
+```txt
+70ad5523b9fe2c8b0aee0a17cf8787ea0987561d684c83519221e2335dd64199  docs/prd.md
+70ad5523b9fe2c8b0aee0a17cf8787ea0987561d684c83519221e2335dd64199  track/context/prd.md
+```
+
+## Notes
+
+- `docs/prd.md` existed at task start and was used as the PRD anchor.
+- Unrelated working tree deletion of `docs/codex-implementation-rules.md` was not staged or modified for this task.
