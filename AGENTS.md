@@ -15,6 +15,11 @@
 
 ## 1. PoC 구현 범위
 
+### Context Sources
+
+- Primary PRD: track/context/prd.md
+- MASTER task list: track/MASTER.md
+
 ### 포함
 
 - Orchestrator Server: Project, Issue, Context Document, Agent Run, Approval, Artifact, Run Event 관리
