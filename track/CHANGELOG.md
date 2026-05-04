@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | SDK-002 | verified | Added shared `CodingRunInput` with run, project, issue, workspace, system instruction, and optional context/model metadata, and wired adapter `start` to that input type. | Shared typecheck, root lint, and source checks passed. |
 | 2026-05-04 | SDK-001 | verified | Added shared `LocalCodingAgentAdapter` interface with minimal start/cancel request and handle types, exported from the shared package without SDK implementation logic. | Shared typecheck passed via existing server TypeScript executable after shared workspace `tsc` was unavailable; root lint and source checks passed. |
 | 2026-05-04 | EXT-010 | verified | Added VS Code `Dabeehive: Start Run` command and issue tree context menu, creating queued planner runs from selected issues through the Orchestrator REST client. | Extension typecheck, package compile, mocked selected issue start run command smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-009 | verified | Added VS Code `Dabeehive: Create Issue` command with project/title/body prompts and Orchestrator REST client `POST /api/issues` support. | Extension typecheck, package compile, mocked create issue command smoke, root lint, and source checks passed. |

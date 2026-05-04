@@ -1,0 +1,25 @@
+# SDK-002 Validation Evidence
+
+Task: SDK-002 — CodingRunInput Type
+Date: 2026-05-04 18:38:58 KST
+Branch: poc/SDK-002-coding-run-input
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: shared package typecheck completed with no output.
+
+2. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+3. `rg "CodingRunInput|CodingRunWorkspace|CodingRunModel|CodingRunProject|systemInstruction|LocalCodingAgentStartRequest" packages/shared/src/agent-sdk.ts track/tasks/SDK-002-coding-run-input.md`
+   - Result: passed
+   - Notes: found `CodingRunInput`, supporting types, `systemInstruction`, adapter start alias, and acceptance tracking.
+
+## Scope Notes
+
+- Added type definitions only; no SDK adapter implementation was created.
+- No `CodingAgentEvent` type, SDK invocation, event normalization, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

@@ -1,13 +1,35 @@
-import type { EntityId } from "./domain";
+import type { AgentRole, EntityId, Issue, Project } from "./domain";
 
-export type LocalCodingAgentStartRequest = {
+export type CodingRunWorkspace = {
+  path: string;
+  repoUrl?: string | null;
+  branchName?: string | null;
+  baseBranchName?: string | null;
+};
+
+export type CodingRunModel = {
+  provider?: string | null;
+  modelId?: string | null;
+};
+
+export type CodingRunProject = Pick<
+  Project,
+  "id" | "name" | "repoUrl" | "repoOwner" | "repoName"
+>;
+
+export type CodingRunInput = {
   runId: EntityId;
-  projectId: EntityId;
-  issueId?: EntityId | null;
-  workspacePath: string;
-  instructions: string;
+  project: CodingRunProject;
+  issue: Issue;
+  workspace: CodingRunWorkspace;
+  systemInstruction: string;
+  agentRole?: AgentRole;
+  model?: CodingRunModel;
+  context?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
 };
+
+export type LocalCodingAgentStartRequest = CodingRunInput;
 
 export type LocalCodingAgentRunHandle = {
   runId: EntityId;
@@ -21,8 +43,6 @@ export type LocalCodingAgentCancelRequest = {
 
 export interface LocalCodingAgentAdapter {
   readonly name: string;
-  start(
-    request: LocalCodingAgentStartRequest
-  ): Promise<LocalCodingAgentRunHandle>;
+  start(request: CodingRunInput): Promise<LocalCodingAgentRunHandle>;
   cancel(request: LocalCodingAgentCancelRequest): Promise<void>;
 }
