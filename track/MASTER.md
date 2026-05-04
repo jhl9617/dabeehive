@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 36 |
+| verified | 37 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 60 |
+| not_started | 59 |
 
 ---
 
@@ -106,7 +106,7 @@ P3 = 후속 확장
 | API-010 | verified | P0 | API | Run event append API | Extension이 SDK 이벤트를 업로드할 수 있다 |
 | API-011 | verified | P0 | API | Approval list/detail API | 승인 목록/상세 조회가 가능하다 |
 | API-012 | verified | P0 | API | Approval respond API | approve/reject/request_changes 처리가 가능하다 |
-| API-013 | not_started | P0 | API | Artifact create/list API | plan/diff/test artifact 저장과 조회가 가능하다 |
+| API-013 | verified | P0 | API | Artifact create/list API | plan/diff/test artifact 저장과 조회가 가능하다 |
 | API-014 | not_started | P1 | API | Run SSE stream API | run event가 SSE로 스트리밍된다 |
 | API-015 | not_started | P1 | API | API token 인증 middleware | Bearer token 인증이 가능하다 |
 | API-016 | not_started | P1 | API | 공통 API 테스트 작성 | 핵심 API happy path 테스트가 있다 |

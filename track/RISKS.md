@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Artifact create/list APIs can expose diff/test content before auth and redaction middleware exist. | High | Validate artifact type and payload size, keep external storage and PR behavior out of scope, and defer auth/redaction enforcement to SEC/API tasks. | open | API-013 |
 | 2026-05-04 | Approval respond API can mutate approval decisions before auth and workflow policy enforcement exist. | High | Validate response actions, limit mutation to approval status/responded fields, and defer workflow continuation and auth enforcement to later tasks. | open | API-012 |
 | 2026-05-04 | Approval read APIs expose risk, diff, and reviewer action metadata before auth middleware exists. | Medium | Keep routes read-only, validate filters and ids, and defer access control/redaction to SEC/API tasks. | open | API-011 |
 | 2026-05-04 | Run event append API can ingest sensitive command/tool metadata before auth and redaction middleware exist. | High | Validate normalized event type and payload size, keep status transitions out of scope, and defer auth/redaction enforcement to SEC/API tasks. | open | API-010 |
