@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Issue MCP create tool can mutate issue data before full token scopes and workflow policy exist. | High | Require the MCP Bearer guard, validate all write inputs with Zod, keep update/delete out of scope, map known DB errors, and defer scope/workflow enforcement to later auth/workflow tasks. | open | MCP-004 |
 | 2026-05-04 | Project MCP tools expose project metadata over the MCP surface before full token scope enforcement exists. | Medium | Keep tools read-only, require the MCP Bearer guard, validate inputs, and defer scope/role enforcement to later auth tasks. | open | MCP-003 |
 | 2026-05-04 | MCP auth guard initially verifies token presence only before DB-backed token hash verification exists. | High | Reject missing Bearer tokens now, record auth approval, and defer hash/scopes/roles validation to SEC/API auth tasks. | open | MCP-002 |
 | 2026-05-04 | MCP handler dependency and route can expose a new protocol surface before auth guard and tools are implemented. | High | Keep MCP-001 to a minimal handler with no domain tools, record package approval, and defer auth/tools to MCP-002+ tasks. | open | MCP-001 |
