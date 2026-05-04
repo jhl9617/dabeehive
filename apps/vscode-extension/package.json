@@ -1,5 +1,16 @@
 {
   "name": "@dabeehive/vscode-extension",
   "version": "0.0.0",
-  "private": true
+  "private": true,
+  "displayName": "Dabeehive Orchestrator",
+  "description": "VS Code control surface for the Dabeehive AI Agent Orchestrator PoC.",
+  "main": "./dist/extension.js",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "scripts": {
+    "compile": "pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json"
+  }
 }

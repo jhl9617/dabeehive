@@ -1,0 +1,45 @@
+Task ID: EXT-001
+Status: verified
+Completed At: 2026-05-04 17:52:52 KST
+
+Validation commands:
+- pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+  Result: passed
+  Notes: Extension source typechecked using the existing workspace TypeScript install.
+
+- pnpm --filter @dabeehive/vscode-extension compile
+  Result: passed
+  Notes: Extension package compile script emitted ignored dist output using the existing workspace TypeScript install.
+
+- node activation smoke
+  Command: node -e "const extension = require('./apps/vscode-extension/dist/extension.js'); const context = { subscriptions: [] }; extension.activate(context); extension.deactivate(); if (context.subscriptions.length !== 1) process.exit(1);"
+  Result: passed
+  Notes: Compiled entrypoint exports activate/deactivate and activation registers one disposable in a fake context.
+
+- pnpm lint
+  Result: passed
+  Notes: basic lint passed.
+
+- manifest/source rg smoke checks
+  Result: passed
+  Notes: Found main, activationEvents, vscode engine, noEmit false, activate/deactivate, and ExtensionContext declarations.
+
+Failed attempt recorded:
+- Initial `pnpm --filter @dabeehive/vscode-extension compile` failed because `tsc` was not available in the extension package. The fix kept the task dependency-free by reusing the existing server package TypeScript install in the compile script.
+
+Changed files:
+- apps/vscode-extension/package.json
+- apps/vscode-extension/tsconfig.json
+- apps/vscode-extension/src/extension.ts
+- apps/vscode-extension/src/vscode.d.ts
+- track/MASTER.md
+- track/CURRENT.md
+- track/CHANGELOG.md
+- track/tasks/EXT-001-extension-scaffold.md
+- track/logs/2026-05-04-EXT-001.md
+- track/evidence/EXT-001/validation.txt
+
+Out of scope / not validated:
+- Real VS Code Extension Host launch was not run in this task.
+- Commands/views, SecretStorage, REST client, status bar, trees, webviews, and SDK adapter calls remain deferred.
+- The unrelated working tree deletion docs/codex-implementation-rules.md was not touched.
