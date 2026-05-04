@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 4 |
+| verified | 5 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 92 |
+| not_started | 91 |
 
 ---
 
@@ -38,7 +38,7 @@ P3 = 후속 확장
 | TRK-002 | verified | P0 | Tracking | `/track` 기본 구조 생성 | MASTER/CURRENT/DECISIONS/RISKS/CHANGELOG/templates 디렉토리와 파일이 존재한다 |
 | TRK-003 | verified | P0 | Tracking | PoC PRD를 `docs/`에 고정 | PoC 요구사항 문서가 repo 내부에서 참조 가능하다 |
 | TRK-004 | verified | P0 | Tracking | task template 정리 | 신규 작업 파일 생성 규칙이 명확하다 |
-| TRK-005 | not_started | P0 | Tracking | session log template 정리 | Codex 실행 로그 형식이 명확하다 |
+| TRK-005 | verified | P0 | Tracking | session log template 정리 | Codex 실행 로그 형식이 명확하다 |
 | TRK-006 | not_started | P1 | Tracking | task status update script 초안 | 선택 사항. 상태 변경 보조 스크립트 또는 npm script가 있다 |
 
 ---

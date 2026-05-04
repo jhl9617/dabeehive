@@ -1,0 +1,26 @@
+# TRK-005 Validation Evidence
+
+Date: 2026-05-04 14:29:56 KST
+Branch: poc/TRK-005-session-log-template
+
+## Commands
+
+### rg "File Name|Template Usage|Initial Context Read|Actions|Validation|Final Summary|Issues / Follow-ups" track/templates/session-log-template.md
+
+Exit code: 0
+Result: Session log template includes required structure sections.
+
+### rg "YYYY-MM-DD-<TASK-ID>|Session Metadata|Action rows should include|Validation rows should include|Changed files|Evidence" track/templates/session-log-template.md
+
+Exit code: 0
+Result: Session log template documents naming, metadata, action rows, validation rows, summary, and evidence expectations.
+
+### rg "TRK-005 \| in_progress|Task ID: TRK-005|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/TRK-005-session-log-template.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
+
+## Notes
+
+- Task file template was not modified; that belongs to `TRK-004`.
+- Unrelated working tree deletion of `docs/codex-implementation-rules.md` was not staged or modified for this task.
