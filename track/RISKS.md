@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Project create API is introduced before auth middleware and seed data are available. | Medium | Require explicit `ownerId`, validate inputs with Zod, keep auth out of scope, and defer DB happy-path smoke to migration/seed tasks. | open | API-002 |
 | 2026-05-04 | Health response becomes a stable public API contract earlier than other REST routes. | Low | Keep the response minimal, version-neutral, and aligned with the existing API success helper. | open | API-001 |
 | 2026-05-04 | Artifact schema may blur inline content and external file references. | Medium | Keep separate content, uri, and metadata fields and defer storage backend behavior to API/Git tasks. | open | DB-009 |
 | 2026-05-04 | Approval schema must capture risk and reviewer actions without locking future workflow too early. | Medium | Store type/status as strings and include risk/diff/action metadata while deferring workflow behavior to API tasks. | open | DB-008 |
