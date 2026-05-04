@@ -57,6 +57,15 @@ export type OrchestratorRun = {
   updatedAt: string;
 };
 
+export type CreateRunInput = {
+  projectId: string;
+  issueId?: string | null;
+  agentRole: string;
+  modelProvider?: string | null;
+  modelId?: string | null;
+  inputContext?: Record<string, unknown> | null;
+};
+
 export type OrchestratorApproval = {
   id: string;
   issueId: string | null;
@@ -122,6 +131,13 @@ export class OrchestratorClient {
 
   listRuns(): Promise<OrchestratorRun[]> {
     return this.request<OrchestratorRun[]>("/api/runs");
+  }
+
+  createRun(input: CreateRunInput): Promise<OrchestratorRun> {
+    return this.request<OrchestratorRun>("/api/runs", {
+      method: "POST",
+      body: input
+    });
   }
 
   listPendingApprovals(): Promise<OrchestratorApproval[]> {

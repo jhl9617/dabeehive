@@ -1,0 +1,34 @@
+# EXT-010 Validation Evidence
+
+Task: EXT-010 — Start Run Command
+Date: 2026-05-04 18:32:38 KST
+Branch: poc/EXT-010-start-run-command
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: completed with no output.
+
+2. `pnpm --filter @dabeehive/vscode-extension compile`
+   - Result: passed
+   - Notes: extension package TypeScript compile completed.
+
+3. mocked selected issue start run command smoke
+   - Result: passed
+   - Notes: mocked `vscode` API and `fetch`; verified `dabeehive.startRun` registration, selected issue argument use without prompts, Bearer token header, JSON `POST /api/runs` body, default `planner` role, and success message.
+
+4. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+5. `rg "dabeehive\\.startRun|START_RUN_COMMAND|startRun\\(|CreateRunInput|createRun\\(|DEFAULT_AGENT_ROLE|view/item/context" apps/vscode-extension/package.json apps/vscode-extension/src`
+   - Result: passed
+   - Notes: found expected command contribution, context menu, command handler, client input type, default role, and createRun method.
+
+## Scope Notes
+
+- No real VS Code Extension Host was launched; selected issue command behavior was smoke-tested with a mocked VS Code API.
+- Start Run creates only an Orchestrator run record; it does not invoke an SDK adapter or execute code.
+- Run tree auto-refresh eventing and run console UI are deferred to later tasks.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

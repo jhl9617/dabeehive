@@ -15,6 +15,7 @@
     "onCommand:dabeehive.setApiToken",
     "onCommand:dabeehive.clearApiToken",
     "onCommand:dabeehive.createIssue",
+    "onCommand:dabeehive.startRun",
     "onView:dabeehive.views.issues",
     "onView:dabeehive.views.runs",
     "onView:dabeehive.views.approvals"
@@ -43,8 +44,22 @@
         "command": "dabeehive.createIssue",
         "title": "Dabeehive: Create Issue",
         "category": "Dabeehive"
+      },
+      {
+        "command": "dabeehive.startRun",
+        "title": "Dabeehive: Start Run",
+        "category": "Dabeehive"
       }
     ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "dabeehive.startRun",
+          "when": "view == dabeehive.views.issues && viewItem == dabeehive.issue",
+          "group": "inline"
+        }
+      ]
+    },
     "viewsContainers": {
       "activitybar": [
         {

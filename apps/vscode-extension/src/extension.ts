@@ -18,6 +18,8 @@ const API_TOKEN_SECRET_KEY = "dabeehive.apiToken";
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const REFRESH_COMMAND = "dabeehive.refresh";
 const CREATE_ISSUE_COMMAND = "dabeehive.createIssue";
+const START_RUN_COMMAND = "dabeehive.startRun";
+const DEFAULT_AGENT_ROLE = "planner";
 const RUN_STATUS_ORDER = [
   "queued",
   "planning",
@@ -282,6 +284,11 @@ export function activate(context: ExtensionContext): void {
       createIssue(context)
     )
   );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(START_RUN_COMMAND, (argument) =>
+      startRun(context, argument)
+    )
+  );
 
   VIEW_IDS.forEach((viewId) => {
     if (viewId === "dabeehive.views.issues") {
@@ -397,6 +404,39 @@ async function createIssue(context: ExtensionContext): Promise<void> {
   }
 }
 
+async function startRun(
+  context: ExtensionContext,
+  argument: unknown
+): Promise<void> {
+  const selectedIssue = getIssueFromCommandArgument(argument);
+  const projectId =
+    selectedIssue?.projectId ?? (await promptRequiredInput("Dabeehive project ID"));
+
+  if (!projectId) {
+    return;
+  }
+
+  const issueId = selectedIssue?.id ?? (await promptRequiredInput("Issue ID"));
+
+  if (!issueId) {
+    return;
+  }
+
+  try {
+    const client = await createOrchestratorClient(context);
+    const run = await client.createRun({
+      projectId,
+      issueId,
+      agentRole: DEFAULT_AGENT_ROLE
+    });
+    await vscode.window.showInformationMessage(
+      `Dabeehive run started: ${formatShortId(run.id)}.`
+    );
+  } catch {
+    await vscode.window.showWarningMessage("Dabeehive run start failed.");
+  }
+}
+
 async function promptRequiredInput(prompt: string): Promise<string | undefined> {
   const input = await vscode.window.showInputBox({
     ignoreFocusOut: true,
@@ -415,6 +455,26 @@ async function promptRequiredInput(prompt: string): Promise<string | undefined> 
   }
 
   return trimmedInput;
+}
+
+function getIssueFromCommandArgument(argument: unknown): OrchestratorIssue | undefined {
+  if (typeof argument !== "object" || argument === null || !("issue" in argument)) {
+    return undefined;
+  }
+
+  const issue = (argument as { issue?: unknown }).issue;
+
+  if (typeof issue !== "object" || issue === null) {
+    return undefined;
+  }
+
+  const candidate = issue as Partial<OrchestratorIssue>;
+
+  if (typeof candidate.id !== "string" || typeof candidate.projectId !== "string") {
+    return undefined;
+  }
+
+  return candidate as OrchestratorIssue;
 }
 
 async function refreshOrchestrator(
