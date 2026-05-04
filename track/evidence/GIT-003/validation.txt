@@ -1,0 +1,55 @@
+# GIT-003 Validation Evidence
+
+Date: 2026-05-04 19:37:26 KST
+Branch: poc/GIT-003-changed-files-detector
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: Passed
+   - Notes: Shared package typecheck completed with no output.
+
+2. `pnpm --filter @dabeehive/server exec node -e "<changed files helper smoke>"`
+   - Result: Passed
+   - Output summary:
+
+```json
+{
+  "count": 6,
+  "command": [
+    "git",
+    "status",
+    "--porcelain=v1",
+    "--untracked-files=no"
+  ],
+  "first": [
+    "modified.ts",
+    null,
+    "modified",
+    false,
+    true,
+    false
+  ],
+  "renamed": [
+    "renamed.ts",
+    "old.ts",
+    "renamed",
+    true,
+    false,
+    false
+  ]
+}
+```
+
+3. `pnpm lint`
+   - Result: Passed
+   - Output: `basic lint passed`
+
+4. `rg "getChangedFiles|parseChangedFiles|git status --porcelain|git-changed-files" packages/shared/src track/tasks/GIT-003-changed-files-detector.md`
+   - Result: Passed
+   - Notes: Helper implementation, export, and task tracking references found.
+
+## Scope Notes
+
+- No Jira, Slack, Draft PR, GitHub API, automatic merge, custom shell tool loop, or AI code editing engine was implemented.
+- Changed file collection remains delegated to an injected command runner.
