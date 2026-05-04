@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | DB-005 | verified | Added Prisma `Document` model with project relation and PRD/ADR/Spec text storage fields. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-004 | verified | Added Prisma `Issue` model with project relation, workflow fields, labels, and optional issue hierarchy. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-003 | verified | Added Prisma `Project` model with owner relation and repo/workspace connection fields. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-002 | verified | Added Prisma `User` and `ApiToken` models with unique email/token hash storage and user-token relation. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
