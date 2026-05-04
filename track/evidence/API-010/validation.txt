@@ -1,0 +1,54 @@
+API-010 validation evidence
+Date: 2026-05-04 16:42:39 KST
+Branch: poc/API-010-run-event-append
+
+Commands and results:
+
+1. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: Passed
+Key output:
+Prisma schema loaded from prisma/schema.prisma
+The schema at prisma/schema.prisma is valid
+
+2. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma
+Result: Passed
+Key output:
+Prisma schema loaded from prisma/schema.prisma
+Generated Prisma Client v6.19.3.
+
+3. pnpm --filter @dabeehive/server build
+Result: Passed
+Key output:
+Next.js 15.5.15 compiled successfully.
+Route table includes dynamic /api/runs/[id]/events.
+
+4. pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: Passed
+Key output:
+No output.
+
+5. pnpm lint
+Result: Passed
+Key output:
+basic lint passed
+
+6. pnpm --filter @dabeehive/server exec next dev --hostname 127.0.0.1 --port 18090
+Result: Passed
+Key output:
+Ready in 1254ms.
+
+7. curl -sS -i -X POST http://127.0.0.1:18090/api/runs/run-1/events -H 'content-type: application/json' --data '{}'
+Result: Passed
+Expected outcome:
+HTTP/1.1 400 Bad Request with error.code VALIDATION_ERROR.
+Returned missing type validation issue.
+
+8. curl -sS -i -X POST http://127.0.0.1:18090/api/runs/run-1/events -H 'content-type: application/json' --data '{"type":"unknown"}'
+Result: Passed
+Expected outcome:
+HTTP/1.1 400 Bad Request with error.code VALIDATION_ERROR.
+Returned invalid event type enum validation issue.
+
+Deferred validation:
+
+- DB-backed event append happy-path smoke was not run because migration/seed/local DB verification is scheduled for later DB/TST tasks and there is no known persisted run data for this route yet.

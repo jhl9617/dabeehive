@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Run event append API can ingest sensitive command/tool metadata before auth and redaction middleware exist. | High | Validate normalized event type and payload size, keep status transitions out of scope, and defer auth/redaction enforcement to SEC/API tasks. | open | API-010 |
 | 2026-05-04 | Run detail API exposes run and event metadata before auth and redaction middleware exist. | Medium | Limit the route to read-only detail/event retrieval, keep write behavior out of scope, and defer auth/redaction policy to SEC/API tasks. | open | API-009 |
 | 2026-05-04 | Run create API can create queued work before SDK runner and workflow policy are connected. | Medium | Store run records only, default to queued state, and defer execution/state transitions to workflow and SDK tasks. | open | API-008 |
 | 2026-05-04 | Document update API can alter context content before approval or versioning policy exists. | Medium | Validate content/status fields, keep automated versioning out of scope, and defer approval/version policy to workflow/context tasks. | open | API-007 |
