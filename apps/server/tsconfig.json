@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "composite": true,
+    "paths": {
+      "@dabeehive/shared": ["../../packages/shared/src"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "next-env.d.ts"],
+  "exclude": ["node_modules", ".next", "dist"]
+}
