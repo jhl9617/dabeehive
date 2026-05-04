@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | DB-001 | verified | Added Prisma CLI 6.x and initialized the server Prisma schema shell with PostgreSQL datasource and client generator. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and schema file check passed. |
 | 2026-05-04 | SRV-005 | verified | Added `@prisma/client` 6.x and a lazy Prisma client singleton factory path for future DB access. | Dependency install, Next.js build, TypeScript noEmit, and root lint passed after avoiding generated-client imports before DB-001. |
 | 2026-05-04 | SRV-004 | verified | Added Zod 3.x and a reusable route-agnostic validation helper with normalized issue details. | Dependency install, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | SRV-003 | verified | Added reusable Next.js API success/error response helpers matching the PoC response contract. | Next.js build, TypeScript noEmit, and root lint passed after replacing a cross-project type import with local structural body types. |

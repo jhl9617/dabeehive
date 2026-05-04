@@ -1,0 +1,113 @@
+# DB-001 Validation Evidence
+
+Task: DB-001 — Prisma 설치 및 schema 초기화
+Date: 2026-05-04 15:18:02 KST
+Branch: poc/DB-001-prisma-schema-init
+
+## Scope
+
+- Added `prisma` 6.x dev dependency to `@dabeehive/server`.
+- Added `apps/server/prisma/schema.prisma`.
+- Schema contains only `prisma-client-js` generator and PostgreSQL datasource.
+- No models, migrations, seed scripts, or DB connections were added.
+
+## Commands
+
+### `pnpm --filter @dabeehive/server add -D prisma@6`
+
+Result: Passed
+
+Key output:
+
+```txt
+. | +35 -1 ++++-
+Done in 5.4s using pnpm v10.23.0
+```
+
+Installed version:
+
+```txt
+apps/server/package.json: "prisma": "^6.19.3"
+```
+
+### Initial Prisma validate/generate
+
+Result: Failed
+
+Cause:
+
+```txt
+getaddrinfo ENOTFOUND binaries.prisma.sh
+```
+
+Resolution:
+
+- Re-ran the same validate/generate commands with approval because Prisma needed engine access.
+
+### Final `DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma`
+
+Result: Passed
+
+Key output:
+
+```txt
+Prisma schema loaded from prisma/schema.prisma
+The schema at prisma/schema.prisma is valid
+```
+
+### Final `DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma`
+
+Result: Passed
+
+Key output:
+
+```txt
+Prisma schema loaded from prisma/schema.prisma
+Generated Prisma Client (v6.19.3)
+```
+
+### `pnpm --filter @dabeehive/server build`
+
+Result: Passed
+
+Key output:
+
+```txt
+▲ Next.js 15.5.15
+✓ Compiled successfully in 690ms
+✓ Generating static pages (4/4)
+```
+
+### `pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result: Passed
+
+Key output:
+
+```txt
+No output; command exited 0.
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Key output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+### `test -f apps/server/prisma/schema.prisma`
+
+Result: Passed
+
+## Notes
+
+- Prisma reported a major version update from 6.19.3 to 7.8.0, but DB-001 intentionally stays on Prisma 6.x per PRD.
+- Generated Prisma client output is under ignored `node_modules` and is not committed.
+- Dependency and DB schema approval/risk were recorded before implementation.
+- Existing unrelated working tree deletion remains unstaged: `docs/codex-implementation-rules.md`.
