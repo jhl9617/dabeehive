@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 11 |
+| verified | 12 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 85 |
+| not_started | 84 |
 
 ---
 
@@ -62,7 +62,7 @@ P3 = 후속 확장
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
 | SRV-001 | verified | P0 | Server | Next.js App Router 앱 초기화 | server app이 dev 모드로 실행된다 |
-| SRV-002 | not_started | P0 | Server | 기본 layout/page 구성 | 홈 또는 health 페이지가 렌더링된다 |
+| SRV-002 | verified | P0 | Server | 기본 layout/page 구성 | 홈 또는 health 페이지가 렌더링된다 |
 | SRV-003 | not_started | P0 | Server | API response helper 작성 | success/error 응답 helper가 있다 |
 | SRV-004 | not_started | P0 | Server | Zod validation helper 작성 | route에서 재사용 가능한 validation helper가 있다 |
 | SRV-005 | not_started | P0 | Server | Prisma client singleton 작성 | DB client import 경로가 정리된다 |

@@ -1,0 +1,74 @@
+# SRV-002 Validation Evidence
+
+Task: SRV-002 — 기본 layout/page 구성
+Date: 2026-05-04 14:59:38 KST
+Branch: poc/SRV-002-basic-layout-page
+
+## Scope
+
+- Added App Router global stylesheet import.
+- Added minimal responsive global CSS.
+- Replaced placeholder page with rendered server status page.
+- No dependency additions.
+
+## Commands
+
+### `pnpm --filter @dabeehive/server build`
+
+Result: Passed
+
+Key output:
+
+```txt
+> @dabeehive/server@0.0.0 build /Users/jongha/Documents/repository/dabeehive/apps/server
+> next build
+
+▲ Next.js 15.5.15
+✓ Compiled successfully in 1247ms
+✓ Generating static pages (4/4)
+
+Route (app)                                 Size  First Load JS
+┌ ○ /                                      123 B         102 kB
+└ ○ /_not-found                            989 B         102 kB
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Key output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+### `pnpm --filter @dabeehive/server dev --hostname 127.0.0.1 --port 13002`
+
+Result: Passed
+
+Key output:
+
+```txt
+▲ Next.js 15.5.15
+- Local: http://127.0.0.1:13002
+✓ Ready in 1180ms
+```
+
+### `curl -sS -I http://127.0.0.1:13002`
+
+Result: Passed
+
+Key output:
+
+```txt
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+```
+
+## Notes
+
+- Initial sandboxed `kill 54886` for the dev server returned `operation not permitted`; the same kill was rerun with approval and succeeded.
+- Existing unrelated working tree deletion remains unstaged: `docs/codex-implementation-rules.md`.

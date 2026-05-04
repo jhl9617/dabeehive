@@ -1,3 +1,5 @@
+import "./globals.css";
+
 export const metadata = {
   title: "Dabeehive Orchestrator",
   description: "AI Agent Orchestrator PoC"
