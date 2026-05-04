@@ -4,7 +4,8 @@ import type { ExtensionContext, Thenable } from "vscode";
 import { OrchestratorClient } from "./orchestratorClient";
 import type {
   OrchestratorIssue,
-  OrchestratorProject
+  OrchestratorProject,
+  OrchestratorRun
 } from "./orchestratorClient";
 
 const VIEW_IDS = [
@@ -15,6 +16,16 @@ const VIEW_IDS = [
 const API_TOKEN_SECRET_KEY = "dabeehive.apiToken";
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const REFRESH_COMMAND = "dabeehive.refresh";
+const RUN_STATUS_ORDER = [
+  "queued",
+  "planning",
+  "waiting_approval",
+  "coding",
+  "reviewing",
+  "succeeded",
+  "failed",
+  "cancelled"
+];
 
 const emptyTreeProvider: vscode.TreeDataProvider<never> = {
   getChildren: () => [],
@@ -105,11 +116,89 @@ class ProjectsIssuesTreeProvider
   }
 }
 
+type RunsTreeNode =
+  | {
+      kind: "status";
+      status: string;
+      runs: OrchestratorRun[];
+    }
+  | {
+      kind: "run";
+      run: OrchestratorRun;
+    }
+  | {
+      kind: "message";
+      label: string;
+    };
+
+class RunsTreeProvider implements vscode.TreeDataProvider<RunsTreeNode> {
+  constructor(private readonly createClient: () => Promise<OrchestratorClient>) {}
+
+  async getChildren(element?: RunsTreeNode): Promise<RunsTreeNode[]> {
+    try {
+      if (element?.kind === "status") {
+        return element.runs.map((run) => ({
+          kind: "run",
+          run
+        }));
+      }
+
+      if (element) {
+        return [];
+      }
+
+      const client = await this.createClient();
+      const runs = await client.listRuns();
+
+      if (runs.length === 0) {
+        return [{ kind: "message", label: "No runs" }];
+      }
+
+      return groupRunsByStatus(runs).map(([status, groupedRuns]) => ({
+        kind: "status",
+        status,
+        runs: groupedRuns
+      }));
+    } catch {
+      return [{ kind: "message", label: "Unable to load runs" }];
+    }
+  }
+
+  getTreeItem(node: RunsTreeNode): vscode.TreeItem {
+    if (node.kind === "status") {
+      return {
+        label: node.status,
+        description: `${node.runs.length} run${node.runs.length === 1 ? "" : "s"}`,
+        collapsibleState: vscode.TreeItemCollapsibleState.Collapsed,
+        contextValue: "dabeehive.runStatus"
+      };
+    }
+
+    if (node.kind === "run") {
+      return {
+        label: `Run ${formatShortId(node.run.id)}`,
+        description: formatRunDescription(node.run),
+        collapsibleState: vscode.TreeItemCollapsibleState.None,
+        contextValue: "dabeehive.run"
+      };
+    }
+
+    return {
+      label: node.label,
+      collapsibleState: vscode.TreeItemCollapsibleState.None,
+      contextValue: "dabeehive.message"
+    };
+  }
+}
+
 export function activate(context: ExtensionContext): void {
   const statusBarItem = createConnectionStatusBarItem();
   setConnectionStatus(statusBarItem, "disconnected");
   context.subscriptions.push(statusBarItem);
   const projectsIssuesTreeProvider = new ProjectsIssuesTreeProvider(() =>
+    createOrchestratorClient(context)
+  );
+  const runsTreeProvider = new RunsTreeProvider(() =>
     createOrchestratorClient(context)
   );
 
@@ -133,6 +222,13 @@ export function activate(context: ExtensionContext): void {
     if (viewId === "dabeehive.views.issues") {
       context.subscriptions.push(
         vscode.window.registerTreeDataProvider(viewId, projectsIssuesTreeProvider)
+      );
+      return;
+    }
+
+    if (viewId === "dabeehive.views.runs") {
+      context.subscriptions.push(
+        vscode.window.registerTreeDataProvider(viewId, runsTreeProvider)
       );
       return;
     }
@@ -242,4 +338,37 @@ function getServerUrl(): string {
   const trimmedUrl = configuredUrl.trim();
 
   return trimmedUrl || DEFAULT_SERVER_URL;
+}
+
+function groupRunsByStatus(runs: OrchestratorRun[]): [string, OrchestratorRun[]][] {
+  const groups = new Map<string, OrchestratorRun[]>();
+
+  runs.forEach((run) => {
+    const groupedRuns = groups.get(run.status) ?? [];
+    groupedRuns.push(run);
+    groups.set(run.status, groupedRuns);
+  });
+
+  return [...groups.entries()].sort(
+    ([statusA], [statusB]) =>
+      getRunStatusOrder(statusA) - getRunStatusOrder(statusB) ||
+      statusA.localeCompare(statusB)
+  );
+}
+
+function getRunStatusOrder(status: string): number {
+  const index = RUN_STATUS_ORDER.indexOf(status);
+
+  return index === -1 ? RUN_STATUS_ORDER.length : index;
+}
+
+function formatShortId(id: string): string {
+  return id.slice(0, 8) || id;
+}
+
+function formatRunDescription(run: OrchestratorRun): string {
+  const issueLabel = run.issueId ? ` / issue ${formatShortId(run.issueId)}` : "";
+  const modelLabel = run.modelId ? ` / ${run.modelId}` : "";
+
+  return `${run.agentRole}${issueLabel}${modelLabel}`;
 }

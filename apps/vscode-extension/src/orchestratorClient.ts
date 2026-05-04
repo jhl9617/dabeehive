@@ -31,6 +31,20 @@ export type OrchestratorIssue = {
   priority: string;
 };
 
+export type OrchestratorRun = {
+  id: string;
+  projectId: string;
+  issueId: string | null;
+  status: string;
+  agentRole: string;
+  modelProvider: string | null;
+  modelId: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type OrchestratorClientOptions = {
   serverUrl: string;
   token?: string;
@@ -62,6 +76,10 @@ export class OrchestratorClient {
     });
 
     return this.request<OrchestratorIssue[]>(`/api/issues?${searchParams}`);
+  }
+
+  listRuns(): Promise<OrchestratorRun[]> {
+    return this.request<OrchestratorRun[]>("/api/runs");
   }
 
   private async request<T>(path: string): Promise<T> {

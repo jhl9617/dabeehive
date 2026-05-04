@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | EXT-007 | verified | Added a VS Code Runs tree using the Orchestrator REST client, grouping runs by status and showing run role/issue/model metadata as child items. | Extension typecheck, package compile, mocked Runs tree provider smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-006 | verified | Added Projects/Issues tree loading in the VS Code extension using the Orchestrator REST client, with projects as roots and issues as child nodes. | Extension typecheck, package compile, mocked Projects/Issues tree provider smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-005 | verified | Added VS Code status bar connection indicator wired to refresh, showing disconnected initially, connected on health-check success, and disconnected on refresh failure. | Extension typecheck, package compile, mocked status bar refresh smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-004 | verified | Added non-sensitive `dabeehive.serverUrl` configuration, fetch-based Orchestrator REST client, SecretStorage token Bearer header wiring, and refresh health-check behavior. | Extension typecheck, package compile, mocked REST refresh smoke, root lint, and source checks passed after adding DOM lib for `fetch`/`URL` types. |
