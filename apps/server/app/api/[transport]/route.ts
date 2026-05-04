@@ -11,6 +11,7 @@ const mcpHandler = createMcpHandler(
   (server) => {
     registerProjectTools(server);
     registerIssueTools(server);
+    registerRunTools(server);
   },
   {
     serverInfo: {
@@ -57,6 +58,16 @@ const agentRoleSchema = z.enum([
   "qa",
   "release"
 ]);
+const runStatusSchema = z.enum([
+  "queued",
+  "planning",
+  "waiting_approval",
+  "coding",
+  "reviewing",
+  "succeeded",
+  "failed",
+  "cancelled"
+]);
 
 const projectSelect = {
   id: true,
@@ -89,11 +100,31 @@ const issueSelect = {
   updatedAt: true
 };
 
+const runSelect = {
+  id: true,
+  projectId: true,
+  issueId: true,
+  status: true,
+  agentRole: true,
+  modelProvider: true,
+  modelId: true,
+  inputContext: true,
+  outputSummary: true,
+  outputArtifacts: true,
+  errorMessage: true,
+  startedAt: true,
+  completedAt: true,
+  createdAt: true,
+  updatedAt: true
+};
+
 type ProjectStatus = z.infer<typeof projectStatusSchema>;
 type IssueType = z.infer<typeof issueTypeSchema>;
 type IssueStatus = z.infer<typeof issueStatusSchema>;
 type IssuePriority = z.infer<typeof issuePrioritySchema>;
 type AgentRole = z.infer<typeof agentRoleSchema>;
+type RunStatus = z.infer<typeof runStatusSchema>;
+type JsonObject = Record<string, unknown>;
 
 type ProjectRecord = {
   id: string;
@@ -132,6 +163,34 @@ type IssueRecord = {
 };
 
 type IssueResponse = Omit<IssueRecord, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+type RunRecord = {
+  id: string;
+  projectId: string;
+  issueId: string | null;
+  status: RunStatus;
+  agentRole: AgentRole;
+  modelProvider: string | null;
+  modelId: string | null;
+  inputContext: JsonObject | null;
+  outputSummary: string | null;
+  outputArtifacts: JsonObject | null;
+  errorMessage: string | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type RunResponse = Omit<
+  RunRecord,
+  "startedAt" | "completedAt" | "createdAt" | "updatedAt"
+> & {
+  startedAt: string | null;
+  completedAt: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -205,6 +264,35 @@ type IssuePrismaClient = {
     findMany: (args: IssueFindManyArgs) => Promise<IssueRecord[]>;
     findUnique: (args: IssueFindUniqueArgs) => Promise<IssueRecord | null>;
     create: (args: IssueCreateArgs) => Promise<IssueRecord>;
+  };
+};
+
+type RunFindUniqueArgs = {
+  where: {
+    id: string;
+  };
+  select: typeof runSelect;
+};
+
+type RunCreateData = {
+  projectId: string;
+  issueId?: string | null;
+  agentRole: AgentRole;
+  modelProvider?: string | null;
+  modelId?: string | null;
+  inputContext?: JsonObject | null;
+  status: "queued";
+};
+
+type RunCreateArgs = {
+  data: RunCreateData;
+  select: typeof runSelect;
+};
+
+type RunPrismaClient = {
+  agentRun: {
+    findUnique: (args: RunFindUniqueArgs) => Promise<RunRecord | null>;
+    create: (args: RunCreateArgs) => Promise<RunRecord>;
   };
 };
 
@@ -389,6 +477,81 @@ function registerIssueTools(server: McpServer): void {
   );
 }
 
+function registerRunTools(server: McpServer): void {
+  server.registerTool(
+    "run.start",
+    {
+      title: "Start run",
+      description: "Create a queued orchestrator agent run.",
+      inputSchema: {
+        projectId: z.string().trim().min(1),
+        issueId: z.string().trim().min(1).nullable().optional(),
+        agentRole: agentRoleSchema,
+        modelProvider: z.string().trim().max(50).nullable().optional(),
+        modelId: z.string().trim().max(120).nullable().optional(),
+        inputContext: z.record(z.unknown()).nullable().optional()
+      }
+    },
+    async (args) => {
+      try {
+        const prisma = (await getPrismaClient()) as unknown as RunPrismaClient;
+        const run = await prisma.agentRun.create({
+          data: {
+            ...args,
+            status: "queued"
+          },
+          select: runSelect
+        });
+
+        return jsonToolResult({
+          data: serializeRun(run)
+        });
+      } catch (error) {
+        if (hasPrismaErrorCode(error, "P2003")) {
+          return runToolError(
+            "RUN_PROJECT_OR_ISSUE_NOT_FOUND",
+            "Run project or issue does not exist."
+          );
+        }
+
+        return runToolError("RUN_START_FAILED", "Failed to start run.");
+      }
+    }
+  );
+
+  server.registerTool(
+    "run.status",
+    {
+      title: "Get run status",
+      description: "Get one orchestrator run status by id.",
+      inputSchema: {
+        id: z.string().trim().min(1)
+      }
+    },
+    async ({ id }) => {
+      try {
+        const prisma = (await getPrismaClient()) as unknown as RunPrismaClient;
+        const run = await prisma.agentRun.findUnique({
+          where: {
+            id
+          },
+          select: runSelect
+        });
+
+        if (!run) {
+          return runToolError("RUN_NOT_FOUND", "Run was not found.");
+        }
+
+        return jsonToolResult({
+          data: serializeRun(run)
+        });
+      } catch {
+        return runToolError("RUN_STATUS_FAILED", "Failed to get run status.");
+      }
+    }
+  );
+}
+
 function verifyBearerToken(
   _request: Request,
   bearerToken?: string
@@ -422,7 +585,29 @@ function serializeIssue(issue: IssueRecord): IssueResponse {
   };
 }
 
+function serializeRun(run: RunRecord): RunResponse {
+  return {
+    ...run,
+    startedAt: run.startedAt?.toISOString() ?? null,
+    completedAt: run.completedAt?.toISOString() ?? null,
+    createdAt: run.createdAt.toISOString(),
+    updatedAt: run.updatedAt.toISOString()
+  };
+}
+
 function issueToolError(code: string, message: string) {
+  return jsonToolResult(
+    {
+      error: {
+        code,
+        message
+      }
+    },
+    true
+  );
+}
+
+function runToolError(code: string, message: string) {
   return jsonToolResult(
     {
       error: {
