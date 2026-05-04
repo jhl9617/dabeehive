@@ -3,6 +3,7 @@ import type { ExtensionContext, Thenable } from "vscode";
 
 import { OrchestratorClient } from "./orchestratorClient";
 import type {
+  OrchestratorApproval,
   OrchestratorIssue,
   OrchestratorProject,
   OrchestratorRun
@@ -191,6 +192,61 @@ class RunsTreeProvider implements vscode.TreeDataProvider<RunsTreeNode> {
   }
 }
 
+type ApprovalsTreeNode =
+  | {
+      kind: "approval";
+      approval: OrchestratorApproval;
+    }
+  | {
+      kind: "message";
+      label: string;
+    };
+
+class ApprovalsTreeProvider
+  implements vscode.TreeDataProvider<ApprovalsTreeNode>
+{
+  constructor(private readonly createClient: () => Promise<OrchestratorClient>) {}
+
+  async getChildren(element?: ApprovalsTreeNode): Promise<ApprovalsTreeNode[]> {
+    if (element) {
+      return [];
+    }
+
+    try {
+      const client = await this.createClient();
+      const approvals = await client.listPendingApprovals();
+
+      if (approvals.length === 0) {
+        return [{ kind: "message", label: "No pending approvals" }];
+      }
+
+      return approvals.map((approval) => ({
+        kind: "approval",
+        approval
+      }));
+    } catch {
+      return [{ kind: "message", label: "Unable to load approvals" }];
+    }
+  }
+
+  getTreeItem(node: ApprovalsTreeNode): vscode.TreeItem {
+    if (node.kind === "approval") {
+      return {
+        label: formatApprovalLabel(node.approval),
+        description: formatApprovalDescription(node.approval),
+        collapsibleState: vscode.TreeItemCollapsibleState.None,
+        contextValue: "dabeehive.approval"
+      };
+    }
+
+    return {
+      label: node.label,
+      collapsibleState: vscode.TreeItemCollapsibleState.None,
+      contextValue: "dabeehive.message"
+    };
+  }
+}
+
 export function activate(context: ExtensionContext): void {
   const statusBarItem = createConnectionStatusBarItem();
   setConnectionStatus(statusBarItem, "disconnected");
@@ -199,6 +255,9 @@ export function activate(context: ExtensionContext): void {
     createOrchestratorClient(context)
   );
   const runsTreeProvider = new RunsTreeProvider(() =>
+    createOrchestratorClient(context)
+  );
+  const approvalsTreeProvider = new ApprovalsTreeProvider(() =>
     createOrchestratorClient(context)
   );
 
@@ -229,6 +288,13 @@ export function activate(context: ExtensionContext): void {
     if (viewId === "dabeehive.views.runs") {
       context.subscriptions.push(
         vscode.window.registerTreeDataProvider(viewId, runsTreeProvider)
+      );
+      return;
+    }
+
+    if (viewId === "dabeehive.views.approvals") {
+      context.subscriptions.push(
+        vscode.window.registerTreeDataProvider(viewId, approvalsTreeProvider)
       );
       return;
     }
@@ -371,4 +437,27 @@ function formatRunDescription(run: OrchestratorRun): string {
   const modelLabel = run.modelId ? ` / ${run.modelId}` : "";
 
   return `${run.agentRole}${issueLabel}${modelLabel}`;
+}
+
+function formatApprovalLabel(approval: OrchestratorApproval): string {
+  return (
+    approval.requiredAction?.trim() ||
+    approval.reason?.trim() ||
+    formatApprovalType(approval.type)
+  );
+}
+
+function formatApprovalDescription(approval: OrchestratorApproval): string {
+  const riskLabel =
+    approval.riskScore === null ? "risk n/a" : `risk ${approval.riskScore}`;
+  const runLabel = approval.runId ? ` / run ${formatShortId(approval.runId)}` : "";
+  const issueLabel = approval.issueId
+    ? ` / issue ${formatShortId(approval.issueId)}`
+    : "";
+
+  return `${formatApprovalType(approval.type)} / ${riskLabel}${runLabel}${issueLabel}`;
+}
+
+function formatApprovalType(type: string): string {
+  return type.replace(/_/g, " ");
 }

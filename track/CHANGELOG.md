@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | EXT-008 | verified | Added a VS Code Approvals tree using the Orchestrator REST client, listing pending approvals with action, type, risk, run, and issue metadata. | Extension typecheck, package compile, mocked Approvals tree provider smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-007 | verified | Added a VS Code Runs tree using the Orchestrator REST client, grouping runs by status and showing run role/issue/model metadata as child items. | Extension typecheck, package compile, mocked Runs tree provider smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-006 | verified | Added Projects/Issues tree loading in the VS Code extension using the Orchestrator REST client, with projects as roots and issues as child nodes. | Extension typecheck, package compile, mocked Projects/Issues tree provider smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-005 | verified | Added VS Code status bar connection indicator wired to refresh, showing disconnected initially, connected on health-check success, and disconnected on refresh failure. | Extension typecheck, package compile, mocked status bar refresh smoke, root lint, and source checks passed. |

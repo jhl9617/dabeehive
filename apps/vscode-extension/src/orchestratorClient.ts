@@ -45,6 +45,24 @@ export type OrchestratorRun = {
   updatedAt: string;
 };
 
+export type OrchestratorApproval = {
+  id: string;
+  issueId: string | null;
+  runId: string | null;
+  requestedById: string | null;
+  respondedById: string | null;
+  type: string;
+  status: string;
+  reason: string | null;
+  changedFiles: string[];
+  diffSummary: string | null;
+  riskScore: number | null;
+  requiredAction: string | null;
+  respondedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type OrchestratorClientOptions = {
   serverUrl: string;
   token?: string;
@@ -80,6 +98,16 @@ export class OrchestratorClient {
 
   listRuns(): Promise<OrchestratorRun[]> {
     return this.request<OrchestratorRun[]>("/api/runs");
+  }
+
+  listPendingApprovals(): Promise<OrchestratorApproval[]> {
+    const searchParams = new URLSearchParams({
+      status: "pending"
+    });
+
+    return this.request<OrchestratorApproval[]>(
+      `/api/approvals?${searchParams}`
+    );
   }
 
   private async request<T>(path: string): Promise<T> {

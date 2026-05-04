@@ -1,0 +1,34 @@
+# EXT-008 Validation Evidence
+
+Task: EXT-008 — Approvals Tree
+Date: 2026-05-04 18:24:14 KST
+Branch: poc/EXT-008-approvals-tree
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: completed with no output.
+
+2. `pnpm --filter @dabeehive/vscode-extension compile`
+   - Result: passed
+   - Notes: extension package TypeScript compile completed.
+
+3. mocked Approvals tree provider smoke
+   - Result: passed
+   - Notes: mocked `vscode` API and `fetch`; verified `dabeehive.views.approvals` provider registration, Bearer token header, `status=pending` query, approval tree item rendering, and leaf behavior.
+
+4. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+5. `rg "OrchestratorApproval|listPendingApprovals|ApprovalsTreeProvider|No pending approvals|Unable to load approvals|dabeehive\\.approval" apps/vscode-extension/src`
+   - Result: passed
+   - Notes: found expected approval type, client method, provider, context value, and empty/error labels.
+
+## Scope Notes
+
+- No real VS Code Extension Host was launched; tree behavior was smoke-tested with a mocked VS Code API.
+- Approval data is read through the REST client and is not persisted locally.
+- Approval response commands and panel UI are deferred to later tasks.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

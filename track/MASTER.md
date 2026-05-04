@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 52 |
+| verified | 53 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 44 |
+| not_started | 43 |
 
 ---
 
@@ -143,7 +143,7 @@ P3 = 후속 확장
 | EXT-005 | verified | P0 | Extension | 연결 상태 status bar 구현 | connected/disconnected가 표시된다 |
 | EXT-006 | verified | P0 | Extension | Projects/Issues Tree 구현 | 프로젝트/이슈 목록이 표시된다 |
 | EXT-007 | verified | P0 | Extension | Runs Tree 구현 | run 상태별 목록이 표시된다 |
-| EXT-008 | not_started | P0 | Extension | Approvals Tree 구현 | pending approval이 표시된다 |
+| EXT-008 | verified | P0 | Extension | Approvals Tree 구현 | pending approval이 표시된다 |
 | EXT-009 | not_started | P0 | Extension | Create Issue command | VS Code에서 이슈 생성이 가능하다 |
 | EXT-010 | not_started | P0 | Extension | Start Run command | 선택 이슈로 run 생성이 가능하다 |
 | EXT-011 | not_started | P1 | Extension | Run Console Webview | run event/log를 표시한다 |
