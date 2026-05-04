@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | DB-007 | verified | Added Prisma `RunEvent` model with AgentRun cascade relation and event metadata storage. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-006 | verified | Added Prisma `AgentRun` model with project/issue relations, run status, and agent/model snapshot fields. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-005 | verified | Added Prisma `Document` model with project relation and PRD/ADR/Spec text storage fields. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-004 | verified | Added Prisma `Issue` model with project relation, workflow fields, labels, and optional issue hierarchy. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
