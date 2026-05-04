@@ -1,0 +1,46 @@
+# FND-005 Validation Evidence
+
+Date: 2026-05-04 14:45:31 KST
+Branch: poc/FND-005-shared-types
+
+## Commands
+
+### test -f packages/shared/src/api.ts && test -f packages/shared/src/domain.ts && test -f packages/shared/src/index.ts
+
+Exit code: 0
+Result: shared API, domain, and index type files exist.
+
+### rg "ApiSuccess|ApiError|ApiResponse" packages/shared/src/api.ts packages/shared/src/index.ts
+
+Exit code: 0
+Result: API response types are present.
+
+### rg "Project|Issue|AgentRun|Approval|Artifact|RunEvent" packages/shared/src/domain.ts packages/shared/src/index.ts
+
+Exit code: 0
+Result: core domain types are present.
+
+### rg '"exports"|"types"' packages/shared/package.json
+
+Exit code: 0
+Result: shared package export metadata is present.
+
+### pnpm lint
+
+Exit code: 0
+Result:
+
+```txt
+basic lint passed
+```
+
+### rg "FND-005 \| in_progress|Task ID: FND-005|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/FND-005-shared-types.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
+
+## Notes
+
+- Typecheck was not run because TypeScript has not been installed yet.
+- No package dependencies were added.
+- Unrelated working tree deletion of `docs/codex-implementation-rules.md` was not staged or modified for this task.

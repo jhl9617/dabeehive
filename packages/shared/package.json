@@ -1,5 +1,21 @@
 {
   "name": "@dabeehive/shared",
   "version": "0.0.0",
-  "private": true
+  "private": true,
+  "type": "module",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./api": {
+      "types": "./src/api.ts",
+      "default": "./src/api.ts"
+    },
+    "./domain": {
+      "types": "./src/domain.ts",
+      "default": "./src/domain.ts"
+    }
+  }
 }
