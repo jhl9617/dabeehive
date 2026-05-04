@@ -1,0 +1,57 @@
+MCP-001 validation evidence
+Date: 2026-05-04 17:13:58 KST
+Branch: poc/MCP-001-route-handler
+
+Reference checked:
+
+- Vercel mcp-handler README/GitHub search result: install `mcp-handler @modelcontextprotocol/sdk zod@^3` and create `app/api/[transport]/route.ts` with `createMcpHandler`.
+
+Commands and results:
+
+1. pnpm --filter @dabeehive/server add mcp-handler @modelcontextprotocol/sdk
+Result: Passed with warning
+Key output:
+mcp-handler 1.1.0 installed.
+Warning: unmet peer @modelcontextprotocol/sdk@1.26.0 found 1.29.0.
+
+2. pnpm --filter @dabeehive/server add @modelcontextprotocol/sdk@1.26.0
+Result: Passed
+Key output:
+Dependency lock updated and peer warning resolved.
+
+3. pnpm --filter @dabeehive/server build
+Result: Passed
+Key output:
+Next.js 15.5.15 compiled successfully.
+Route table includes dynamic /api/[transport].
+
+4. pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: Passed
+Key output:
+No output.
+
+5. pnpm lint
+Result: Passed
+Key output:
+basic lint passed
+
+6. pnpm --filter @dabeehive/server exec next dev --hostname 127.0.0.1 --port 18094
+Result: Passed
+Key output:
+Ready in 1352ms.
+
+7. curl -sS -i -X POST http://127.0.0.1:18094/api/mcp -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' --data '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"smoke","version":"0.0.0"}}}'
+Result: Passed
+Expected outcome:
+HTTP/1.1 200 OK with MCP initialize response.
+Observed serverInfo name `dabeehive-orchestrator` and version `0.0.0`.
+
+8. curl -sS -i http://127.0.0.1:18094/api/health
+Result: Passed
+Expected outcome:
+HTTP/1.1 200 OK from existing REST route.
+Observed health response with `status":"ok"`.
+
+Deferred validation:
+
+- MCP auth guard, tools, resources, and prompts are intentionally deferred to later MCP tasks.
