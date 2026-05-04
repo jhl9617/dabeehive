@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 25 |
+| verified | 27 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 70 |
+| not_started | 69 |
 
 ---
 
@@ -96,7 +96,7 @@ P3 = 후속 확장
 |---|---|---:|---|---|---|
 | API-001 | verified | P0 | API | `GET /api/health` 구현 | health 응답이 반환된다 |
 | API-002 | verified | P0 | API | Project list/create API | 프로젝트 목록/생성이 가능하다 |
-| API-003 | not_started | P0 | API | Project detail/update API | 프로젝트 조회/수정이 가능하다 |
+| API-003 | verified | P0 | API | Project detail/update API | 프로젝트 조회/수정이 가능하다 |
 | API-004 | not_started | P0 | API | Issue list/create API | 이슈 목록/생성이 가능하다 |
 | API-005 | not_started | P0 | API | Issue detail/update API | 이슈 조회/수정이 가능하다 |
 | API-006 | not_started | P0 | API | Document list/create API | 문서 목록/생성이 가능하다 |

@@ -1,0 +1,63 @@
+Task: API-003
+Date: 2026-05-04 16:04:43 KST
+Branch: poc/API-003-project-detail-update
+
+Validation commands:
+
+1. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+Prisma schema loaded from prisma/schema.prisma
+The schema at prisma/schema.prisma is valid.
+
+2. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+Generated Prisma Client v6.19.3 successfully.
+
+3. pnpm --filter @dabeehive/server build
+Result: PASS
+Summary:
+Next.js 15.5.15 production build compiled successfully and listed dynamic route:
+- /api/projects/[id]
+
+4. pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: PASS
+Summary:
+TypeScript noEmit completed with exit code 0.
+
+5. pnpm lint
+Result: PASS
+Summary:
+basic lint passed.
+
+6. pnpm --filter @dabeehive/server exec next dev --hostname 127.0.0.1 --port 18083
+Result: PASS
+Summary:
+Started Next.js dev server at http://127.0.0.1:18083 with approved local port bind.
+
+7. curl -sS -i -X PATCH http://127.0.0.1:18083/api/projects/demo-project -H 'content-type: application/json' --data '{}'
+Result: PASS
+Summary:
+HTTP/1.1 400 Bad Request
+content-type: application/json
+
+{"error":{"code":"VALIDATION_ERROR","message":"Invalid project update input.","details":{"issues":[{"path":"$","code":"custom","message":"At least one project field must be provided."}]}}}
+
+8. curl -sS -i -X PATCH http://127.0.0.1:18083/api/projects/demo-project -H 'content-type: application/json' --data '{"status":"bad"}'
+Result: PASS
+Summary:
+HTTP/1.1 400 Bad Request
+content-type: application/json
+
+{"error":{"code":"VALIDATION_ERROR","message":"Invalid project update input.","details":{"issues":[{"path":"status","code":"invalid_enum_value","message":"Invalid enum value. Expected 'draft' | 'active' | 'at_risk' | 'released' | 'archived', received 'bad'"}]}}}
+
+Not run:
+
+- DB-backed happy-path `GET /api/projects/[id]` / `PATCH /api/projects/[id]` with persisted data.
+Reason:
+- Migration, seed data, and local DB verification are explicitly tracked by later DB/TST tasks. API-003 implemented the Prisma-backed path and verified route validation without requiring DB state.
+
+Notes:
+- Dev server was stopped after smoke checks.
+- No delete route, auth middleware, migrations, seed data, UI, MCP, or external integrations were added.
