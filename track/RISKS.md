@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Issue create API is introduced before auth and workflow policy can restrict issue creation. | Medium | Require explicit `projectId`, validate issue fields with Zod, and defer authorization/workflow policy to later auth/workflow tasks. | open | API-004 |
 | 2026-05-04 | Project update API is introduced before auth middleware can restrict who may edit a project. | Medium | Keep owner transfer/delete out of scope, validate patch fields, and defer authorization to SEC/API auth tasks. | open | API-003 |
 | 2026-05-04 | Project create API is introduced before auth middleware and seed data are available. | Medium | Require explicit `ownerId`, validate inputs with Zod, keep auth out of scope, and defer DB happy-path smoke to migration/seed tasks. | open | API-002 |
 | 2026-05-04 | Health response becomes a stable public API contract earlier than other REST routes. | Low | Keep the response minimal, version-neutral, and aligned with the existing API success helper. | open | API-001 |

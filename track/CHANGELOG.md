@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | API-004 | verified | Added `/api/issues` GET/POST handlers with Zod validation, Prisma issue list/create access, ISO serialization, filter support, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
 | 2026-05-04 | API-003 | verified | Added `/api/projects/[id]` GET/PATCH handlers with route/body validation, Prisma detail/update access, ISO serialization, not-found handling, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
 | 2026-05-04 | API-002 | verified | Added `/api/projects` GET/POST handlers with Zod validation, Prisma project list/create access, ISO serialization, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
 | 2026-05-04 | API-001 | verified | Added `GET /api/health` App Router endpoint returning the shared success response shape with health status and service identifier. | Next.js build, TypeScript noEmit, root lint, and HTTP smoke passed. |

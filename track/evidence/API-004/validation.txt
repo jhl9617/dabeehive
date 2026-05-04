@@ -1,0 +1,63 @@
+Task: API-004
+Date: 2026-05-04 16:09:15 KST
+Branch: poc/API-004-issue-list-create
+
+Validation commands:
+
+1. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+Prisma schema loaded from prisma/schema.prisma
+The schema at prisma/schema.prisma is valid.
+
+2. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+Generated Prisma Client v6.19.3 successfully.
+
+3. pnpm --filter @dabeehive/server build
+Result: PASS
+Summary:
+Next.js 15.5.15 production build compiled successfully and listed dynamic route:
+- /api/issues
+
+4. pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: PASS
+Summary:
+TypeScript noEmit completed with exit code 0.
+
+5. pnpm lint
+Result: PASS
+Summary:
+basic lint passed.
+
+6. pnpm --filter @dabeehive/server exec next dev --hostname 127.0.0.1 --port 18084
+Result: PASS
+Summary:
+Started Next.js dev server at http://127.0.0.1:18084 with approved local port bind.
+
+7. curl -sS -i -X POST http://127.0.0.1:18084/api/issues -H 'content-type: application/json' --data '{}'
+Result: PASS
+Summary:
+HTTP/1.1 400 Bad Request
+content-type: application/json
+
+{"error":{"code":"VALIDATION_ERROR","message":"Invalid issue input.","details":{"issues":[{"path":"projectId","code":"invalid_type","message":"Required"},{"path":"title","code":"invalid_type","message":"Required"}]}}}
+
+8. curl -sS -i 'http://127.0.0.1:18084/api/issues?status=bad'
+Result: PASS
+Summary:
+HTTP/1.1 400 Bad Request
+content-type: application/json
+
+{"error":{"code":"VALIDATION_ERROR","message":"Invalid issue query.","details":{"issues":[{"path":"status","code":"invalid_enum_value","message":"Invalid enum value. Expected 'backlog' | 'ready' | 'in_progress' | 'in_review' | 'qa' | 'done', received 'bad'"}]}}}
+
+Not run:
+
+- DB-backed happy-path `GET /api/issues` / `POST /api/issues` with persisted data.
+Reason:
+- Migration, seed data, and local DB verification are explicitly tracked by later DB/TST tasks. API-004 implemented the Prisma-backed path and verified route validation without requiring DB state.
+
+Notes:
+- Dev server was stopped after smoke checks.
+- No detail/update/delete route, delegation route, auth middleware, migrations, seed data, UI, MCP, or external integrations were added.
