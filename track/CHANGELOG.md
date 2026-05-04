@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | API-001 | verified | Added `GET /api/health` App Router endpoint returning the shared success response shape with health status and service identifier. | Next.js build, TypeScript noEmit, root lint, and HTTP smoke passed. |
 | 2026-05-04 | DB-009 | verified | Added Prisma `Artifact` model with AgentRun relation, optional Issue relation, inline content, URI, and metadata fields for plan/diff/test_report/pr_url storage. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-008 | verified | Added Prisma `Approval` model with issue/run/user relations, risk metadata, diff summary, and reviewer action fields. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | DB-007 | verified | Added Prisma `RunEvent` model with AgentRun cascade relation and event metadata storage. | Prisma validate/generate, Next.js build, TypeScript noEmit, and root lint passed. |

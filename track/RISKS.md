@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Health response becomes a stable public API contract earlier than other REST routes. | Low | Keep the response minimal, version-neutral, and aligned with the existing API success helper. | open | API-001 |
 | 2026-05-04 | Artifact schema may blur inline content and external file references. | Medium | Keep separate content, uri, and metadata fields and defer storage backend behavior to API/Git tasks. | open | DB-009 |
 | 2026-05-04 | Approval schema must capture risk and reviewer actions without locking future workflow too early. | Medium | Store type/status as strings and include risk/diff/action metadata while deferring workflow behavior to API tasks. | open | DB-008 |
 | 2026-05-04 | RunEvent metadata can become inconsistent across SDK adapters. | Medium | Normalize event type at the DB boundary and keep adapter-specific payloads in metadata JSON. | open | DB-007 |
