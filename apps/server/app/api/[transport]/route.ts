@@ -12,6 +12,7 @@ const mcpHandler = createMcpHandler(
     registerProjectTools(server);
     registerIssueTools(server);
     registerRunTools(server);
+    registerRunEventTools(server);
   },
   {
     serverInfo: {
@@ -68,6 +69,16 @@ const runStatusSchema = z.enum([
   "failed",
   "cancelled"
 ]);
+const runEventTypeSchema = z.enum([
+  "message",
+  "tool_call",
+  "tool_result",
+  "file_change",
+  "command",
+  "test_result",
+  "error",
+  "done"
+]);
 
 const projectSelect = {
   id: true,
@@ -118,12 +129,22 @@ const runSelect = {
   updatedAt: true
 };
 
+const runEventSelect = {
+  id: true,
+  runId: true,
+  type: true,
+  message: true,
+  metadata: true,
+  createdAt: true
+};
+
 type ProjectStatus = z.infer<typeof projectStatusSchema>;
 type IssueType = z.infer<typeof issueTypeSchema>;
 type IssueStatus = z.infer<typeof issueStatusSchema>;
 type IssuePriority = z.infer<typeof issuePrioritySchema>;
 type AgentRole = z.infer<typeof agentRoleSchema>;
 type RunStatus = z.infer<typeof runStatusSchema>;
+type RunEventType = z.infer<typeof runEventTypeSchema>;
 type JsonObject = Record<string, unknown>;
 
 type ProjectRecord = {
@@ -193,6 +214,19 @@ type RunResponse = Omit<
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
+};
+
+type RunEventRecord = {
+  id: string;
+  runId: string;
+  type: RunEventType;
+  message: string | null;
+  metadata: JsonObject | null;
+  createdAt: Date;
+};
+
+type RunEventResponse = Omit<RunEventRecord, "createdAt"> & {
+  createdAt: string;
 };
 
 type ProjectFindManyArgs = {
@@ -293,6 +327,22 @@ type RunPrismaClient = {
   agentRun: {
     findUnique: (args: RunFindUniqueArgs) => Promise<RunRecord | null>;
     create: (args: RunCreateArgs) => Promise<RunRecord>;
+  };
+};
+
+type RunEventCreateArgs = {
+  data: {
+    runId: string;
+    type: RunEventType;
+    message: string | null;
+    metadata: JsonObject | null;
+  };
+  select: typeof runEventSelect;
+};
+
+type RunEventPrismaClient = {
+  runEvent: {
+    create: (args: RunEventCreateArgs) => Promise<RunEventRecord>;
   };
 };
 
@@ -552,6 +602,50 @@ function registerRunTools(server: McpServer): void {
   );
 }
 
+function registerRunEventTools(server: McpServer): void {
+  server.registerTool(
+    "run.append_event",
+    {
+      title: "Append run event",
+      description: "Append a normalized SDK event to an orchestrator run.",
+      inputSchema: {
+        runId: z.string().trim().min(1),
+        type: runEventTypeSchema,
+        message: z.string().max(100000).nullable().optional(),
+        metadata: z.record(z.unknown()).nullable().optional()
+      }
+    },
+    async (args) => {
+      try {
+        const prisma =
+          (await getPrismaClient()) as unknown as RunEventPrismaClient;
+        const event = await prisma.runEvent.create({
+          data: {
+            runId: args.runId,
+            type: args.type,
+            message: args.message ?? null,
+            metadata: args.metadata ?? null
+          },
+          select: runEventSelect
+        });
+
+        return jsonToolResult({
+          data: serializeRunEvent(event)
+        });
+      } catch (error) {
+        if (hasPrismaErrorCode(error, "P2003")) {
+          return runToolError("RUN_NOT_FOUND", "Run was not found.");
+        }
+
+        return runToolError(
+          "RUN_EVENT_APPEND_FAILED",
+          "Failed to append run event."
+        );
+      }
+    }
+  );
+}
+
 function verifyBearerToken(
   _request: Request,
   bearerToken?: string
@@ -592,6 +686,13 @@ function serializeRun(run: RunRecord): RunResponse {
     completedAt: run.completedAt?.toISOString() ?? null,
     createdAt: run.createdAt.toISOString(),
     updatedAt: run.updatedAt.toISOString()
+  };
+}
+
+function serializeRunEvent(event: RunEventRecord): RunEventResponse {
+  return {
+    ...event,
+    createdAt: event.createdAt.toISOString()
   };
 }
 
