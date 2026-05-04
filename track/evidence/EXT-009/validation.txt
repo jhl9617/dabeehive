@@ -1,0 +1,34 @@
+# EXT-009 Validation Evidence
+
+Task: EXT-009 — Create Issue Command
+Date: 2026-05-04 18:28:31 KST
+Branch: poc/EXT-009-create-issue-command
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: completed with no output.
+
+2. `pnpm --filter @dabeehive/vscode-extension compile`
+   - Result: passed
+   - Notes: extension package TypeScript compile completed.
+
+3. mocked create issue command smoke
+   - Result: passed
+   - Notes: mocked `vscode` API and `fetch`; verified `dabeehive.createIssue` registration, project/title/body prompts, input trimming, Bearer token header, JSON `POST /api/issues` body, and success message.
+
+4. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+5. `rg "dabeehive\\.createIssue|CREATE_ISSUE_COMMAND|createIssue\\(|CreateIssueInput|content-type|POST" apps/vscode-extension/package.json apps/vscode-extension/src`
+   - Result: passed
+   - Notes: found expected command contribution, command handler, client input type, POST method, and JSON content type.
+
+## Scope Notes
+
+- No real VS Code Extension Host was launched; command behavior was smoke-tested with a mocked VS Code API.
+- Issue data is sent directly to the Orchestrator REST API and is not persisted locally.
+- Issue tree auto-refresh eventing and Start Run command are deferred to later tasks.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

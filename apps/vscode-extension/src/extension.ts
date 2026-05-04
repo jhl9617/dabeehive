@@ -17,6 +17,7 @@ const VIEW_IDS = [
 const API_TOKEN_SECRET_KEY = "dabeehive.apiToken";
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const REFRESH_COMMAND = "dabeehive.refresh";
+const CREATE_ISSUE_COMMAND = "dabeehive.createIssue";
 const RUN_STATUS_ORDER = [
   "queued",
   "planning",
@@ -276,6 +277,11 @@ export function activate(context: ExtensionContext): void {
       clearApiToken(context)
     )
   );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(CREATE_ISSUE_COMMAND, () =>
+      createIssue(context)
+    )
+  );
 
   VIEW_IDS.forEach((viewId) => {
     if (viewId === "dabeehive.views.issues") {
@@ -352,6 +358,63 @@ async function setApiToken(context: ExtensionContext): Promise<void> {
 async function clearApiToken(context: ExtensionContext): Promise<void> {
   await context.secrets.delete(API_TOKEN_SECRET_KEY);
   await vscode.window.showInformationMessage("Dabeehive API token cleared.");
+}
+
+async function createIssue(context: ExtensionContext): Promise<void> {
+  const projectId = await promptRequiredInput("Dabeehive project ID");
+
+  if (!projectId) {
+    return;
+  }
+
+  const title = await promptRequiredInput("Issue title");
+
+  if (!title) {
+    return;
+  }
+
+  const bodyInput = await vscode.window.showInputBox({
+    ignoreFocusOut: true,
+    prompt: "Issue body (optional)"
+  });
+
+  if (bodyInput === undefined) {
+    return;
+  }
+
+  try {
+    const client = await createOrchestratorClient(context);
+    const issue = await client.createIssue({
+      projectId,
+      title,
+      body: bodyInput.trim() || null
+    });
+    await vscode.window.showInformationMessage(
+      `Dabeehive issue created: ${issue.title}.`
+    );
+  } catch {
+    await vscode.window.showWarningMessage("Dabeehive issue creation failed.");
+  }
+}
+
+async function promptRequiredInput(prompt: string): Promise<string | undefined> {
+  const input = await vscode.window.showInputBox({
+    ignoreFocusOut: true,
+    prompt
+  });
+
+  if (input === undefined) {
+    return undefined;
+  }
+
+  const trimmedInput = input.trim();
+
+  if (!trimmedInput) {
+    await vscode.window.showWarningMessage(`${prompt} is required.`);
+    return undefined;
+  }
+
+  return trimmedInput;
 }
 
 async function refreshOrchestrator(

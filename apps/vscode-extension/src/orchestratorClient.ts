@@ -31,6 +31,18 @@ export type OrchestratorIssue = {
   priority: string;
 };
 
+export type CreateIssueInput = {
+  projectId: string;
+  parentId?: string | null;
+  title: string;
+  body?: string | null;
+  type?: string;
+  status?: string;
+  priority?: string;
+  assigneeRole?: string | null;
+  labels?: string[];
+};
+
 export type OrchestratorRun = {
   id: string;
   projectId: string;
@@ -69,6 +81,11 @@ export type OrchestratorClientOptions = {
   fetchImpl?: typeof fetch;
 };
 
+type OrchestratorRequestOptions = {
+  method?: "GET" | "POST";
+  body?: unknown;
+};
+
 export class OrchestratorClient {
   private readonly serverUrl: URL;
   private readonly token?: string;
@@ -96,6 +113,13 @@ export class OrchestratorClient {
     return this.request<OrchestratorIssue[]>(`/api/issues?${searchParams}`);
   }
 
+  createIssue(input: CreateIssueInput): Promise<OrchestratorIssue> {
+    return this.request<OrchestratorIssue>("/api/issues", {
+      method: "POST",
+      body: input
+    });
+  }
+
   listRuns(): Promise<OrchestratorRun[]> {
     return this.request<OrchestratorRun[]>("/api/runs");
   }
@@ -110,18 +134,27 @@ export class OrchestratorClient {
     );
   }
 
-  private async request<T>(path: string): Promise<T> {
+  private async request<T>(
+    path: string,
+    options: OrchestratorRequestOptions = {}
+  ): Promise<T> {
     const url = new URL(path, this.serverUrl);
     const headers: Record<string, string> = {
       accept: "application/json"
     };
+
+    if (options.body !== undefined) {
+      headers["content-type"] = "application/json";
+    }
 
     if (this.token) {
       headers.authorization = `Bearer ${this.token}`;
     }
 
     const response = await this.fetchImpl(url, {
-      headers
+      body: options.body === undefined ? undefined : JSON.stringify(options.body),
+      headers,
+      method: options.method ?? "GET"
     });
     const body = (await response.json()) as ApiSuccess<T> | ApiError;
 

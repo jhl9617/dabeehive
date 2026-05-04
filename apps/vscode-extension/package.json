@@ -14,6 +14,7 @@
     "onCommand:dabeehive.refresh",
     "onCommand:dabeehive.setApiToken",
     "onCommand:dabeehive.clearApiToken",
+    "onCommand:dabeehive.createIssue",
     "onView:dabeehive.views.issues",
     "onView:dabeehive.views.runs",
     "onView:dabeehive.views.approvals"
@@ -36,6 +37,11 @@
       {
         "command": "dabeehive.clearApiToken",
         "title": "Dabeehive: Clear API Token",
+        "category": "Dabeehive"
+      },
+      {
+        "command": "dabeehive.createIssue",
+        "title": "Dabeehive: Create Issue",
         "category": "Dabeehive"
       }
     ],
