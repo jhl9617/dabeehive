@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 1 |
+| verified | 2 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 95 |
+| not_started | 94 |
 
 ---
 
@@ -35,7 +35,7 @@ P3 = 후속 확장
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
 | TRK-001 | verified | P0 | Tracking | 루트 `AGENTS.md` 추가 | Codex 구현 규칙이 루트에 존재한다 |
-| TRK-002 | not_started | P0 | Tracking | `/track` 기본 구조 생성 | MASTER/CURRENT/DECISIONS/RISKS/CHANGELOG/templates 디렉토리와 파일이 존재한다 |
+| TRK-002 | verified | P0 | Tracking | `/track` 기본 구조 생성 | MASTER/CURRENT/DECISIONS/RISKS/CHANGELOG/templates 디렉토리와 파일이 존재한다 |
 | TRK-003 | not_started | P0 | Tracking | PoC PRD를 `docs/`에 고정 | PoC 요구사항 문서가 repo 내부에서 참조 가능하다 |
 | TRK-004 | not_started | P0 | Tracking | task template 정리 | 신규 작업 파일 생성 규칙이 명확하다 |
 | TRK-005 | not_started | P0 | Tracking | session log template 정리 | Codex 실행 로그 형식이 명확하다 |
