@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | EXT-006 | verified | Added Projects/Issues tree loading in the VS Code extension using the Orchestrator REST client, with projects as roots and issues as child nodes. | Extension typecheck, package compile, mocked Projects/Issues tree provider smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-005 | verified | Added VS Code status bar connection indicator wired to refresh, showing disconnected initially, connected on health-check success, and disconnected on refresh failure. | Extension typecheck, package compile, mocked status bar refresh smoke, root lint, and source checks passed. |
 | 2026-05-04 | EXT-004 | verified | Added non-sensitive `dabeehive.serverUrl` configuration, fetch-based Orchestrator REST client, SecretStorage token Bearer header wiring, and refresh health-check behavior. | Extension typecheck, package compile, mocked REST refresh smoke, root lint, and source checks passed after adding DOM lib for `fetch`/`URL` types. |
 | 2026-05-04 | EXT-003 | verified | Added VS Code SecretStorage API token set/clear commands, activation registrations, `getApiToken` helper, and local type shim updates without writing tokens to settings/config/globalState. | Extension typecheck, package compile, mocked SecretStorage smoke, root lint, and no-settings-token-write source checks passed. |

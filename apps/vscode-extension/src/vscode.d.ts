@@ -22,7 +22,20 @@ declare module "vscode" {
 
   export interface TreeDataProvider<T> {
     getChildren(element?: T): T[] | Thenable<T[]>;
-    getTreeItem(element: T): T;
+    getTreeItem(element: T): TreeItem | Thenable<TreeItem>;
+  }
+
+  export interface TreeItem {
+    collapsibleState?: TreeItemCollapsibleState;
+    contextValue?: string;
+    description?: string;
+    label: string;
+  }
+
+  export enum TreeItemCollapsibleState {
+    None = 0,
+    Collapsed = 1,
+    Expanded = 2
   }
 
   export interface StatusBarItem extends Disposable {

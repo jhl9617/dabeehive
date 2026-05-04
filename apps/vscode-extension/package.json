@@ -52,7 +52,7 @@
       "dabeehive": [
         {
           "id": "dabeehive.views.issues",
-          "name": "Issues"
+          "name": "Projects / Issues"
         },
         {
           "id": "dabeehive.views.runs",

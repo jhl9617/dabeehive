@@ -1,0 +1,34 @@
+# EXT-006 Validation Evidence
+
+Task: EXT-006 — Projects/Issues Tree
+Date: 2026-05-04 18:16:09 KST
+Branch: poc/EXT-006-project-issue-tree
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: completed with no output.
+
+2. `pnpm --filter @dabeehive/vscode-extension compile`
+   - Result: passed
+   - Notes: extension package TypeScript compile completed.
+
+3. mocked Projects/Issues tree provider smoke
+   - Result: passed
+   - Notes: mocked `vscode` API and `fetch`; verified `dabeehive.views.issues` provider registration, Bearer token header, project root item, and issue child item rendering.
+
+4. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+5. `rg "listProjects|listIssues|Projects / Issues|dabeehive\\.project|dabeehive\\.issue|Unable to load projects or issues" apps/vscode-extension/src apps/vscode-extension/package.json`
+   - Result: passed
+   - Notes: found expected client methods, view label, project/issue context values, and tree error label.
+
+## Scope Notes
+
+- No real VS Code Extension Host was launched; tree behavior was smoke-tested with a mocked VS Code API.
+- Project and issue data are read through the REST client and are not persisted locally.
+- Runs and Approvals tree implementations are deferred to EXT-007 and EXT-008.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

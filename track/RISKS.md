@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Extension Projects/Issues tree can display project and issue metadata before full API authorization and redaction policy exist. | Medium | Read through the Orchestrator REST client with optional Bearer token, avoid local persistence, and defer authorization/redaction enforcement to API auth tasks. | open | EXT-006 |
 | 2026-05-04 | Extension REST client could leak API tokens if it logs headers or stores token-bearing config. | High | Read token only from SecretStorage, set Authorization only in memory per request, avoid logging token/header values, and keep serverUrl as the only non-sensitive setting. | open | EXT-004 |
 | 2026-05-04 | VS Code extension token handling could leak API tokens if written to settings or logs. | High | Store tokens only through SecretStorage, do not log token values, do not add settings writes, and validate with source checks. | open | EXT-003 |
 | 2026-05-04 | MCP artifact.create can store diff/test/log content before redaction and storage policy exist. | High | Validate artifact type and payload size, require content or uri, keep external storage and PR behavior out of scope, and defer auth/redaction enforcement to later tasks. | open | MCP-008 |

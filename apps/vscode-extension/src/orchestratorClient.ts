@@ -16,6 +16,21 @@ export type OrchestratorHealth = {
   checkedAt: string;
 };
 
+export type OrchestratorProject = {
+  id: string;
+  name: string;
+  description: string | null;
+  status: string;
+};
+
+export type OrchestratorIssue = {
+  id: string;
+  projectId: string;
+  title: string;
+  status: string;
+  priority: string;
+};
+
 export type OrchestratorClientOptions = {
   serverUrl: string;
   token?: string;
@@ -35,6 +50,18 @@ export class OrchestratorClient {
 
   getHealth(): Promise<OrchestratorHealth> {
     return this.request<OrchestratorHealth>("/api/health");
+  }
+
+  listProjects(): Promise<OrchestratorProject[]> {
+    return this.request<OrchestratorProject[]>("/api/projects");
+  }
+
+  listIssues(projectId: string): Promise<OrchestratorIssue[]> {
+    const searchParams = new URLSearchParams({
+      projectId
+    });
+
+    return this.request<OrchestratorIssue[]>(`/api/issues?${searchParams}`);
   }
 
   private async request<T>(path: string): Promise<T> {
