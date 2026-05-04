@@ -1,0 +1,25 @@
+# SDK-003 Validation Evidence
+
+Task: SDK-003 — CodingAgentEvent Type
+Date: 2026-05-04 18:41:42 KST
+Branch: poc/SDK-003-coding-agent-event
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: shared package typecheck completed with no output.
+
+2. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+3. `rg "CodingAgentEvent|RunEventType|message|tool_call|test_result|createdAt" packages/shared/src/agent-sdk.ts packages/shared/src/domain.ts track/tasks/SDK-003-coding-agent-event.md`
+   - Result: passed
+   - Notes: found `CodingAgentEvent`, shared event type union, key event categories, and timestamp field.
+
+## Scope Notes
+
+- Added type definitions only; no SDK adapter implementation was created.
+- No event normalization implementation, SDK invocation, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

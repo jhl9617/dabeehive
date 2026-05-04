@@ -1,4 +1,11 @@
-import type { AgentRole, EntityId, Issue, Project } from "./domain";
+import type {
+  AgentRole,
+  EntityId,
+  IsoDateTime,
+  Issue,
+  Project,
+  RunEventType
+} from "./domain";
 
 export type CodingRunWorkspace = {
   path: string;
@@ -30,6 +37,14 @@ export type CodingRunInput = {
 };
 
 export type LocalCodingAgentStartRequest = CodingRunInput;
+
+export type CodingAgentEvent = {
+  runId: EntityId;
+  type: RunEventType;
+  message?: string;
+  metadata?: Record<string, unknown>;
+  createdAt: IsoDateTime;
+};
 
 export type LocalCodingAgentRunHandle = {
   runId: EntityId;
