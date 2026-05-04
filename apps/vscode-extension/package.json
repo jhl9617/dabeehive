@@ -9,8 +9,48 @@
     "vscode": "^1.90.0"
   },
   "categories": ["Other"],
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:dabeehive.refresh",
+    "onView:dabeehive.views.issues",
+    "onView:dabeehive.views.runs",
+    "onView:dabeehive.views.approvals"
+  ],
   "scripts": {
     "compile": "pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json"
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "dabeehive.refresh",
+        "title": "Dabeehive: Refresh",
+        "category": "Dabeehive"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "dabeehive",
+          "title": "Dabeehive",
+          "icon": "resources/dabeehive.svg"
+        }
+      ]
+    },
+    "views": {
+      "dabeehive": [
+        {
+          "id": "dabeehive.views.issues",
+          "name": "Issues"
+        },
+        {
+          "id": "dabeehive.views.runs",
+          "name": "Runs"
+        },
+        {
+          "id": "dabeehive.views.approvals",
+          "name": "Approvals"
+        }
+      ]
+    }
   }
 }

@@ -1,0 +1,42 @@
+Task ID: EXT-002
+Status: verified
+Completed At: 2026-05-04 17:56:49 KST
+
+Validation commands:
+- pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+  Result: passed
+  Notes: Extension source typechecked using the existing workspace TypeScript install.
+
+- pnpm --filter @dabeehive/vscode-extension compile
+  Result: passed
+  Notes: Extension package compile script emitted ignored dist output.
+
+- mocked activation smoke
+  Command: node -e "const Module = require('module'); const original = Module._load; const calls = { commands: [], views: [] }; Module._load = (request, parent, isMain) => request === 'vscode' ? { commands: { registerCommand: (command, callback) => { calls.commands.push(command); callback(); return { dispose() {} }; } }, window: { registerTreeDataProvider: (viewId) => { calls.views.push(viewId); return { dispose() {} }; } } } : original(request, parent, isMain); const extension = require('./apps/vscode-extension/dist/extension.js'); const context = { subscriptions: [] }; extension.activate(context); extension.deactivate(); if (context.subscriptions.length !== 4) process.exit(1); if (!calls.commands.includes('dabeehive.refresh')) process.exit(1); if (calls.views.length !== 3) process.exit(1);"
+  Result: passed
+  Notes: Registered one command and three view providers against a mocked VS Code API.
+
+- pnpm lint
+  Result: passed
+  Notes: basic lint passed.
+
+- manifest/source rg smoke checks
+  Result: passed
+  Notes: Found Activity Bar, command, view ids, source registrations, and icon file.
+
+Changed files:
+- apps/vscode-extension/package.json
+- apps/vscode-extension/resources/dabeehive.svg
+- apps/vscode-extension/src/extension.ts
+- apps/vscode-extension/src/vscode.d.ts
+- track/MASTER.md
+- track/CURRENT.md
+- track/CHANGELOG.md
+- track/tasks/EXT-002-contributes-views.md
+- track/logs/2026-05-04-EXT-002.md
+- track/evidence/EXT-002/validation.txt
+
+Out of scope / not validated:
+- Real VS Code Extension Host launch was not run in this task.
+- Real project/issue/run/approval data providers remain deferred to later EXT tasks.
+- The unrelated working tree deletion docs/codex-implementation-rules.md was not touched.
