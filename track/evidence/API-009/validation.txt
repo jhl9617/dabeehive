@@ -1,0 +1,48 @@
+API-009 validation evidence
+Date: 2026-05-04 16:37:29 KST
+Branch: poc/API-009-run-detail-api
+
+Commands and results:
+
+1. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: Passed
+Key output:
+Prisma schema loaded from prisma/schema.prisma
+The schema at prisma/schema.prisma is valid
+
+2. DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma
+Result: Passed
+Key output:
+Prisma schema loaded from prisma/schema.prisma
+Generated Prisma Client v6.19.3.
+
+3. pnpm --filter @dabeehive/server build
+Result: Passed
+Key output:
+Next.js 15.5.15 compiled successfully.
+Route table includes dynamic /api/runs/[id].
+
+4. pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: Passed
+Key output:
+No output.
+
+5. pnpm lint
+Result: Passed
+Key output:
+basic lint passed
+
+6. pnpm --filter @dabeehive/server exec next dev --hostname 127.0.0.1 --port 18089
+Result: Passed
+Key output:
+Ready in 1351ms.
+
+7. curl -sS -i 'http://127.0.0.1:18089/api/runs/%20'
+Result: Passed
+Expected outcome:
+HTTP/1.1 400 Bad Request with error.code VALIDATION_ERROR.
+Returned too-small id validation issue after trimming route param.
+
+Deferred validation:
+
+- DB-backed run detail happy-path smoke was not run because migration/seed/local DB verification is scheduled for later DB/TST tasks and there is no known persisted run data for this route yet.

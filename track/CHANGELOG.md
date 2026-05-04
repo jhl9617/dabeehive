@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | API-009 | verified | Added `/api/runs/[id]` GET handler with route validation, Prisma run detail lookup, ordered nested event retrieval, ISO serialization, not-found handling, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
 | 2026-05-04 | API-008 | verified | Added `/api/runs` GET/POST handlers with query/body validation, queued Prisma run creation, ISO serialization, filter support, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
 | 2026-05-04 | API-007 | verified | Added `/api/documents/[id]` GET/PATCH handlers with route/body validation, Prisma detail/update access, ISO serialization, not-found handling, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
 | 2026-05-04 | API-006 | verified | Added `/api/documents` GET/POST handlers with Zod validation, Prisma document list/create access, ISO serialization, filter support, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
