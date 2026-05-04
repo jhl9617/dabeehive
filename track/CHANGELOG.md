@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | FND-002 | verified | Created pnpm workspace structure for server, VS Code extension, and shared packages. | `pnpm install --lockfile-only --ignore-scripts`; `pnpm -r list --depth -1`; workspace path checks passed. |
 | 2026-05-04 | FND-001 | verified | Selected pnpm as the repository package manager and generated the matching lockfile. | `pnpm --version`; `pnpm install --lockfile-only --ignore-scripts`; package/lockfile checks passed. |
 | 2026-05-04 | TRK-005 | verified | Clarified Codex session log naming, metadata, action, validation, summary, and follow-up recording expectations. | Session log template `rg` checks passed. |
 | 2026-05-04 | TRK-004 | verified | Clarified task file template fields, creation flow, validation, evidence, and approval recording rules. | Template and task README `rg` checks passed. |

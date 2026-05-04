@@ -1,0 +1,74 @@
+# FND-002 Validation Evidence
+
+Date: 2026-05-04 14:35:47 KST
+Branch: poc/FND-002-workspace-structure
+
+## Commands
+
+### pnpm install --lockfile-only --ignore-scripts
+
+Exit code: 0
+Result:
+
+```txt
+Scope: all 4 workspace projects
+
+Done in 162ms using pnpm v10.23.0
+```
+
+### test -d apps/server && test -d apps/vscode-extension && test -d packages/shared
+
+Exit code: 0
+Result: required workspace directories exist.
+
+### test -f pnpm-workspace.yaml && test -f apps/server/package.json && test -f apps/vscode-extension/package.json && test -f packages/shared/package.json
+
+Exit code: 0
+Result: workspace config and package manifests exist.
+
+### pnpm -r list --depth -1
+
+Exit code: 0
+Result:
+
+```txt
+dabeehive-orchestrator-poc /Users/jongha/Documents/repository/dabeehive (PRIVATE)
+
+@dabeehive/server@0.0.0 /Users/jongha/Documents/repository/dabeehive/apps/server (PRIVATE)
+
+@dabeehive/vscode-extension@0.0.0 /Users/jongha/Documents/repository/dabeehive/apps/vscode-extension (PRIVATE)
+
+@dabeehive/shared@0.0.0 /Users/jongha/Documents/repository/dabeehive/packages/shared (PRIVATE)
+```
+
+### rg "apps/\*|packages/\*" pnpm-workspace.yaml
+
+Exit code: 0
+Result: workspace globs include `apps/*` and `packages/*`.
+
+### rg "FND-002 \| in_progress|Task ID: FND-002|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/FND-002-workspace-structure.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
+
+### cat pnpm-lock.yaml
+
+Exit code: 0
+Relevant content:
+
+```txt
+importers:
+
+  .: {}
+
+  apps/server: {}
+
+  apps/vscode-extension: {}
+
+  packages/shared: {}
+```
+
+## Notes
+
+- Workspace package manifests are dependency-free placeholders.
+- Unrelated working tree deletion of `docs/codex-implementation-rules.md` was not staged or modified for this task.
