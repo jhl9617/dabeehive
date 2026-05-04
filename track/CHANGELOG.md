@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | SDK-007 | verified | Added exported deterministic `buildReviewerInstruction` for provider-neutral review prompts from `CodingRunInput`, diff summary, changed files, test results, and review focus. | Shared typecheck, builder smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-006 | verified | Added exported deterministic `buildCoderInstruction` for provider-neutral code-change prompts from `CodingRunInput`, approved plan, constraints, and validation commands. | Shared typecheck, builder smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-005 | verified | Added exported deterministic `buildPlannerInstruction` for provider-neutral implementation planning prompts from issue, project, context documents, and constraints. | Shared typecheck, builder smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-004 | verified | Added exported `ClaudeAgentSdkAdapter` skeleton implementing `LocalCodingAgentAdapter` with start/cancel method structure and no real SDK invocation or package dependency. | Shared typecheck, root lint, and source checks passed. |
