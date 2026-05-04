@@ -1,0 +1,29 @@
+# TRK-001 Validation Evidence
+
+Date: 2026-05-04 14:04:59 KST
+Branch: poc/TRK-001-root-agents
+
+## Commands
+
+### test -f AGENTS.md
+
+Exit code: 0
+Result: Root `AGENTS.md` exists.
+
+### rg "AI Agent Orchestrator PoC|절대 원칙|PoC 구현 범위|Codex 최종 응답 형식" AGENTS.md
+
+Exit code: 0
+Matched sections:
+
+```txt
+# AGENTS.md — AI Agent Orchestrator PoC Implementation Rules
+이 저장소는 **AI Agent Orchestrator PoC** 구현 저장소다. Codex는 이 파일과 `/track` 디렉토리를 기준으로 작업을 계획, 구현, 검증, 보고해야 한다.
+## 0. 절대 원칙
+## 1. PoC 구현 범위
+## 16. Codex 최종 응답 형식
+```
+
+### rg "TRK-001 \| in_progress|Task ID: TRK-001|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/TRK-001-root-agents.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
