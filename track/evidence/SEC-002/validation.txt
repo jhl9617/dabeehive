@@ -1,0 +1,39 @@
+# SEC-002 Validation Evidence
+
+Date: 2026-05-04 19:58:11 KST
+Branch: poc/SEC-002-bearer-auth-middleware
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc --noEmit`
+   - Result: Passed
+   - Notes: Server typecheck completed with no output.
+
+2. `pnpm --filter @dabeehive/server exec node -e "<bearer auth helper smoke>"`
+   - Result: Passed
+   - Output summary:
+
+```json
+{
+  "authenticated": true,
+  "userId": "user-1",
+  "tokenId": "tok-valid",
+  "wrong": false,
+  "missing": "missing",
+  "okStatus": 200,
+  "noStatus": 401
+}
+```
+
+3. `pnpm lint`
+   - Result: Passed
+   - Output: `basic lint passed`
+
+4. `rg "authenticateBearerToken|withBearerAuth|verifyApiToken|verifyBearerToken|SEC-002" apps/server/src/lib/security apps/server/app/api/[transport]/route.ts track/tasks/SEC-002-bearer-auth-middleware.md track/RISKS.md`
+   - Result: Passed
+   - Notes: Helper implementation, MCP wiring, task record, and risk entry found.
+
+## Scope Notes
+
+- No schema/migration change, token generation, scope model, route-wide REST enforcement, external integration, deployment, or automatic merge was implemented.
+- Approval record is documented in `track/tasks/SEC-002-bearer-auth-middleware.md`.

@@ -4,6 +4,10 @@ import { createMcpHandler, withMcpAuth } from "mcp-handler";
 import { z } from "zod";
 
 import { getPrismaClient } from "../../../src/lib/db/prisma";
+import {
+  authenticateBearerToken,
+  type BearerAuthPrismaClient
+} from "../../../src/lib/security/bearer-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -1095,21 +1099,36 @@ function registerArtifactTools(server: McpServer): void {
   );
 }
 
-function verifyBearerToken(
+async function verifyBearerToken(
   _request: Request,
   bearerToken?: string
-): AuthInfo | undefined {
+): Promise<AuthInfo | undefined> {
   const token = bearerToken?.trim();
 
   if (!token) {
     return undefined;
   }
 
-  return {
+  const prisma = (await getPrismaClient()) as unknown as BearerAuthPrismaClient;
+  const result = await authenticateBearerToken(prisma, token);
+
+  if (!result.authenticated) {
+    return undefined;
+  }
+
+  const authInfo: AuthInfo = {
     token,
-    clientId: "poc-mcp-client",
-    scopes: []
+    clientId: result.auth.userId,
+    scopes: result.auth.scopes
   };
+
+  if (result.auth.expiresAt) {
+    authInfo.expiresAt = Math.floor(
+      new Date(result.auth.expiresAt).getTime() / 1000
+    );
+  }
+
+  return authInfo;
 }
 
 function serializeProject(project: ProjectRecord): ProjectResponse {
