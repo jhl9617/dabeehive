@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 38 |
+| verified | 39 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 58 |
+| not_started | 57 |
 
 ---
 
@@ -118,7 +118,7 @@ P3 = 후속 확장
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
 | MCP-001 | verified | P0 | MCP | MCP route handler 구성 | MCP endpoint가 초기화된다 |
-| MCP-002 | not_started | P0 | MCP | MCP auth guard 연결 | Bearer token 없는 요청을 거부한다 |
+| MCP-002 | verified | P0 | MCP | MCP auth guard 연결 | Bearer token 없는 요청을 거부한다 |
 | MCP-003 | not_started | P0 | MCP | `project.list/get` tools | MCP로 프로젝트 조회가 가능하다 |
 | MCP-004 | not_started | P0 | MCP | `issue.list/get/create` tools | MCP로 이슈 조회/생성이 가능하다 |
 | MCP-005 | not_started | P0 | MCP | `run.start/status` tools | MCP로 run 시작/상태 조회가 가능하다 |
