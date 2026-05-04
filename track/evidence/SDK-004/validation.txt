@@ -1,0 +1,25 @@
+# SDK-004 Validation Evidence
+
+Task: SDK-004 — Claude Agent SDK Adapter Skeleton
+Date: 2026-05-04 18:44:33 KST
+Branch: poc/SDK-004-claude-adapter-skeleton
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: shared package typecheck completed with no output.
+
+2. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+3. `rg "ClaudeAgentSdkAdapter|implements LocalCodingAgentAdapter|async start|async cancel|claude-agent-sdk-adapter" packages/shared/src track/tasks/SDK-004-claude-adapter-skeleton.md`
+   - Result: passed
+   - Notes: found skeleton class, interface implementation, start/cancel methods, and shared index export.
+
+## Scope Notes
+
+- Added skeleton class only; no Claude SDK package dependency was added.
+- No real SDK invocation, event streaming, event normalization, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.
