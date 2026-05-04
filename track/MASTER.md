@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 70 |
+| verified | 71 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 26 |
+| not_started | 25 |
 
 ---
 
@@ -196,7 +196,7 @@ P3 = 후속 확장
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
 | GIT-001 | verified | P0 | Git | workspace git status helper | 현재 branch/dirty 상태를 조회한다 |
-| GIT-002 | not_started | P0 | Git | task branch creation | `poc/<TASK-ID>-slug` branch 생성이 가능하다 |
+| GIT-002 | verified | P0 | Git | task branch creation | `poc/<TASK-ID>-slug` branch 생성이 가능하다 |
 | GIT-003 | not_started | P0 | Git | changed files detector | 변경 파일 목록을 수집한다 |
 | GIT-004 | not_started | P0 | Git | diff summary generator | 사람이 읽는 diff summary가 생성된다 |
 | GIT-005 | not_started | P0 | Git | test result artifact 생성 | 테스트 결과가 artifact로 저장된다 |

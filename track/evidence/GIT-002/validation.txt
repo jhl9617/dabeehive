@@ -1,0 +1,39 @@
+# GIT-002 Validation Evidence
+
+Date: 2026-05-04 19:33:06 KST
+Branch: poc/GIT-002-task-branch-creation
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: Passed
+   - Notes: Shared package typecheck completed with no output.
+
+2. `pnpm --filter @dabeehive/server exec node -e "<task branch helper smoke>"`
+   - Result: Passed
+   - Output summary:
+
+```json
+{
+  "branch": "poc/GIT-002-task-branch-creation",
+  "command": [
+    "git",
+    "switch",
+    "-c",
+    "poc/GIT-002-task-branch-creation"
+  ]
+}
+```
+
+3. `pnpm lint`
+   - Result: Passed
+   - Output: `basic lint passed`
+
+4. `rg "createTaskBranch|buildTaskBranchName|slugifyTaskBranchTitle|git switch|git-branch" packages/shared/src track/tasks/GIT-002-task-branch-creation.md`
+   - Result: Passed
+   - Notes: Helper implementation, export, and task tracking references found.
+
+## Scope Notes
+
+- No Jira, Slack, Draft PR, GitHub API, automatic merge, custom shell tool loop, or AI code editing engine was implemented.
+- Branch creation remains delegated to an injected command runner.

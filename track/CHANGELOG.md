@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | GIT-002 | verified | Added shared task branch helpers for stable `poc/<TASK-ID>-slug` names and injected `git switch -c` branch creation. | Shared typecheck, branch helper smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | GIT-001 | verified | Added shared `parseWorkspaceGitStatus` and injected `getWorkspaceGitStatus` helpers for branch/upstream/ahead/behind/dirty/file status parsing from `git status --short --branch`. | Shared typecheck, git status smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | WFL-005 | verified | Added server `storeRunArtifact` helper that stores workflow artifacts for `plan`, `diff`, `test_report`, and `review` with normalized titles, content/uri, metadata, and issue links. | Server typecheck, artifact storage smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | WFL-004 | verified | Added server `createFinalDiffApproval` helper that creates pending `final_approval` records linked to run and issue from diff summary and normalized changed files. | Server typecheck, final diff approval smoke via existing TypeScript compiler API, root lint, and source checks passed. |
