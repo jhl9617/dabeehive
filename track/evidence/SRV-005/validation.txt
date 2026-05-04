@@ -1,0 +1,86 @@
+# SRV-005 Validation Evidence
+
+Task: SRV-005 — Prisma client singleton 작성
+Date: 2026-05-04 15:13:08 KST
+Branch: poc/SRV-005-prisma-client-singleton
+
+## Scope
+
+- Added `@prisma/client` 6.x to `@dabeehive/server`.
+- Added `apps/server/src/lib/db/prisma.ts`.
+- Implemented a lazy `getPrismaClient` singleton factory using `globalThis` cache outside production.
+- Deferred Prisma CLI, schema, generated client, and migrations to DB-001.
+
+## Commands
+
+### `pnpm --filter @dabeehive/server add @prisma/client@6`
+
+Result: Passed
+
+Key output:
+
+```txt
+. | +1 +
+Done in 2.9s using pnpm v10.23.0
+```
+
+Installed version:
+
+```txt
+apps/server/package.json: "@prisma/client": "^6.19.3"
+```
+
+### Initial `pnpm --filter @dabeehive/server build`
+
+Result: Failed
+
+Cause:
+
+```txt
+Type error: Module '"@prisma/client"' has no exported member 'PrismaClient'.
+```
+
+Resolution:
+
+- Replaced the eager `PrismaClient` named import with a lazy dynamic import and narrow local constructor type.
+- This keeps SRV-005 scoped to the import path/singleton wrapper while DB-001 remains responsible for schema and generated client setup.
+
+### Final `pnpm --filter @dabeehive/server build`
+
+Result: Passed
+
+Key output:
+
+```txt
+▲ Next.js 15.5.15
+✓ Compiled successfully in 690ms
+✓ Generating static pages (4/4)
+```
+
+### Final `pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result: Passed
+
+Key output:
+
+```txt
+No output; command exited 0.
+```
+
+### Final `pnpm lint`
+
+Result: Passed
+
+Key output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+## Notes
+
+- Dependency addition approval was recorded in `track/tasks/SRV-005-prisma-client-singleton.md` before installation.
+- Existing unrelated working tree deletion remains unstaged: `docs/codex-implementation-rules.md`.

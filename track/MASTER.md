@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 14 |
+| verified | 15 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 82 |
+| not_started | 81 |
 
 ---
 
@@ -65,7 +65,7 @@ P3 = 후속 확장
 | SRV-002 | verified | P0 | Server | 기본 layout/page 구성 | 홈 또는 health 페이지가 렌더링된다 |
 | SRV-003 | verified | P0 | Server | API response helper 작성 | success/error 응답 helper가 있다 |
 | SRV-004 | verified | P0 | Server | Zod validation helper 작성 | route에서 재사용 가능한 validation helper가 있다 |
-| SRV-005 | not_started | P0 | Server | Prisma client singleton 작성 | DB client import 경로가 정리된다 |
+| SRV-005 | verified | P0 | Server | Prisma client singleton 작성 | DB client import 경로가 정리된다 |
 | SRV-006 | not_started | P1 | Server | server logger 작성 | API/Run 이벤트 기록용 logger wrapper가 있다 |
 | SRV-007 | not_started | P1 | Server | server error boundary/not-found 처리 | 기본 에러 UX가 있다 |
 

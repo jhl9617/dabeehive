@@ -10,6 +10,9 @@ importers:
 
   apps/server:
     dependencies:
+      '@prisma/client':
+        specifier: ^6.19.3
+        version: 6.19.3(typescript@6.0.3)
       next:
         specifier: ^15.5.15
         version: 15.5.15(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -229,6 +232,18 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
+
+  '@prisma/client@6.19.3':
+    resolution: {integrity: sha512-mKq3jQFhjvko5LTJFHGilsuQs+W+T3Gm451NzuTDGQxwCzwXHYnIu2zGkRoW+Exq3Rob7yp2MfzSrdIiZVhrBg==}
+    engines: {node: '>=18.18'}
+    peerDependencies:
+      prisma: '*'
+      typescript: '>=5.1.0'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+      typescript:
+        optional: true
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -466,6 +481,10 @@ snapshots:
 
   '@next/swc-win32-x64-msvc@15.5.15':
     optional: true
+
+  '@prisma/client@6.19.3(typescript@6.0.3)':
+    optionalDependencies:
+      typescript: 6.0.3
 
   '@swc/helpers@0.5.15':
     dependencies:
