@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 62 |
+| verified | 63 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 34 |
+| not_started | 33 |
 
 ---
 
@@ -166,7 +166,7 @@ P3 = 후속 확장
 | SDK-005 | verified | P0 | SDK | Planner instruction builder | issue/context 기반 구현 계획 prompt가 생성된다 |
 | SDK-006 | verified | P0 | SDK | Coder instruction builder | 승인된 plan 기반 코드 수정 prompt가 생성된다 |
 | SDK-007 | verified | P0 | SDK | Reviewer instruction builder | diff/test 결과 검토 prompt가 생성된다 |
-| SDK-008 | not_started | P0 | SDK | SDK event normalization | SDK 이벤트가 Orchestrator RunEvent 형태로 변환된다 |
+| SDK-008 | verified | P0 | SDK | SDK event normalization | SDK 이벤트가 Orchestrator RunEvent 형태로 변환된다 |
 | SDK-009 | not_started | P0 | SDK | Run cancellation handling | cancel command가 adapter에 전달된다 |
 | SDK-010 | not_started | P1 | SDK | allowed tools 설정 | read/edit/bash/search 등 허용 tool 설정이 명시된다 |
 | SDK-011 | not_started | P1 | SDK | blocked command detector | 위험 명령 실행 전 차단 또는 승인 요구가 가능하다 |
