@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | MCP-003 | verified | Added authenticated MCP `project.list` and `project.get` tools backed by Prisma project reads, with Zod input schemas, ISO serialization, JSON text tool results, and not-found handling. | Next.js build, TypeScript noEmit, root lint, MCP `tools/list` smoke, and invalid `project.get` validation smoke passed. |
 | 2026-05-04 | MCP-002 | verified | Added required Bearer auth around the MCP route handler, rejecting missing tokens while allowing non-empty tokens through the MCP initialize flow; DB-backed token verification remains deferred. | Next.js build, TypeScript noEmit, root lint, MCP 401/200 auth smoke, and REST route precedence smoke passed. |
 | 2026-05-04 | MCP-001 | verified | Added `mcp-handler` and `@modelcontextprotocol/sdk`, initialized minimal `/api/[transport]` MCP handler with server info and SSE disabled, and kept domain tools/auth out of scope for later MCP tasks. | Dependency install, Next.js build, TypeScript noEmit, root lint, MCP initialize smoke, and REST route precedence smoke passed. |
 | 2026-05-04 | API-013 | verified | Added `/api/artifacts` GET/POST handlers with query/body validation, artifact type checks, content-or-uri requirement, Prisma artifact list/create access, ISO serialization, foreign-key not-found mapping, and controlled API errors. | Prisma validate/generate, Next.js build, TypeScript noEmit, root lint, and validation smoke checks passed; DB happy path deferred until migration/seed tasks. |
