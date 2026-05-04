@@ -1,0 +1,77 @@
+# DB-003 Validation Evidence
+
+Task: DB-003 — Project 모델 정의
+Date: 2026-05-04 15:24:56 KST
+Branch: poc/DB-003-project-model
+
+## Scope
+
+- Added `Project` model.
+- Added `User.projects` owner relation.
+- Added repo/workspace fields: `repoProvider`, `repoUrl`, `repoOwner`, `repoName`, `defaultBranch`, `workspacePath`.
+- No Issue, Document, Run, Approval, Artifact, migration, API, or repository code was added.
+
+## Commands
+
+### `DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma`
+
+Result: Passed
+
+Key output:
+
+```txt
+Prisma schema loaded from prisma/schema.prisma
+The schema at prisma/schema.prisma is valid
+```
+
+### `DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma generate --schema prisma/schema.prisma`
+
+Result: Passed
+
+Key output:
+
+```txt
+Prisma schema loaded from prisma/schema.prisma
+Generated Prisma Client (v6.19.3)
+```
+
+### `pnpm --filter @dabeehive/server build`
+
+Result: Passed
+
+Key output:
+
+```txt
+▲ Next.js 15.5.15
+✓ Compiled successfully in 716ms
+✓ Generating static pages (4/4)
+```
+
+### `pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result: Passed
+
+Key output:
+
+```txt
+No output; command exited 0.
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Key output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+## Notes
+
+- Generated Prisma client output is under ignored `node_modules` and is not committed.
+- DB schema approval/risk was recorded before implementation.
+- Existing unrelated working tree deletion remains unstaged: `docs/codex-implementation-rules.md`.

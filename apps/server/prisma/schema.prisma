@@ -15,6 +15,7 @@ model User {
   image         String?
   role          String     @default("developer")
   apiTokens     ApiToken[]
+  projects      Project[]  @relation("ProjectOwner")
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
@@ -31,4 +32,25 @@ model ApiToken {
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  ownerId       String
+  name          String
+  description   String?  @db.Text
+  status        String   @default("draft")
+  repoProvider  String?
+  repoUrl       String?
+  repoOwner     String?
+  repoName      String?
+  defaultBranch String?
+  workspacePath String?
+  owner         User     @relation("ProjectOwner", fields: [ownerId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([repoOwner, repoName])
 }
