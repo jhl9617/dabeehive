@@ -25,6 +25,10 @@ declare module "vscode" {
     getTreeItem(element: T): T;
   }
 
+  export interface WorkspaceConfiguration {
+    get<T>(section: string, defaultValue: T): T;
+  }
+
   export type Thenable<T> = PromiseLike<T>;
 
   export namespace commands {
@@ -45,5 +49,9 @@ declare module "vscode" {
       options?: InputBoxOptions
     ): Thenable<string | undefined>;
     function showWarningMessage(message: string): Thenable<string | undefined>;
+  }
+
+  export namespace workspace {
+    function getConfiguration(section?: string): WorkspaceConfiguration;
   }
 }

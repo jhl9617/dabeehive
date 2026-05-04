@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | EXT-004 | verified | Added non-sensitive `dabeehive.serverUrl` configuration, fetch-based Orchestrator REST client, SecretStorage token Bearer header wiring, and refresh health-check behavior. | Extension typecheck, package compile, mocked REST refresh smoke, root lint, and source checks passed after adding DOM lib for `fetch`/`URL` types. |
 | 2026-05-04 | EXT-003 | verified | Added VS Code SecretStorage API token set/clear commands, activation registrations, `getApiToken` helper, and local type shim updates without writing tokens to settings/config/globalState. | Extension typecheck, package compile, mocked SecretStorage smoke, root lint, and no-settings-token-write source checks passed. |
 | 2026-05-04 | EXT-002 | verified | Added VS Code Activity Bar contribution, Issues/Runs/Approvals views, `Dabeehive: Refresh` command, passive activation registrations, icon asset, and local VS Code type shim updates. | Extension typecheck, package compile, mocked activation smoke, root lint, and manifest/source smoke checks passed. |
 | 2026-05-04 | EXT-001 | verified | Added minimal VS Code extension scaffold with manifest activation metadata, compile path, passive activate/deactivate entrypoints, and a local VS Code type shim without adding package dependencies. | Extension typecheck, package compile, activation smoke, root lint, and manifest/source smoke checks passed. |
