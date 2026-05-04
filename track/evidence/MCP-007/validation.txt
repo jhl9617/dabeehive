@@ -1,0 +1,41 @@
+Task ID: MCP-007
+Status: verified
+Completed At: 2026-05-04 17:43:13 KST
+
+Validation commands:
+- pnpm --filter @dabeehive/server build
+  Result: passed
+  Notes: Next.js 15.5.15 production build compiled successfully and generated API routes including /api/[transport].
+
+- pnpm --filter @dabeehive/server exec tsc --noEmit
+  Result: passed
+  Notes: TypeScript completed with exit code 0.
+
+- pnpm lint
+  Result: passed
+  Notes: basic lint passed.
+
+- MCP tools/list smoke with Bearer token
+  Command: curl -sS -i -X POST http://127.0.0.1:18100/api/mcp -H 'authorization: Bearer poc-token' -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' --data '{"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}'
+  Result: passed
+  Notes: HTTP 200 text/event-stream response listed approval.list, approval.request, and approval.respond with JSON schemas.
+
+- MCP tools/call validation smoke for invalid approval.request
+  Command: curl -sS -i -X POST http://127.0.0.1:18100/api/mcp -H 'authorization: Bearer poc-token' -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' --data '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"approval.request","arguments":{"runId":"run_1"}}}'
+  Result: passed
+  Notes: HTTP 200 text/event-stream response returned an MCP tool error with Zod validation detail for missing type.
+
+Changed files:
+- apps/server/app/api/[transport]/route.ts
+- track/MASTER.md
+- track/CURRENT.md
+- track/RISKS.md
+- track/CHANGELOG.md
+- track/tasks/MCP-007-approval-tools.md
+- track/logs/2026-05-04-MCP-007.md
+- track/evidence/MCP-007/validation.txt
+
+Out of scope / not validated:
+- DB happy-path approval list/request/respond was not smoke-tested because local migration/seed tasks are still deferred.
+- Workflow continuation after approval response remains deferred to WFL tasks.
+- The unrelated working tree deletion docs/codex-implementation-rules.md was not touched.

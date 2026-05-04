@@ -13,6 +13,7 @@ const mcpHandler = createMcpHandler(
     registerIssueTools(server);
     registerRunTools(server);
     registerRunEventTools(server);
+    registerApprovalTools(server);
   },
   {
     serverInfo: {
@@ -79,6 +80,27 @@ const runEventTypeSchema = z.enum([
   "error",
   "done"
 ]);
+const approvalStatusSchema = z.enum([
+  "pending",
+  "approved",
+  "rejected",
+  "changes_requested"
+]);
+const approvalTypeSchema = z.enum([
+  "schema_change",
+  "auth_change",
+  "billing_change",
+  "prod_deploy",
+  "spec_approval",
+  "final_approval",
+  "risk_approval",
+  "general"
+]);
+const approvalResponseActionSchema = z.enum([
+  "approve",
+  "reject",
+  "request_changes"
+]);
 
 const projectSelect = {
   id: true,
@@ -138,6 +160,24 @@ const runEventSelect = {
   createdAt: true
 };
 
+const approvalSelect = {
+  id: true,
+  issueId: true,
+  runId: true,
+  requestedById: true,
+  respondedById: true,
+  type: true,
+  status: true,
+  reason: true,
+  changedFiles: true,
+  diffSummary: true,
+  riskScore: true,
+  requiredAction: true,
+  respondedAt: true,
+  createdAt: true,
+  updatedAt: true
+};
+
 type ProjectStatus = z.infer<typeof projectStatusSchema>;
 type IssueType = z.infer<typeof issueTypeSchema>;
 type IssueStatus = z.infer<typeof issueStatusSchema>;
@@ -145,6 +185,9 @@ type IssuePriority = z.infer<typeof issuePrioritySchema>;
 type AgentRole = z.infer<typeof agentRoleSchema>;
 type RunStatus = z.infer<typeof runStatusSchema>;
 type RunEventType = z.infer<typeof runEventTypeSchema>;
+type ApprovalStatus = z.infer<typeof approvalStatusSchema>;
+type ApprovalType = z.infer<typeof approvalTypeSchema>;
+type ApprovalResponseAction = z.infer<typeof approvalResponseActionSchema>;
 type JsonObject = Record<string, unknown>;
 
 type ProjectRecord = {
@@ -227,6 +270,33 @@ type RunEventRecord = {
 
 type RunEventResponse = Omit<RunEventRecord, "createdAt"> & {
   createdAt: string;
+};
+
+type ApprovalRecord = {
+  id: string;
+  issueId: string | null;
+  runId: string | null;
+  requestedById: string | null;
+  respondedById: string | null;
+  type: ApprovalType;
+  status: ApprovalStatus;
+  reason: string | null;
+  changedFiles: string[];
+  diffSummary: string | null;
+  riskScore: number | null;
+  requiredAction: string | null;
+  respondedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type ApprovalResponse = Omit<
+  ApprovalRecord,
+  "respondedAt" | "createdAt" | "updatedAt"
+> & {
+  respondedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 type ProjectFindManyArgs = {
@@ -343,6 +413,58 @@ type RunEventCreateArgs = {
 type RunEventPrismaClient = {
   runEvent: {
     create: (args: RunEventCreateArgs) => Promise<RunEventRecord>;
+  };
+};
+
+type ApprovalFindManyArgs = {
+  where?: {
+    issueId?: string;
+    runId?: string;
+    status?: ApprovalStatus;
+    type?: ApprovalType;
+  };
+  orderBy: {
+    createdAt: "desc";
+  };
+  select: typeof approvalSelect;
+};
+
+type ApprovalCreateData = {
+  issueId: string | null;
+  runId: string | null;
+  requestedById?: string | null;
+  type: ApprovalType;
+  status: "pending";
+  reason?: string | null;
+  changedFiles: string[];
+  diffSummary?: string | null;
+  riskScore?: number | null;
+  requiredAction?: string | null;
+};
+
+type ApprovalCreateArgs = {
+  data: ApprovalCreateData;
+  select: typeof approvalSelect;
+};
+
+type ApprovalUpdateArgs = {
+  where: {
+    id: string;
+  };
+  data: {
+    status: Exclude<ApprovalStatus, "pending">;
+    respondedById: string | null;
+    respondedAt: Date;
+    reason?: string | null;
+  };
+  select: typeof approvalSelect;
+};
+
+type ApprovalPrismaClient = {
+  approval: {
+    findMany: (args: ApprovalFindManyArgs) => Promise<ApprovalRecord[]>;
+    create: (args: ApprovalCreateArgs) => Promise<ApprovalRecord>;
+    update: (args: ApprovalUpdateArgs) => Promise<ApprovalRecord>;
   };
 };
 
@@ -646,6 +768,166 @@ function registerRunEventTools(server: McpServer): void {
   );
 }
 
+function registerApprovalTools(server: McpServer): void {
+  server.registerTool(
+    "approval.list",
+    {
+      title: "List approvals",
+      description: "List orchestrator approvals.",
+      inputSchema: {
+        issueId: z.string().trim().min(1).optional(),
+        runId: z.string().trim().min(1).optional(),
+        status: approvalStatusSchema.optional(),
+        type: approvalTypeSchema.optional()
+      }
+    },
+    async (args) => {
+      try {
+        const prisma =
+          (await getPrismaClient()) as unknown as ApprovalPrismaClient;
+        const approvals = await prisma.approval.findMany({
+          where: args,
+          orderBy: {
+            createdAt: "desc"
+          },
+          select: approvalSelect
+        });
+
+        return jsonToolResult({
+          data: approvals.map(serializeApproval)
+        });
+      } catch {
+        return approvalToolError(
+          "APPROVAL_LIST_FAILED",
+          "Failed to list approvals."
+        );
+      }
+    }
+  );
+
+  server.registerTool(
+    "approval.request",
+    {
+      title: "Request approval",
+      description: "Create a human approval request.",
+      inputSchema: {
+        issueId: z.string().trim().min(1).nullable().optional(),
+        runId: z.string().trim().min(1).nullable().optional(),
+        requestedById: z.string().trim().min(1).nullable().optional(),
+        type: approvalTypeSchema,
+        reason: z.string().trim().min(1).max(100000).nullable().optional(),
+        changedFiles: z
+          .array(z.string().trim().min(1).max(1000))
+          .max(100)
+          .default([]),
+        diffSummary: z.string().trim().max(100000).nullable().optional(),
+        riskScore: z.number().int().min(0).max(100).nullable().optional(),
+        requiredAction: z.string().trim().max(100000).nullable().optional()
+      }
+    },
+    async (args) => {
+      if (!args.issueId && !args.runId) {
+        return approvalToolError(
+          "APPROVAL_TARGET_REQUIRED",
+          "Approval requires an issueId or runId."
+        );
+      }
+
+      try {
+        const prisma =
+          (await getPrismaClient()) as unknown as ApprovalPrismaClient;
+        const approval = await prisma.approval.create({
+          data: {
+            issueId: args.issueId ?? null,
+            runId: args.runId ?? null,
+            requestedById: args.requestedById ?? null,
+            type: args.type,
+            status: "pending",
+            reason: args.reason ?? null,
+            changedFiles: args.changedFiles,
+            diffSummary: args.diffSummary ?? null,
+            riskScore: args.riskScore ?? null,
+            requiredAction: args.requiredAction ?? null
+          },
+          select: approvalSelect
+        });
+
+        return jsonToolResult({
+          data: serializeApproval(approval)
+        });
+      } catch (error) {
+        if (hasPrismaErrorCode(error, "P2003")) {
+          return approvalToolError(
+            "APPROVAL_TARGET_OR_REQUESTER_NOT_FOUND",
+            "Approval issue, run, or requester does not exist."
+          );
+        }
+
+        return approvalToolError(
+          "APPROVAL_REQUEST_FAILED",
+          "Failed to request approval."
+        );
+      }
+    }
+  );
+
+  server.registerTool(
+    "approval.respond",
+    {
+      title: "Respond to approval",
+      description: "Approve, reject, or request changes for an approval.",
+      inputSchema: {
+        id: z.string().trim().min(1),
+        action: approvalResponseActionSchema,
+        respondedById: z.string().trim().min(1).nullable().optional(),
+        reason: z.string().trim().min(1).max(100000).nullable().optional()
+      }
+    },
+    async (args) => {
+      try {
+        const prisma =
+          (await getPrismaClient()) as unknown as ApprovalPrismaClient;
+        const approval = await prisma.approval.update({
+          where: {
+            id: args.id
+          },
+          data: {
+            status: mapApprovalStatus(args.action),
+            respondedById: args.respondedById ?? null,
+            respondedAt: new Date(),
+            ...(args.reason !== undefined
+              ? {
+                  reason: args.reason
+                }
+              : {})
+          },
+          select: approvalSelect
+        });
+
+        return jsonToolResult({
+          data: serializeApproval(approval)
+        });
+      } catch (error) {
+        if (hasPrismaErrorCode(error, "P2025")) {
+          return approvalToolError("APPROVAL_NOT_FOUND", "Approval was not found.");
+        }
+
+        if (hasPrismaErrorCode(error, "P2003")) {
+          return approvalToolError(
+            "APPROVAL_RESPONDER_NOT_FOUND",
+            "Approval responder does not exist."
+          );
+        }
+
+        return approvalToolError(
+          "APPROVAL_RESPOND_FAILED",
+          "Failed to respond to approval."
+        );
+      }
+    }
+  );
+}
+
 function verifyBearerToken(
   _request: Request,
   bearerToken?: string
@@ -696,6 +978,29 @@ function serializeRunEvent(event: RunEventRecord): RunEventResponse {
   };
 }
 
+function serializeApproval(approval: ApprovalRecord): ApprovalResponse {
+  return {
+    ...approval,
+    respondedAt: approval.respondedAt?.toISOString() ?? null,
+    createdAt: approval.createdAt.toISOString(),
+    updatedAt: approval.updatedAt.toISOString()
+  };
+}
+
+function mapApprovalStatus(
+  action: ApprovalResponseAction
+): Exclude<ApprovalStatus, "pending"> {
+  if (action === "approve") {
+    return "approved";
+  }
+
+  if (action === "reject") {
+    return "rejected";
+  }
+
+  return "changes_requested";
+}
+
 function issueToolError(code: string, message: string) {
   return jsonToolResult(
     {
@@ -709,6 +1014,18 @@ function issueToolError(code: string, message: string) {
 }
 
 function runToolError(code: string, message: string) {
+  return jsonToolResult(
+    {
+      error: {
+        code,
+        message
+      }
+    },
+    true
+  );
+}
+
+function approvalToolError(code: string, message: string) {
   return jsonToolResult(
     {
       error: {

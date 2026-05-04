@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | MCP-007 | verified | Added authenticated MCP `approval.list`, `approval.request`, and `approval.respond` tools backed by Prisma approval list/create/update operations, with Zod input schemas, ISO serialization, and controlled approval errors. | Next.js build, TypeScript noEmit, root lint, MCP `tools/list` smoke, and invalid `approval.request` validation smoke passed. |
 | 2026-05-04 | MCP-006 | verified | Added authenticated MCP `run.append_event` tool backed by Prisma RunEvent creation, with normalized SDK event type validation, ISO serialization, JSON text tool results, and controlled run event errors. | Next.js build, TypeScript noEmit, root lint, MCP `tools/list` smoke, and invalid `run.append_event` validation smoke passed. |
 | 2026-05-04 | MCP-005 | verified | Added authenticated MCP `run.start` and `run.status` tools backed by Prisma AgentRun creation/status lookup, with queued-only run start, Zod input schemas, ISO serialization, and controlled run errors. | Next.js build, TypeScript noEmit, root lint, MCP `tools/list` smoke, and invalid `run.start` validation smoke passed. |
 | 2026-05-04 | MCP-004 | verified | Added authenticated MCP `issue.list`, `issue.get`, and `issue.create` tools backed by Prisma issue reads/writes, with Zod input schemas, ISO serialization, JSON text tool results, and controlled issue errors. | Next.js build, TypeScript noEmit, root lint, MCP `tools/list` smoke, and invalid `issue.create` validation smoke passed. |

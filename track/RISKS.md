@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | MCP approval request/respond tools can create or finalize human approval records before workflow policy and role enforcement exist. | High | Require MCP Bearer auth, validate inputs, keep workflow continuation out of scope, map known DB errors, and defer role/scope enforcement to later auth/workflow tasks. | open | MCP-007 |
 | 2026-05-04 | MCP run.append_event can ingest sensitive SDK tool, command, file, or test metadata before redaction policy exists. | High | Validate normalized event types and payload size, keep status transitions out of scope, require MCP Bearer auth, and defer redaction/policy enforcement to later auth/workflow tasks. | open | MCP-006 |
 | 2026-05-04 | MCP run.start can create queued AgentRun records before workflow policy and SDK runner execution are connected. | High | Validate input, always create runs in queued state only, keep execution/cancellation out of scope, and defer workflow/SDK behavior to WFL and SDK tasks. | open | MCP-005 |
 | 2026-05-04 | Issue MCP create tool can mutate issue data before full token scopes and workflow policy exist. | High | Require the MCP Bearer guard, validate all write inputs with Zod, keep update/delete out of scope, map known DB errors, and defer scope/workflow enforcement to later auth/workflow tasks. | open | MCP-004 |
