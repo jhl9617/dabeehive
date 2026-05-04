@@ -1,0 +1,29 @@
+# WFL-003 Validation Evidence
+
+Task: WFL-003 — Approval Resume Flow
+Date: 2026-05-04 19:15:56 KST
+Branch: poc/WFL-003-approval-resume-flow
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc --noEmit`
+   - Result: passed
+   - Notes: server typecheck completed with no output.
+
+2. approval resume helper smoke via `pnpm --filter @dabeehive/server exec node`
+   - Result: passed
+   - Notes: used the existing server TypeScript dependency to transpile `approval-resume.ts`, executed `resumeRunAfterApproval()`, and verified approve/reject/request_changes mappings plus fake Prisma `agentRun.update()` calls.
+
+3. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+4. `rg "resumeRunAfterApproval|getRunStatusAfterApprovalResponse|buildApprovalRunUpdateData|agentRun.update|approval-resume" apps/server/src/lib/workflow track/tasks/WFL-003-approval-resume-flow.md`
+   - Result: passed
+   - Notes: found helper, status mapper, update data builder, agent run update call, task references, and source path.
+
+## Scope Notes
+
+- Added server workflow helper only; no public API route was changed.
+- No DB schema change, final diff approval creation, artifact persistence, SDK invocation, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

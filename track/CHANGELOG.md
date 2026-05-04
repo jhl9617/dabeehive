@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | WFL-003 | verified | Added server `resumeRunAfterApproval` helper that maps approval responses to next run status and updates the linked AgentRun through `agentRun.update()`. | Server typecheck, approval resume smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | WFL-002 | verified | Added server `createPlanApproval` helper that creates pending `spec_approval` records linked to run and issue from planner output, with normalized reason, required action, risk score, and empty changed files. | Server typecheck, plan approval smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | WFL-001 | verified | Added exported deterministic run state machine with allowed transitions, terminal status detection, next-status lookup, and transition assertion helpers. | Shared typecheck, state machine smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-009 | verified | Added exported deterministic `dispatchRunCancellation` and `buildRunCancellationCommand` helpers that normalize cancellation reason/timestamp and pass the command to adapter `cancel()`. | Shared typecheck, cancellation smoke via existing TypeScript compiler API, root lint, and source checks passed. |
