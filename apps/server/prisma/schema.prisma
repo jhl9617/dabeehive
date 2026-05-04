@@ -49,6 +49,7 @@ model Project {
   owner         User     @relation("ProjectOwner", fields: [ownerId], references: [id])
   issues        Issue[]
   documents     Document[]
+  runs          AgentRun[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -71,6 +72,7 @@ model Issue {
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   parent       Issue?   @relation("IssueHierarchy", fields: [parentId], references: [id])
   children     Issue[]  @relation("IssueHierarchy")
+  runs         AgentRun[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -94,5 +96,29 @@ model Document {
 
   @@index([projectId])
   @@index([projectId, type])
+  @@index([status])
+}
+
+model AgentRun {
+  id              String    @id @default(cuid())
+  projectId       String
+  issueId         String?
+  status          String    @default("queued")
+  agentRole       String
+  modelProvider   String?
+  modelId         String?
+  inputContext    Json?
+  outputSummary   String?   @db.Text
+  outputArtifacts Json?
+  errorMessage    String?   @db.Text
+  startedAt       DateTime?
+  completedAt     DateTime?
+  project         Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  issue           Issue?    @relation(fields: [issueId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([projectId])
+  @@index([issueId])
   @@index([status])
 }
