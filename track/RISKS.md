@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Document update API can alter context content before approval or versioning policy exists. | Medium | Validate content/status fields, keep automated versioning out of scope, and defer approval/version policy to workflow/context tasks. | open | API-007 |
 | 2026-05-04 | Document create API can store large or policy-sensitive context before auth and context search policy exist. | Medium | Validate content size, keep search/versioning behavior out of scope, and defer authorization/context policy to later tasks. | open | API-006 |
 | 2026-05-04 | Issue update API can change workflow fields before dedicated workflow policy exists. | Medium | Limit the task to validated field updates and defer workflow state machine enforcement to WFL tasks. | open | API-005 |
 | 2026-05-04 | Issue create API is introduced before auth and workflow policy can restrict issue creation. | Medium | Require explicit `projectId`, validate issue fields with Zod, and defer authorization/workflow policy to later auth/workflow tasks. | open | API-004 |
