@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | API token hash utility exists before Bearer auth middleware, token rotation, and scope checks are connected. | High | Store only scrypt hash payloads, verify with timing-safe comparison, keep plaintext token storage out of scope, and complete SEC-002/SEC-003 before relying on tokens for full access control. | open | SEC-001 |
 | 2026-05-04 | Extension Projects/Issues tree can display project and issue metadata before full API authorization and redaction policy exist. | Medium | Read through the Orchestrator REST client with optional Bearer token, avoid local persistence, and defer authorization/redaction enforcement to API auth tasks. | open | EXT-006 |
 | 2026-05-04 | Extension REST client could leak API tokens if it logs headers or stores token-bearing config. | High | Read token only from SecretStorage, set Authorization only in memory per request, avoid logging token/header values, and keep serverUrl as the only non-sensitive setting. | open | EXT-004 |
 | 2026-05-04 | VS Code extension token handling could leak API tokens if written to settings or logs. | High | Store tokens only through SecretStorage, do not log token values, do not add settings writes, and validate with source checks. | open | EXT-003 |

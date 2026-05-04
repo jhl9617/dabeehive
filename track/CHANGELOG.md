@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | SEC-001 | verified | Added server API token hash/verify utility using versioned scrypt payloads, random salt, and timing-safe derived-key comparison; recorded residual auth risk. | Server typecheck, API token hash smoke via existing TypeScript compiler API, root lint, and source/risk checks passed. |
 | 2026-05-04 | GIT-005 | verified | Added server workflow helper to store normalized test command results as `test_report` artifacts through the existing artifact storage path. | Server typecheck, test result artifact smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | GIT-004 | verified | Added shared diff summary generator for Git numstat output with totals, binary file count, per-file lines, omitted-file counts, and injected command execution. | Shared typecheck, diff summary smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | GIT-003 | verified | Added shared changed files detector for Git porcelain status output with staged, unstaged, untracked, deleted, renamed, and copied file metadata. | Shared typecheck, changed files smoke via existing TypeScript compiler API, root lint, and source checks passed. |

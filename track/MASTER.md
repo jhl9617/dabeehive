@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 74 |
+| verified | 75 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 22 |
+| not_started | 21 |
 
 ---
 
@@ -225,7 +225,7 @@ P3 = 후속 확장
 
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
-| SEC-001 | not_started | P0 | Security | API token hash utility | token hash/verify가 가능하다 |
+| SEC-001 | verified | P0 | Security | API token hash utility | token hash/verify가 가능하다 |
 | SEC-002 | not_started | P0 | Security | Bearer auth middleware | REST/MCP에서 token 검증이 가능하다 |
 | SEC-003 | not_started | P0 | Security | Secret redaction helper | logs/artifacts에서 secret 패턴이 마스킹된다 |
 | SEC-004 | not_started | P1 | Security | Extension SecretStorage audit | 민감값이 settings에 남지 않는다 |

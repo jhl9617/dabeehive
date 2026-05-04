@@ -1,0 +1,39 @@
+# SEC-001 Validation Evidence
+
+Date: 2026-05-04 19:51:28 KST
+Branch: poc/SEC-001-api-token-hash
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc --noEmit`
+   - Result: Passed after fix
+   - Notes: Initial run failed on scrypt promisify typing and undefined guard; final server typecheck completed with no output.
+
+2. `pnpm --filter @dabeehive/server exec node -e "<api token hash helper smoke>"`
+   - Result: Passed
+   - Output summary:
+
+```json
+{
+  "version": "api-token-scrypt-v1",
+  "hashLength": 32,
+  "saltLength": 8,
+  "ok": true,
+  "wrong": false,
+  "malformed": false,
+  "leakedPlaintext": false
+}
+```
+
+3. `pnpm lint`
+   - Result: Passed
+   - Output: `basic lint passed`
+
+4. `rg "hashApiToken|verifyApiToken|scrypt|timingSafeEqual|SEC-001" apps/server/src/lib/security track/tasks/SEC-001-api-token-hash.md track/RISKS.md`
+   - Result: Passed
+   - Notes: Helper implementation, task record, and risk entry found.
+
+## Scope Notes
+
+- No plaintext token storage, DB schema change, auth middleware, token generation UI, external integration, deployment, or automatic merge was implemented.
+- SEC-002 remains responsible for applying Bearer auth middleware.
