@@ -1,0 +1,36 @@
+# SEC-003 Validation Evidence
+
+Date: 2026-05-04 20:02:25 KST
+Branch: poc/SEC-003-secret-redaction
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc --noEmit`
+   - Result: Passed
+   - Notes: Server typecheck completed with no output.
+
+2. `pnpm --filter @dabeehive/server exec node -e "<secret redaction helper smoke>"`
+   - Result: Passed
+   - Output summary:
+
+```json
+{
+  "text": "Authorization: Bearer [REDACTED] OPENAI_API_KEY=[REDACTED] https://[REDACTED]@example.com",
+  "apiToken": "[REDACTED]",
+  "normal": "keep",
+  "circular": "[Circular]"
+}
+```
+
+3. `pnpm lint`
+   - Result: Passed
+   - Output: `basic lint passed`
+
+4. `rg "redactSecrets|redactSecretText|REDACTED_SECRET|SEC-003" apps/server/src/lib/security track/tasks/SEC-003-secret-redaction.md track/RISKS.md`
+   - Result: Passed
+   - Notes: Helper implementation, task record, and risk entry found.
+
+## Scope Notes
+
+- No route-wide API/log/artifact integration, storage policy, external integration, deployment, or automatic merge was implemented.
+- Follow-up tasks must wire redaction into SDK event, command, and artifact boundaries.

@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 76 |
+| verified | 77 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 20 |
+| not_started | 19 |
 
 ---
 
@@ -227,7 +227,7 @@ P3 = 후속 확장
 |---|---|---:|---|---|---|
 | SEC-001 | verified | P0 | Security | API token hash utility | token hash/verify가 가능하다 |
 | SEC-002 | verified | P0 | Security | Bearer auth middleware | REST/MCP에서 token 검증이 가능하다 |
-| SEC-003 | not_started | P0 | Security | Secret redaction helper | logs/artifacts에서 secret 패턴이 마스킹된다 |
+| SEC-003 | verified | P0 | Security | Secret redaction helper | logs/artifacts에서 secret 패턴이 마스킹된다 |
 | SEC-004 | not_started | P1 | Security | Extension SecretStorage audit | 민감값이 settings에 남지 않는다 |
 | SEC-005 | not_started | P1 | Security | dangerous command denylist | deploy/delete/pipe shell 등 차단 목록이 있다 |
 | SEC-006 | not_started | P1 | Security | env validation | 서버 시작 시 필수 env 검증이 있다 |
