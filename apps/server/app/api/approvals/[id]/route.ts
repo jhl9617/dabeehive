@@ -27,6 +27,17 @@ const approvalParamsSchema = z.object({
   id: z.string().trim().min(1)
 });
 
+const approvalResponseActionSchema = z.enum([
+  "approve",
+  "reject",
+  "request_changes"
+]);
+const respondApprovalSchema = z.object({
+  action: approvalResponseActionSchema,
+  respondedById: z.string().trim().min(1).nullable().optional(),
+  reason: z.string().trim().min(1).max(100000).nullable().optional()
+});
+
 const approvalSelect = {
   id: true,
   issueId: true,
@@ -47,6 +58,7 @@ const approvalSelect = {
 
 type ApprovalStatus = z.infer<typeof approvalStatusSchema>;
 type ApprovalType = z.infer<typeof approvalTypeSchema>;
+type ApprovalResponseAction = z.infer<typeof approvalResponseActionSchema>;
 type ApprovalRouteContext = {
   params: Promise<{
     id: string;
@@ -87,9 +99,23 @@ type ApprovalFindUniqueArgs = {
   select: typeof approvalSelect;
 };
 
+type ApprovalUpdateArgs = {
+  where: {
+    id: string;
+  };
+  data: {
+    status: Exclude<ApprovalStatus, "pending">;
+    respondedById: string | null;
+    respondedAt: Date;
+    reason?: string | null;
+  };
+  select: typeof approvalSelect;
+};
+
 type ApprovalPrismaClient = {
   approval: {
     findUnique: (args: ApprovalFindUniqueArgs) => Promise<ApprovalRecord | null>;
+    update: (args: ApprovalUpdateArgs) => Promise<ApprovalRecord>;
   };
 };
 
@@ -116,6 +142,71 @@ export async function GET(_request: Request, context: ApprovalRouteContext) {
     return apiSuccess(serializeApproval(approval));
   } catch {
     return apiError("APPROVAL_GET_FAILED", "Failed to get approval.", {
+      status: 500
+    });
+  }
+}
+
+export async function POST(request: Request, context: ApprovalRouteContext) {
+  const params = await validateApprovalParams(context);
+
+  if (!params.success) {
+    return params.response;
+  }
+
+  let body: unknown;
+
+  try {
+    body = await request.json();
+  } catch {
+    return apiError("INVALID_JSON", "Request body must be valid JSON.", {
+      status: 400
+    });
+  }
+
+  const validation = validateInput(respondApprovalSchema, body, {
+    message: "Invalid approval response input."
+  });
+
+  if (!validation.success) {
+    return apiError(validation.error.code, validation.error.message, {
+      status: 400,
+      details: validation.error.details
+    });
+  }
+
+  try {
+    const prisma = (await getPrismaClient()) as unknown as ApprovalPrismaClient;
+    const approval = await prisma.approval.update({
+      where: {
+        id: params.id
+      },
+      data: {
+        status: mapApprovalStatus(validation.data.action),
+        respondedById: validation.data.respondedById ?? null,
+        respondedAt: new Date(),
+        ...(validation.data.reason !== undefined
+          ? {
+              reason: validation.data.reason
+            }
+          : {})
+      },
+      select: approvalSelect
+    });
+
+    return apiSuccess(serializeApproval(approval));
+  } catch (error) {
+    if (hasPrismaErrorCode(error, "P2025")) {
+      return approvalNotFound();
+    }
+
+    if (hasPrismaErrorCode(error, "P2003")) {
+      return apiError("APPROVAL_RESPONDER_NOT_FOUND", "Approval responder does not exist.", {
+        status: 400
+      });
+    }
+
+    return apiError("APPROVAL_RESPOND_FAILED", "Failed to respond to approval.", {
       status: 500
     });
   }
@@ -159,6 +250,20 @@ function approvalNotFound() {
   });
 }
 
+function mapApprovalStatus(
+  action: ApprovalResponseAction
+): Exclude<ApprovalStatus, "pending"> {
+  if (action === "approve") {
+    return "approved";
+  }
+
+  if (action === "reject") {
+    return "rejected";
+  }
+
+  return "changes_requested";
+}
+
 function serializeApproval(approval: ApprovalRecord): ApprovalResponse {
   return {
     ...approval,
@@ -166,4 +271,13 @@ function serializeApproval(approval: ApprovalRecord): ApprovalResponse {
     createdAt: approval.createdAt.toISOString(),
     updatedAt: approval.updatedAt.toISOString()
   };
+}
+
+function hasPrismaErrorCode(error: unknown, code: string): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === code
+  );
 }
