@@ -1,0 +1,43 @@
+# GIT-005 Validation Evidence
+
+Date: 2026-05-04 19:46:12 KST
+Branch: poc/GIT-005-test-result-artifact
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc --noEmit`
+   - Result: Passed
+   - Notes: Server typecheck completed with no output.
+
+2. `pnpm --filter @dabeehive/server exec node -e "<test result artifact helper smoke>"`
+   - Result: Passed
+   - Output summary:
+
+```json
+{
+  "type": "test_report",
+  "title": "Test Result: Passed",
+  "metadata": {
+    "kind": "test_result",
+    "command": "pnpm test",
+    "status": "passed",
+    "exitCode": 0,
+    "durationMs": 10,
+    "startedAt": null,
+    "completedAt": null
+  }
+}
+```
+
+3. `pnpm lint`
+   - Result: Passed
+   - Output: `basic lint passed`
+
+4. `rg "storeTestResultArtifact|buildTestResultArtifactInput|test_report|test-result-artifact" apps/server/src/lib/workflow track/tasks/GIT-005-test-result-artifact.md`
+   - Result: Passed
+   - Notes: Helper implementation and task tracking references found.
+
+## Scope Notes
+
+- No Jira, Slack, Draft PR, GitHub API, automatic merge, custom shell tool loop, or AI code editing engine was implemented.
+- Test result artifact persistence reuses the existing `storeRunArtifact` path.
