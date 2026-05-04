@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 59 |
+| verified | 60 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 37 |
+| not_started | 36 |
 
 ---
 
@@ -163,7 +163,7 @@ P3 = 후속 확장
 | SDK-002 | verified | P0 | SDK | `CodingRunInput` 타입 정의 | runId/issue/workspace/systemInstruction 등이 포함된다 |
 | SDK-003 | verified | P0 | SDK | `CodingAgentEvent` 타입 정의 | message/tool/file/command/test/done 이벤트 타입이 있다 |
 | SDK-004 | verified | P0 | SDK | Claude Agent SDK adapter skeleton | start/cancel 메서드 구조가 있다 |
-| SDK-005 | not_started | P0 | SDK | Planner instruction builder | issue/context 기반 구현 계획 prompt가 생성된다 |
+| SDK-005 | verified | P0 | SDK | Planner instruction builder | issue/context 기반 구현 계획 prompt가 생성된다 |
 | SDK-006 | not_started | P0 | SDK | Coder instruction builder | 승인된 plan 기반 코드 수정 prompt가 생성된다 |
 | SDK-007 | not_started | P0 | SDK | Reviewer instruction builder | diff/test 결과 검토 prompt가 생성된다 |
 | SDK-008 | not_started | P0 | SDK | SDK event normalization | SDK 이벤트가 Orchestrator RunEvent 형태로 변환된다 |

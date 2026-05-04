@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | SDK-005 | verified | Added exported deterministic `buildPlannerInstruction` for provider-neutral implementation planning prompts from issue, project, context documents, and constraints. | Shared typecheck, builder smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-004 | verified | Added exported `ClaudeAgentSdkAdapter` skeleton implementing `LocalCodingAgentAdapter` with start/cancel method structure and no real SDK invocation or package dependency. | Shared typecheck, root lint, and source checks passed. |
 | 2026-05-04 | SDK-003 | verified | Added shared `CodingAgentEvent` matching the normalized run event shape with run id, event type, optional message/metadata, and created timestamp. | Shared typecheck, root lint, and source checks passed. |
 | 2026-05-04 | SDK-002 | verified | Added shared `CodingRunInput` with run, project, issue, workspace, system instruction, and optional context/model metadata, and wired adapter `start` to that input type. | Shared typecheck, root lint, and source checks passed. |
