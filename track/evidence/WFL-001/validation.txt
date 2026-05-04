@@ -1,0 +1,29 @@
+# WFL-001 Validation Evidence
+
+Task: WFL-001 — Run State Machine
+Date: 2026-05-04 19:06:30 KST
+Branch: poc/WFL-001-run-state-machine
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: passed
+   - Notes: shared package typecheck completed with no output.
+
+2. run state machine smoke via `pnpm --filter @dabeehive/server exec node`
+   - Result: passed
+   - Notes: used the existing server TypeScript dependency to transpile `run-state-machine.ts`, executed state helper functions, and verified allowed/blocked transitions, terminal statuses, next states, and assertion error output.
+
+3. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+4. `rg "RUN_STATUS_TRANSITIONS|TERMINAL_RUN_STATUSES|canTransitionRunStatus|getNextRunStatuses|run-state-machine" packages/shared/src track/tasks/WFL-001-run-state-machine.md`
+   - Result: passed
+   - Notes: found transition table, terminal statuses, helper functions, task references, and shared export.
+
+## Scope Notes
+
+- Added deterministic state machine helper only; no workflow orchestration runtime was added.
+- No API route, database write, approval creation, artifact persistence, SDK invocation, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | WFL-001 | verified | Added exported deterministic run state machine with allowed transitions, terminal status detection, next-status lookup, and transition assertion helpers. | Shared typecheck, state machine smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-009 | verified | Added exported deterministic `dispatchRunCancellation` and `buildRunCancellationCommand` helpers that normalize cancellation reason/timestamp and pass the command to adapter `cancel()`. | Shared typecheck, cancellation smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-008 | verified | Added exported deterministic `normalizeCodingAgentEvent` helper for provider-neutral raw SDK event type aliasing, message, metadata/data, and ISO timestamp normalization into `CodingAgentEvent`. | Shared typecheck, event normalization smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | SDK-007 | verified | Added exported deterministic `buildReviewerInstruction` for provider-neutral review prompts from `CodingRunInput`, diff summary, changed files, test results, and review focus. | Shared typecheck, builder smoke via existing TypeScript compiler API, root lint, and source checks passed. |
