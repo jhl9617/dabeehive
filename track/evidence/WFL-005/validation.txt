@@ -1,0 +1,29 @@
+# WFL-005 Validation Evidence
+
+Task: WFL-005 — Artifact Storage Rules
+Date: 2026-05-04 19:23:07 KST
+Branch: poc/WFL-005-artifact-storage-rules
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc --noEmit`
+   - Result: passed
+   - Notes: server typecheck completed with no output.
+
+2. artifact storage helper smoke via `pnpm --filter @dabeehive/server exec node`
+   - Result: passed
+   - Notes: used the existing server TypeScript dependency to transpile `artifact-storage.ts`, executed `storeRunArtifact()`, and verified a fake Prisma `artifact.create()` received normalized `test_report` data plus content-or-uri validation.
+
+3. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+4. `rg "storeRunArtifact|buildRunArtifactData|WorkflowArtifactType|test_report|artifact-storage" apps/server/src/lib/workflow track/tasks/WFL-005-artifact-storage-rules.md`
+   - Result: passed
+   - Notes: found helper, data builder, workflow artifact type, test report type, task references, and source path.
+
+## Scope Notes
+
+- Added server workflow helper only; no public API route was added.
+- No DB schema change, approval flow behavior, SDK invocation, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.
