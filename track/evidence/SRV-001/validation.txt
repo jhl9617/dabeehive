@@ -1,0 +1,80 @@
+# SRV-001 Validation Evidence
+
+Date: 2026-05-04 14:51:55 KST
+Branch: poc/SRV-001-next-app-init
+
+## Commands
+
+### pnpm --filter @dabeehive/server add next@15 react@19 react-dom@19
+
+Exit code: 0
+Result: installed Next.js runtime dependencies after approval.
+
+Installed versions in `apps/server/package.json`:
+
+```json
+"next": "^15.5.15",
+"react": "^19.2.5",
+"react-dom": "^19.2.5"
+```
+
+Next dev also auto-installed TypeScript support because workspace tsconfig files exist:
+
+```json
+"@types/node": "25.6.0",
+"@types/react": "19.2.14",
+"typescript": "6.0.3"
+```
+
+### pnpm --filter @dabeehive/server dev --hostname 127.0.0.1 --port 13001
+
+First sandboxed run:
+
+- Exit code: 0
+- Result: failed to bind `127.0.0.1:13001` with `EPERM`.
+
+Escalated rerun:
+
+- Result: Next.js 15.5.15 dev server started at `http://127.0.0.1:13001`.
+
+### curl -I http://127.0.0.1:13001
+
+Exit code: 0
+Result:
+
+```txt
+HTTP/1.1 200 OK
+X-Powered-By: Next.js
+Content-Type: text/html; charset=utf-8
+```
+
+### pnpm --filter @dabeehive/server build
+
+First run:
+
+- Exit code: 1
+- Result: failed because TypeScript 6 treats `baseUrl` as deprecated without an ignore setting.
+
+Second run after removing `baseUrl` from `apps/server/tsconfig.json`:
+
+- Exit code: 0
+- Result: production build completed successfully.
+
+### pnpm lint
+
+Exit code: 0
+Result:
+
+```txt
+basic lint passed
+```
+
+### rg "SRV-001 \| in_progress|Task ID: SRV-001|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/SRV-001-next-app-init.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
+
+## Notes
+
+- `.next/`, `node_modules/`, `next-env.d.ts`, and tsbuildinfo outputs are ignored and not committed.
+- Unrelated working tree deletion of `docs/codex-implementation-rules.md` was not staged or modified for this task.

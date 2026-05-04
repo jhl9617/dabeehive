@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | SRV-001 | verified | Initialized minimal Next.js 15 App Router server app with dev/build scripts and runtime dependencies. | Dependency install, dev HTTP check, production build, and `pnpm lint` passed. |
 | 2026-05-04 | FND-005 | verified | Added shared package API response and core domain type exports. | Shared type file checks, package export checks, and `pnpm lint` passed. |
 | 2026-05-04 | FND-004 | verified | Added dependency-free basic lint command and formatting policy. | `pnpm lint`; `pnpm run format:check`; package script and editorconfig checks passed. |
 | 2026-05-04 | FND-003 | verified | Added shared TypeScript base config and workspace tsconfig files. | Config file existence, JSON parse, and key-field `rg` checks passed. |
