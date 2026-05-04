@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 23 |
+| verified | 24 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 73 |
+| not_started | 72 |
 
 ---
 
@@ -83,7 +83,7 @@ P3 = 후속 확장
 | DB-006 | verified | P0 | DB | AgentRun 모델 정의 | run 상태와 issue/project 연결이 가능하다 |
 | DB-007 | verified | P0 | DB | RunEvent 모델 정의 | SDK event/tool/command/test 로그 저장이 가능하다 |
 | DB-008 | verified | P0 | DB | Approval 모델 정의 | spec/final/risk approval 저장이 가능하다 |
-| DB-009 | not_started | P0 | DB | Artifact 모델 정의 | plan/diff/test_report/pr_url 저장이 가능하다 |
+| DB-009 | verified | P0 | DB | Artifact 모델 정의 | plan/diff/test_report/pr_url 저장이 가능하다 |
 | DB-010 | not_started | P1 | DB | Seed script 작성 | demo project/issue/document가 생성된다 |
 | DB-011 | not_started | P1 | DB | migration 실행 검증 | local DB에 migrate가 성공한다 |
 | DB-012 | not_started | P1 | DB | Prisma repository layer 작성 | 주요 모델 CRUD 함수가 lib 계층에 있다 |

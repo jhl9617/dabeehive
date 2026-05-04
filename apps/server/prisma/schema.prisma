@@ -76,6 +76,7 @@ model Issue {
   children     Issue[]  @relation("IssueHierarchy")
   runs         AgentRun[]
   approvals    Approval[]
+  artifacts    Artifact[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -120,6 +121,7 @@ model AgentRun {
   issue           Issue?    @relation(fields: [issueId], references: [id], onDelete: SetNull)
   events          RunEvent[]
   approvals       Approval[]
+  artifacts       Artifact[]
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -168,4 +170,24 @@ model Approval {
   @@index([type])
   @@index([requestedById])
   @@index([respondedById])
+}
+
+model Artifact {
+  id        String   @id @default(cuid())
+  runId     String
+  issueId   String?
+  type      String
+  title     String?
+  content   String?  @db.Text
+  uri       String?
+  metadata  Json?
+  run       AgentRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  issue     Issue?   @relation(fields: [issueId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([runId])
+  @@index([issueId])
+  @@index([type])
+  @@index([runId, type])
 }

@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | Artifact schema may blur inline content and external file references. | Medium | Keep separate content, uri, and metadata fields and defer storage backend behavior to API/Git tasks. | open | DB-009 |
 | 2026-05-04 | Approval schema must capture risk and reviewer actions without locking future workflow too early. | Medium | Store type/status as strings and include risk/diff/action metadata while deferring workflow behavior to API tasks. | open | DB-008 |
 | 2026-05-04 | RunEvent metadata can become inconsistent across SDK adapters. | Medium | Normalize event type at the DB boundary and keep adapter-specific payloads in metadata JSON. | open | DB-007 |
 | 2026-05-04 | AgentRun schema must support SDK adapter runs without over-modeling AgentProfile in PoC. | Medium | Store role/provider/model snapshots on AgentRun and defer SDK event details to DB-007. | open | DB-006 |
