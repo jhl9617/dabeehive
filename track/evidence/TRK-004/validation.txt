@@ -1,0 +1,31 @@
+# TRK-004 Validation Evidence
+
+Date: 2026-05-04 14:26:18 KST
+Branch: poc/TRK-004-task-template
+
+## Commands
+
+### rg "File Name|Creation Flow|Status|Validation|Evidence|Risk / Approval" track/templates/task-template.md track/tasks/README.md
+
+Exit code: 0
+Result: Task template and README include the required rule sections.
+
+### rg "not_started \| planned \| in_progress \| blocked \| implemented \| verified \| skipped|track/evidence/<TASK-ID>|Approval Required|Expected Files" track/templates/task-template.md
+
+Exit code: 0
+Result: Task template documents allowed status values, expected files, approval, and evidence requirements.
+
+### rg "<TASK-ID>-<short-slug>|track/templates/task-template.md|track/CURRENT.md|track/MASTER.md|One task file covers one Task ID" track/tasks/README.md
+
+Exit code: 0
+Result: Task README documents naming and task creation flow.
+
+### rg "TRK-004 \| in_progress|Task ID: TRK-004|Status: in_progress" track/MASTER.md track/CURRENT.md track/tasks/TRK-004-task-template.md
+
+Exit code: 0
+Result: Pre-implementation tracking state was recorded before validation.
+
+## Notes
+
+- Session log template was not modified; that belongs to `TRK-005`.
+- Unrelated working tree deletion of `docs/codex-implementation-rules.md` was not staged or modified for this task.
