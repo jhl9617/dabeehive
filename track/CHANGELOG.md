@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | SRV-004 | verified | Added Zod 3.x and a reusable route-agnostic validation helper with normalized issue details. | Dependency install, Next.js build, TypeScript noEmit, and root lint passed. |
 | 2026-05-04 | SRV-003 | verified | Added reusable Next.js API success/error response helpers matching the PoC response contract. | Next.js build, TypeScript noEmit, and root lint passed after replacing a cross-project type import with local structural body types. |
 | 2026-05-04 | SRV-002 | verified | Added basic App Router global styling and a rendered server home/status page. | Next.js production build, root lint, dev server startup, and HTTP 200 smoke check passed. |
 | 2026-05-04 | SRV-001 | verified | Initialized minimal Next.js 15 App Router server app with dev/build scripts and runtime dependencies. | Dependency install, dev HTTP check, production build, and `pnpm lint` passed. |

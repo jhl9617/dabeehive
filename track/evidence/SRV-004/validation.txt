@@ -1,0 +1,71 @@
+# SRV-004 Validation Evidence
+
+Task: SRV-004 — Zod validation helper 작성
+Date: 2026-05-04 15:08:25 KST
+Branch: poc/SRV-004-zod-validation-helper
+
+## Scope
+
+- Added `zod` 3.x to `@dabeehive/server`.
+- Added `apps/server/src/lib/validation.ts`.
+- Implemented `validateInput`, `formatZodIssues`, and validation result/error types.
+
+## Commands
+
+### `pnpm --filter @dabeehive/server add zod@3`
+
+Result: Passed
+
+Key output:
+
+```txt
+WARN GET https://registry.npmjs.org/react-dom error (ENOTFOUND). Will retry in 10 seconds. 2 retries left.
+. | +1 +
+Done in 10.9s using pnpm v10.23.0
+```
+
+Installed version:
+
+```txt
+apps/server/package.json: "zod": "^3.25.76"
+```
+
+### `pnpm --filter @dabeehive/server build`
+
+Result: Passed
+
+Key output:
+
+```txt
+▲ Next.js 15.5.15
+✓ Compiled successfully in 940ms
+✓ Generating static pages (4/4)
+```
+
+### `pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result: Passed
+
+Key output:
+
+```txt
+No output; command exited 0.
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Key output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+## Notes
+
+- Dependency addition approval was recorded in `track/tasks/SRV-004-zod-validation-helper.md` before installation.
+- Existing unrelated working tree deletion remains unstaged: `docs/codex-implementation-rules.md`.
