@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | GIT-004 | verified | Added shared diff summary generator for Git numstat output with totals, binary file count, per-file lines, omitted-file counts, and injected command execution. | Shared typecheck, diff summary smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | GIT-003 | verified | Added shared changed files detector for Git porcelain status output with staged, unstaged, untracked, deleted, renamed, and copied file metadata. | Shared typecheck, changed files smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | GIT-002 | verified | Added shared task branch helpers for stable `poc/<TASK-ID>-slug` names and injected `git switch -c` branch creation. | Shared typecheck, branch helper smoke via existing TypeScript compiler API, root lint, and source checks passed. |
 | 2026-05-04 | GIT-001 | verified | Added shared `parseWorkspaceGitStatus` and injected `getWorkspaceGitStatus` helpers for branch/upstream/ahead/behind/dirty/file status parsing from `git status --short --branch`. | Shared typecheck, git status smoke via existing TypeScript compiler API, root lint, and source checks passed. |

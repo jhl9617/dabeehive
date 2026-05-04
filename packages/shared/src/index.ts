@@ -6,6 +6,7 @@ export type * from "./domain";
 export * from "./event-normalization";
 export * from "./git-branch";
 export * from "./git-changed-files";
+export * from "./git-diff-summary";
 export * from "./git-status";
 export * from "./planner-instruction";
 export * from "./reviewer-instruction";

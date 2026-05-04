@@ -1,0 +1,40 @@
+# GIT-004 Validation Evidence
+
+Date: 2026-05-04 19:41:38 KST
+Branch: poc/GIT-004-diff-summary-generator
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit`
+   - Result: Passed
+   - Notes: Shared package typecheck completed with no output.
+
+2. `pnpm --filter @dabeehive/server exec node -e "<diff summary helper smoke>"`
+   - Result: Passed
+   - Output summary:
+
+```json
+{
+  "totalFiles": 3,
+  "text": "Review diff: 3 files changed (+15/-3, 1 binary file)\n- src/a.ts: +10/-2\n- src/b.ts: +5/-1\n- 1 more file omitted",
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--numstat"
+  ]
+}
+```
+
+3. `pnpm lint`
+   - Result: Passed
+   - Output: `basic lint passed`
+
+4. `rg "getDiffSummary|parseDiffNumstat|buildHumanReadableDiffSummary|git diff --numstat|git-diff-summary" packages/shared/src track/tasks/GIT-004-diff-summary-generator.md`
+   - Result: Passed
+   - Notes: Helper implementation, export, and task tracking references found.
+
+## Scope Notes
+
+- No Jira, Slack, Draft PR, GitHub API, automatic merge, custom shell tool loop, or AI code editing engine was implemented.
+- Diff summary collection remains delegated to an injected command runner and is read-only.
