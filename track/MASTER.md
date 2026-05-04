@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 5 |
+| verified | 6 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 91 |
+| not_started | 90 |
 
 ---
 
@@ -47,7 +47,7 @@ P3 = 후속 확장
 
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
-| FND-001 | not_started | P0 | Foundation | repository package manager 결정 | lockfile과 package manager가 하나로 정리된다 |
+| FND-001 | verified | P0 | Foundation | repository package manager 결정 | lockfile과 package manager가 하나로 정리된다 |
 | FND-002 | not_started | P0 | Foundation | workspace 구조 생성 | `apps/server`, `apps/vscode-extension`, `packages/shared` 또는 동등 구조가 존재한다 |
 | FND-003 | not_started | P0 | Foundation | TypeScript base config 생성 | 공통 tsconfig와 app별 tsconfig가 존재한다 |
 | FND-004 | not_started | P0 | Foundation | lint/format 기본 설정 | lint 명령이 실행 가능하다 |

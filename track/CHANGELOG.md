@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-04 | FND-001 | verified | Selected pnpm as the repository package manager and generated the matching lockfile. | `pnpm --version`; `pnpm install --lockfile-only --ignore-scripts`; package/lockfile checks passed. |
 | 2026-05-04 | TRK-005 | verified | Clarified Codex session log naming, metadata, action, validation, summary, and follow-up recording expectations. | Session log template `rg` checks passed. |
 | 2026-05-04 | TRK-004 | verified | Clarified task file template fields, creation flow, validation, evidence, and approval recording rules. | Template and task README `rg` checks passed. |
 | 2026-05-04 | TRK-003 | verified | `docs/prd.md` exists as the PoC PRD anchor and matches `track/context/prd.md`. | `test -f docs/prd.md`; PRD `rg`; `cmp -s`; `shasum -a 256` passed. |
