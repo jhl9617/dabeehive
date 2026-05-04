@@ -14,6 +14,7 @@ const mcpHandler = createMcpHandler(
     registerRunTools(server);
     registerRunEventTools(server);
     registerApprovalTools(server);
+    registerArtifactTools(server);
   },
   {
     serverInfo: {
@@ -101,6 +102,14 @@ const approvalResponseActionSchema = z.enum([
   "reject",
   "request_changes"
 ]);
+const artifactTypeSchema = z.enum([
+  "plan",
+  "diff",
+  "test_report",
+  "review",
+  "pr_url",
+  "log"
+]);
 
 const projectSelect = {
   id: true,
@@ -178,6 +187,19 @@ const approvalSelect = {
   updatedAt: true
 };
 
+const artifactSelect = {
+  id: true,
+  runId: true,
+  issueId: true,
+  type: true,
+  title: true,
+  content: true,
+  uri: true,
+  metadata: true,
+  createdAt: true,
+  updatedAt: true
+};
+
 type ProjectStatus = z.infer<typeof projectStatusSchema>;
 type IssueType = z.infer<typeof issueTypeSchema>;
 type IssueStatus = z.infer<typeof issueStatusSchema>;
@@ -188,6 +210,7 @@ type RunEventType = z.infer<typeof runEventTypeSchema>;
 type ApprovalStatus = z.infer<typeof approvalStatusSchema>;
 type ApprovalType = z.infer<typeof approvalTypeSchema>;
 type ApprovalResponseAction = z.infer<typeof approvalResponseActionSchema>;
+type ArtifactType = z.infer<typeof artifactTypeSchema>;
 type JsonObject = Record<string, unknown>;
 
 type ProjectRecord = {
@@ -295,6 +318,24 @@ type ApprovalResponse = Omit<
   "respondedAt" | "createdAt" | "updatedAt"
 > & {
   respondedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type ArtifactRecord = {
+  id: string;
+  runId: string;
+  issueId: string | null;
+  type: ArtifactType;
+  title: string | null;
+  content: string | null;
+  uri: string | null;
+  metadata: JsonObject | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type ArtifactResponse = Omit<ArtifactRecord, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
 };
@@ -465,6 +506,33 @@ type ApprovalPrismaClient = {
     findMany: (args: ApprovalFindManyArgs) => Promise<ApprovalRecord[]>;
     create: (args: ApprovalCreateArgs) => Promise<ApprovalRecord>;
     update: (args: ApprovalUpdateArgs) => Promise<ApprovalRecord>;
+  };
+};
+
+type ArtifactFindUniqueArgs = {
+  where: {
+    id: string;
+  };
+  select: typeof artifactSelect;
+};
+
+type ArtifactCreateArgs = {
+  data: {
+    runId: string;
+    issueId: string | null;
+    type: ArtifactType;
+    title: string | null;
+    content: string | null;
+    uri: string | null;
+    metadata: JsonObject | null;
+  };
+  select: typeof artifactSelect;
+};
+
+type ArtifactPrismaClient = {
+  artifact: {
+    findUnique: (args: ArtifactFindUniqueArgs) => Promise<ArtifactRecord | null>;
+    create: (args: ArtifactCreateArgs) => Promise<ArtifactRecord>;
   };
 };
 
@@ -928,6 +996,105 @@ function registerApprovalTools(server: McpServer): void {
   );
 }
 
+function registerArtifactTools(server: McpServer): void {
+  server.registerTool(
+    "artifact.create",
+    {
+      title: "Create artifact",
+      description: "Create an orchestrator run artifact.",
+      inputSchema: {
+        runId: z.string().trim().min(1),
+        issueId: z.string().trim().min(1).nullable().optional(),
+        type: artifactTypeSchema,
+        title: z.string().trim().min(1).max(200).nullable().optional(),
+        content: z.string().trim().min(1).max(1000000).nullable().optional(),
+        uri: z.string().trim().min(1).max(2000).nullable().optional(),
+        metadata: z.record(z.unknown()).nullable().optional()
+      }
+    },
+    async (args) => {
+      if (!args.content && !args.uri) {
+        return artifactToolError(
+          "ARTIFACT_CONTENT_OR_URI_REQUIRED",
+          "Artifact content or uri must be provided."
+        );
+      }
+
+      try {
+        const prisma =
+          (await getPrismaClient()) as unknown as ArtifactPrismaClient;
+        const artifact = await prisma.artifact.create({
+          data: {
+            runId: args.runId,
+            issueId: args.issueId ?? null,
+            type: args.type,
+            title: args.title ?? null,
+            content: args.content ?? null,
+            uri: args.uri ?? null,
+            metadata: args.metadata ?? null
+          },
+          select: artifactSelect
+        });
+
+        return jsonToolResult({
+          data: serializeArtifact(artifact)
+        });
+      } catch (error) {
+        if (hasPrismaErrorCode(error, "P2003")) {
+          return artifactToolError(
+            "ARTIFACT_RUN_OR_ISSUE_NOT_FOUND",
+            "Artifact run or issue does not exist."
+          );
+        }
+
+        return artifactToolError(
+          "ARTIFACT_CREATE_FAILED",
+          "Failed to create artifact."
+        );
+      }
+    }
+  );
+
+  server.registerTool(
+    "artifact.get",
+    {
+      title: "Get artifact",
+      description: "Get one orchestrator artifact by id.",
+      inputSchema: {
+        id: z.string().trim().min(1)
+      }
+    },
+    async ({ id }) => {
+      try {
+        const prisma =
+          (await getPrismaClient()) as unknown as ArtifactPrismaClient;
+        const artifact = await prisma.artifact.findUnique({
+          where: {
+            id
+          },
+          select: artifactSelect
+        });
+
+        if (!artifact) {
+          return artifactToolError(
+            "ARTIFACT_NOT_FOUND",
+            "Artifact was not found."
+          );
+        }
+
+        return jsonToolResult({
+          data: serializeArtifact(artifact)
+        });
+      } catch {
+        return artifactToolError(
+          "ARTIFACT_GET_FAILED",
+          "Failed to get artifact."
+        );
+      }
+    }
+  );
+}
+
 function verifyBearerToken(
   _request: Request,
   bearerToken?: string
@@ -987,6 +1154,14 @@ function serializeApproval(approval: ApprovalRecord): ApprovalResponse {
   };
 }
 
+function serializeArtifact(artifact: ArtifactRecord): ArtifactResponse {
+  return {
+    ...artifact,
+    createdAt: artifact.createdAt.toISOString(),
+    updatedAt: artifact.updatedAt.toISOString()
+  };
+}
+
 function mapApprovalStatus(
   action: ApprovalResponseAction
 ): Exclude<ApprovalStatus, "pending"> {
@@ -1026,6 +1201,18 @@ function runToolError(code: string, message: string) {
 }
 
 function approvalToolError(code: string, message: string) {
+  return jsonToolResult(
+    {
+      error: {
+        code,
+        message
+      }
+    },
+    true
+  );
+}
+
+function artifactToolError(code: string, message: string) {
   return jsonToolResult(
     {
       error: {
