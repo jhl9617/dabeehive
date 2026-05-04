@@ -1,0 +1,29 @@
+# WFL-002 Validation Evidence
+
+Task: WFL-002 — Plan Approval Flow
+Date: 2026-05-04 19:11:13 KST
+Branch: poc/WFL-002-plan-approval-flow
+
+## Commands
+
+1. `pnpm --filter @dabeehive/server exec tsc --noEmit`
+   - Result: passed
+   - Notes: server typecheck completed with no output.
+
+2. plan approval helper smoke via `pnpm --filter @dabeehive/server exec node`
+   - Result: passed
+   - Notes: used the existing server TypeScript dependency to transpile `plan-approval.ts`, executed `createPlanApproval()`, and verified a fake Prisma `approval.create()` received pending `spec_approval` data linked to run and issue.
+
+3. `pnpm lint`
+   - Result: passed
+   - Output: `basic lint passed`
+
+4. `rg "createPlanApproval|buildPlanApprovalData|PLAN_APPROVAL_TYPE|spec_approval|plan-approval" apps/server/src/lib/workflow track/tasks/WFL-002-plan-approval-flow.md`
+   - Result: passed
+   - Notes: found helper, data builder, spec approval type, task references, and source path.
+
+## Scope Notes
+
+- Added server workflow helper only; no public API route was added.
+- No DB schema change, approval response/resume behavior, final diff approval, artifact persistence, SDK invocation, shell loop, or patch loop was added.
+- Existing unrelated working tree deletion `docs/codex-implementation-rules.md` was not touched.

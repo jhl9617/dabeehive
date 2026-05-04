@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 65 |
+| verified | 66 |
 | implemented | 0 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 31 |
+| not_started | 30 |
 
 ---
 
@@ -181,7 +181,7 @@ P3 = 후속 확장
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
 | WFL-001 | verified | P0 | Workflow | Run state machine 정의 | queued/planning/waiting/coding/reviewing/succeeded/failed 상태가 있다 |
-| WFL-002 | not_started | P0 | Workflow | Plan approval 생성 흐름 | Planner 결과 후 approval이 생성된다 |
+| WFL-002 | verified | P0 | Workflow | Plan approval 생성 흐름 | Planner 결과 후 approval이 생성된다 |
 | WFL-003 | not_started | P0 | Workflow | Approval respond 후 run 재개 | 승인 후 다음 단계로 진행 가능하다 |
 | WFL-004 | not_started | P0 | Workflow | Final diff approval 흐름 | 코드 수정 후 최종 승인을 요청한다 |
 | WFL-005 | not_started | P0 | Workflow | Artifact 저장 규칙 구현 | plan/diff/test/review artifact가 저장된다 |
