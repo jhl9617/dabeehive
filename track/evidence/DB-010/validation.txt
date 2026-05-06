@@ -1,0 +1,62 @@
+DB-010 validation evidence
+Date: 2026-05-06 11:05:37 KST
+Branch: poc/DB-010-seed-script
+
+Changes:
+- No product source changes.
+- Existing apps/server/prisma/seed.cjs was validated for DB-010 scope.
+
+Command: node -c apps/server/prisma/seed.cjs
+Result: PASS
+Summary:
+- Seed script syntax is valid.
+
+Command: rg "prisma.project.upsert" apps/server/prisma/seed.cjs
+Result: PASS
+Output:
+- const project = await prisma.project.upsert({
+
+Command: rg "prisma.issue.upsert" apps/server/prisma/seed.cjs
+Result: PASS
+Output:
+- const issue = await prisma.issue.upsert({
+
+Command: rg "prisma.document.upsert" apps/server/prisma/seed.cjs
+Result: PASS
+Output:
+- const document = await prisma.document.upsert({
+
+Command: DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+- Prisma schema loaded from prisma/schema.prisma.
+- The schema is valid.
+- Prisma emitted the existing package.json#prisma deprecation warning.
+
+Command: pg_isready -h localhost -p 55432
+Result: FAILED / BLOCKER
+Summary:
+- localhost:55432 returned no response.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma db seed --schema prisma/schema.prisma
+Result: FAILED / BLOCKER
+Summary:
+- Prisma invoked the configured seed command: node prisma/seed.cjs.
+- The seed failed at prisma.user.upsert().
+- Prisma could not reach database server at localhost:55432.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: node scripts/track-status.mjs --task DB-010 --status implemented
+Result: PASS
+Output summary:
+- updated: DB-010 in_progress -> implemented
+- file: track/MASTER.md
+- total=131; not_started=41, planned=0, in_progress=0, blocked=1, implemented=4, verified=85, skipped=0
+
+Status:
+- DB-010 is implemented, not verified.
+- Actual demo project/issue/document insertion requires a reachable local PostgreSQL database.

@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | DB-010 | implemented | Confirmed the existing Prisma seed script contains demo project, issue, document, and related PoC data upserts; actual DB execution remains blocked by missing local PostgreSQL. | Seed syntax/source checks, Prisma schema validation, and root lint passed; `prisma db seed` failed because PostgreSQL at `localhost:55432` is unreachable. |
 | 2026-05-06 | SRV-007 | verified | Added root App Router error and not-found pages with shared state-page styling and recovery actions, without changing API error contracts. | Server typecheck, Next build, source checks, root lint, and MASTER status helper passed. |
 | 2026-05-06 | SRV-006 | verified | Added dependency-free server logger wrapper with JSON console sink, API request/error helpers, run event helper, child context, injectable sink/clock, min-level filtering, error normalization, and secret redaction. | Server typecheck, source checks, root lint, and MASTER status helper passed. |
 | 2026-05-06 | FND-007 | verified | Added root README with local PoC setup, database, server, validation, REST/MCP smoke, VS Code extension, known blocker, and tracking instructions. | README existence/content checks, excluded env setup check, root lint, and MASTER status helper passed. |
