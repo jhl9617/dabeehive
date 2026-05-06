@@ -5,6 +5,7 @@ export * from "./blocked-command-detector";
 export * from "./claude-agent-sdk-adapter";
 export * from "./coder-instruction";
 export type * from "./domain";
+export * from "./dry-run";
 export * from "./event-normalization";
 export * from "./git-branch";
 export * from "./git-changed-files";

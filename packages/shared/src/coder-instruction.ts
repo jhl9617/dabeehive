@@ -14,6 +14,14 @@ export type CoderInstructionInput = {
 
 export function buildCoderInstruction(input: CoderInstructionInput): string {
   const { issue, project, workspace } = input.run;
+  const dryRunInstructions = input.run.dryRun
+    ? [
+        "",
+        "Dry Run:",
+        "- Validate the prompt, approved plan, constraints, and validation commands only.",
+        "- Do not modify files or run commands while dry-run mode is enabled."
+      ]
+    : [];
 
   return [
     "You are the coder for a local coding agent run.",
@@ -45,6 +53,7 @@ export function buildCoderInstruction(input: CoderInstructionInput): string {
     "",
     "Allowed Tools:",
     ...formatAllowedTools(input.run.allowedTools),
+    ...dryRunInstructions,
     "",
     "Output Requirements:",
     "- Modify only files required by the approved plan.",
