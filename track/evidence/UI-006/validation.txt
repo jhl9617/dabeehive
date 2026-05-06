@@ -1,0 +1,45 @@
+# UI-006 Validation Evidence
+
+Validated At: 2026-05-06 15:21:59 KST
+
+## Commands
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Notes:
+
+- Next.js production build compiled successfully.
+- `/approvals/[id]` appeared in the route table as a dynamic server-rendered route.
+- Server action compilation completed successfully.
+
+### `pnpm lint`
+
+Result: Passed
+
+Notes:
+
+- `scripts/lint-basic.mjs` completed with `basic lint passed`.
+
+### Source Checks
+
+Command:
+
+```txt
+rg -n "Approval detail|respondApproval|status = action === \"approve\"|approved|rejected|action-form|action-row|Approval action failed|Approval updated|/api/approvals|revalidatePath" 'apps/server/app/approvals/[id]/page.js' apps/server/app/globals.css
+```
+
+Result: Passed
+
+Command:
+
+```txt
+rg -n "Approve|Reject|name=\"action\"|value=\"approve\"|value=\"reject\"|respondedAt|respondedById" 'apps/server/app/approvals/[id]/page.js'
+```
+
+Result: Passed
+
+Notes:
+
+- Confirmed detail route, server action, approve/reject status mapping, form controls, response fields, action banners, links, revalidation, and CSS hooks.

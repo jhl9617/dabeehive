@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 113 |
+| verified | 114 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 10 |
+| not_started | 9 |
 
 ---
 
@@ -215,7 +215,7 @@ P3 = 후속 확장
 | UI-003 | verified | P1 | UI | Issue list page | 이슈 목록과 생성 버튼이 있다 |
 | UI-004 | verified | P1 | UI | Run detail page | run 상태/event/artifact가 보인다 |
 | UI-005 | verified | P1 | UI | Approval list page | pending approval 목록이 보인다 |
-| UI-006 | not_started | P1 | UI | Approval detail action | approve/reject가 가능하다 |
+| UI-006 | verified | P1 | UI | Approval detail action | approve/reject가 가능하다 |
 | UI-007 | not_started | P2 | UI | Artifact viewer | markdown/test/diff artifact를 볼 수 있다 |
 | UI-008 | not_started | P2 | UI | basic loading/error states | 기본 로딩/에러 상태가 있다 |
 
