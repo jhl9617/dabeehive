@@ -1,0 +1,50 @@
+TST-006 validation evidence
+Date: 2026-05-06 10:32:47 KST
+Branch: poc/TST-006-sdk-fake-run
+
+Changes:
+- Added scripts/sdk-fake-run-smoke.mjs.
+- The script loads existing shared TypeScript source in memory, uses normalizeCodingAgentEvent and dispatchRunCancellation, and does not call a real external SDK.
+
+Command: pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: pnpm --filter @dabeehive/server exec node ../../scripts/sdk-fake-run-smoke.mjs
+Result: PASS
+Output summary:
+{
+  "adapter": "fake-local-coding-agent",
+  "runId": "fake-run-001",
+  "adapterRunId": "fake-adapter-run-001",
+  "events": [
+    "message",
+    "tool_call",
+    "tool_result",
+    "file_change",
+    "command",
+    "test_result",
+    "done"
+  ],
+  "cancellation": {
+    "runId": "fake-run-001",
+    "reason": "stop fake run",
+    "requestedAt": "2026-05-06T01:30:00.000Z"
+  }
+}
+
+Command: node -c scripts/sdk-fake-run-smoke.mjs
+Result: PASS
+Summary:
+- Smoke script syntax is valid.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Status:
+- TST-006 is verified.
+- No real external coding SDK was invoked.
+- No custom AI code editing engine was implemented.
