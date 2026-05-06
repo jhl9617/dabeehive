@@ -4,6 +4,8 @@ import type { ExtensionContext, Thenable } from "vscode";
 import { OrchestratorClient } from "./orchestratorClient";
 import type {
   ApprovalResponseAction,
+  ArtifactType,
+  OrchestratorArtifact,
   OrchestratorApproval,
   OrchestratorIssue,
   OrchestratorProject,
@@ -24,7 +26,16 @@ const CREATE_ISSUE_COMMAND = "dabeehive.createIssue";
 const START_RUN_COMMAND = "dabeehive.startRun";
 const OPEN_RUN_CONSOLE_COMMAND = "dabeehive.openRunConsole";
 const OPEN_APPROVAL_PANEL_COMMAND = "dabeehive.openApprovalPanel";
+const OPEN_ARTIFACT_VIEWER_COMMAND = "dabeehive.openArtifactViewer";
 const DEFAULT_AGENT_ROLE = "planner";
+const ARTIFACT_TYPES = [
+  "plan",
+  "diff",
+  "test_report",
+  "review",
+  "pr_url",
+  "log"
+] as const;
 const RUN_STATUS_ORDER = [
   "queued",
   "planning",
@@ -314,6 +325,11 @@ export function activate(context: ExtensionContext): void {
       openApprovalPanel(context, argument)
     )
   );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(OPEN_ARTIFACT_VIEWER_COMMAND, (argument) =>
+      openArtifactViewer(context, argument)
+    )
+  );
 
   VIEW_IDS.forEach((viewId) => {
     if (viewId === "dabeehive.views.issues") {
@@ -591,6 +607,49 @@ async function openApprovalPanel(
   }
 }
 
+async function openArtifactViewer(
+  context: ExtensionContext,
+  argument: unknown
+): Promise<void> {
+  const selectedRun = getRunFromCommandArgument(argument);
+  const runId = selectedRun?.id ?? (await promptRequiredInput("Run ID"));
+
+  if (!runId) {
+    return;
+  }
+
+  const artifactType = await promptArtifactType();
+
+  if (artifactType === undefined) {
+    return;
+  }
+
+  const panel = vscode.window.createWebviewPanel(
+    "dabeehive.artifactViewer",
+    `Artifacts ${formatShortId(runId)}`,
+    vscode.ViewColumn.Active,
+    {
+      enableScripts: false
+    }
+  );
+  panel.webview.html = renderArtifactViewerLoadingHtml(runId);
+
+  try {
+    const client = await createOrchestratorClient(context);
+    const artifacts = await client.listArtifacts({
+      runId,
+      ...(artifactType ? { type: artifactType } : {})
+    });
+    panel.title = `Artifacts ${formatShortId(runId)}`;
+    panel.webview.html = renderArtifactViewerHtml(runId, artifactType, artifacts);
+  } catch {
+    panel.webview.html = renderArtifactViewerErrorHtml(runId);
+    await vscode.window.showWarningMessage(
+      "Dabeehive artifact viewer failed to load."
+    );
+  }
+}
+
 async function promptRequiredInput(prompt: string): Promise<string | undefined> {
   const input = await vscode.window.showInputBox({
     ignoreFocusOut: true,
@@ -609,6 +668,30 @@ async function promptRequiredInput(prompt: string): Promise<string | undefined> 
   }
 
   return trimmedInput;
+}
+
+async function promptArtifactType(): Promise<ArtifactType | null | undefined> {
+  const input = await vscode.window.showInputBox({
+    ignoreFocusOut: true,
+    prompt: "Artifact type filter (optional: plan, diff, test_report, review, pr_url, log)"
+  });
+
+  if (input === undefined) {
+    return undefined;
+  }
+
+  const trimmedInput = input.trim();
+
+  if (!trimmedInput) {
+    return null;
+  }
+
+  if (isArtifactType(trimmedInput)) {
+    return trimmedInput;
+  }
+
+  await vscode.window.showWarningMessage("Unsupported artifact type.");
+  return undefined;
 }
 
 function getIssueFromCommandArgument(argument: unknown): OrchestratorIssue | undefined {
@@ -693,6 +776,10 @@ function getApprovalActionFromMessage(
   }
 
   return undefined;
+}
+
+function isArtifactType(value: string): value is ArtifactType {
+  return (ARTIFACT_TYPES as readonly string[]).includes(value);
 }
 
 async function refreshOrchestrator(
@@ -928,6 +1015,112 @@ function renderApprovalPanelHtml(
     body,
     nonce
   );
+}
+
+function renderArtifactViewerLoadingHtml(runId: string): string {
+  return renderRunConsoleShell(
+    `Artifacts ${escapeHtml(formatShortId(runId))}`,
+    `<p class="muted">Loading artifacts...</p>`
+  );
+}
+
+function renderArtifactViewerErrorHtml(runId: string): string {
+  return renderRunConsoleShell(
+    `Artifacts ${escapeHtml(formatShortId(runId))}`,
+    `<p class="error">Unable to load artifacts.</p>`
+  );
+}
+
+function renderArtifactViewerHtml(
+  runId: string,
+  artifactType: ArtifactType | null,
+  artifacts: OrchestratorArtifact[]
+): string {
+  const summaryRows = [
+    ["Run", formatShortId(runId)],
+    ["Type", artifactType ?? "all"],
+    ["Count", String(artifacts.length)]
+  ];
+  const body = `
+    <dl class="summary">
+      ${summaryRows
+        .map(
+          ([label, value]) => `
+            <div>
+              <dt>${escapeHtml(label)}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>`
+        )
+        .join("")}
+    </dl>
+    <section>
+      <h2>Artifacts</h2>
+      ${renderArtifacts(artifacts)}
+    </section>`;
+
+  return renderRunConsoleShell(
+    `Artifacts ${escapeHtml(formatShortId(runId))}`,
+    body
+  );
+}
+
+function renderArtifacts(artifacts: OrchestratorArtifact[]): string {
+  if (artifacts.length === 0) {
+    return `<p class="muted">No artifacts found.</p>`;
+  }
+
+  return `
+    <div class="events">
+      ${artifacts
+        .map(
+          (artifact) => `
+            <article class="event">
+              <div class="event-header">
+                <span class="event-type">${escapeHtml(formatArtifactTitle(artifact))}</span>
+                <span class="event-time">${escapeHtml(formatDateTime(artifact.createdAt))}</span>
+              </div>
+              ${renderArtifactMetadata(artifact)}
+              ${renderArtifactContent(artifact)}
+              ${renderMetadata(artifact.metadata)}
+            </article>`
+        )
+        .join("")}
+    </div>`;
+}
+
+function renderArtifactMetadata(artifact: OrchestratorArtifact): string {
+  const metadataRows = [
+    ["ID", artifact.id],
+    ["Type", artifact.type],
+    ["Issue", artifact.issueId ? formatShortId(artifact.issueId) : "none"],
+    ["Updated", formatDateTime(artifact.updatedAt)]
+  ];
+
+  return `
+    <dl class="summary">
+      ${metadataRows
+        .map(
+          ([label, value]) => `
+            <div>
+              <dt>${escapeHtml(label)}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>`
+        )
+        .join("")}
+    </dl>
+    ${artifact.uri ? `<p class="muted">${escapeHtml(artifact.uri)}</p>` : ""}`;
+}
+
+function renderArtifactContent(artifact: OrchestratorArtifact): string {
+  if (!artifact.content?.trim()) {
+    return artifact.uri ? "" : `<p class="muted">No inline content.</p>`;
+  }
+
+  return `<pre>${escapeHtml(artifact.content)}</pre>`;
+}
+
+function formatArtifactTitle(artifact: OrchestratorArtifact): string {
+  return artifact.title?.trim() || formatApprovalType(artifact.type);
 }
 
 function renderApprovalPanelShell(

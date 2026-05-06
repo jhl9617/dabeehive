@@ -74,6 +74,33 @@ export type OrchestratorRunDetail = OrchestratorRun & {
   events: OrchestratorRunEvent[];
 };
 
+export type ArtifactType =
+  | "plan"
+  | "diff"
+  | "test_report"
+  | "review"
+  | "pr_url"
+  | "log";
+
+export type OrchestratorArtifact = {
+  id: string;
+  runId: string;
+  issueId: string | null;
+  type: ArtifactType;
+  title: string | null;
+  content: string | null;
+  uri: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ListArtifactsInput = {
+  runId?: string;
+  issueId?: string;
+  type?: ArtifactType;
+};
+
 export type CreateRunInput = {
   projectId: string;
   issueId?: string | null;
@@ -169,6 +196,28 @@ export class OrchestratorClient {
       method: "POST",
       body: input
     });
+  }
+
+  listArtifacts(input: ListArtifactsInput): Promise<OrchestratorArtifact[]> {
+    const searchParams = new URLSearchParams();
+
+    if (input.runId) {
+      searchParams.set("runId", input.runId);
+    }
+
+    if (input.issueId) {
+      searchParams.set("issueId", input.issueId);
+    }
+
+    if (input.type) {
+      searchParams.set("type", input.type);
+    }
+
+    const query = searchParams.toString();
+
+    return this.request<OrchestratorArtifact[]>(
+      query ? `/api/artifacts?${query}` : "/api/artifacts"
+    );
   }
 
   listPendingApprovals(): Promise<OrchestratorApproval[]> {

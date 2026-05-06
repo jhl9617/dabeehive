@@ -1,0 +1,29 @@
+EXT-013 validation evidence
+Date: 2026-05-06
+Branch: poc/EXT-013-artifact-diff-view
+
+Commands:
+
+1. pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+Result: PASS
+Notes: No-emit TypeScript validation passed through the existing workspace TypeScript executable.
+
+2. pnpm --filter @dabeehive/vscode-extension run compile
+Result: PASS
+Output:
+> @dabeehive/vscode-extension@0.0.0 compile /Users/jongha/Documents/repository/dabeehive/apps/vscode-extension
+> pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json
+
+3. pnpm lint
+Result: PASS
+Output:
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+basic lint passed
+
+4. rg -n 'openArtifactViewer|listArtifacts|OrchestratorArtifact|ArtifactType|/api/artifacts|enableScripts: false|renderArtifactViewer|dabeehive.openArtifactViewer' apps/vscode-extension/package.json apps/vscode-extension/src/extension.ts apps/vscode-extension/src/orchestratorClient.ts
+Result: PASS
+Notes: Confirmed command contribution, artifact list client method, artifact types, read-only webview configuration, viewer rendering, and existing REST API path.
+
+Conclusion:
+EXT-013 is verified with no-emit typecheck, extension compile, root lint, and source checks. Runtime webview interaction was not launched inside VS Code in this session.
