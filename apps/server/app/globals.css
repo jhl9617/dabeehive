@@ -437,6 +437,26 @@ select {
   white-space: pre-wrap;
 }
 
+.artifact-content {
+  max-width: 100%;
+  max-height: 70vh;
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
 .detail-link {
   color: var(--accent);
   font-weight: 700;

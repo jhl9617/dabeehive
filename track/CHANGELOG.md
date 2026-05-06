@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | UI-007 | verified | Added a dynamic read-only `/artifacts/[id]` viewer for artifact metadata, run/issue context, URI fallback, JSON metadata, and fixed-width markdown/test/diff/review/log content, with run detail links into the viewer. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-006 | verified | Added a dynamic `/approvals/[id]` detail page with review evidence and a pending-only server-action form that updates approvals to approved or rejected, revalidating list/detail pages without changing auth or responder identity. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-005 | verified | Added a dynamic read-only `/approvals` page showing pending approvals with type, risk, changed file count, issue/run context, required action, diff summary, timestamps, and detail API links while leaving response actions to UI-006. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-004 | verified | Added a dynamic read-only `/runs/[id]` page showing run status, project/issue/model metadata, timing, event/artifact/approval counts, recent events, artifacts, and missing/unavailable states. | Server Next build, root lint, and quoted source checks passed. |

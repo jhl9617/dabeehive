@@ -197,7 +197,11 @@ export default async function RunDetailPage({ params }) {
                   {run.artifacts.map((artifact) => (
                     <div className="detail-item" key={artifact.id}>
                       <div className="detail-item-header">
-                        <strong>{artifact.title || artifact.type}</strong>
+                        <strong>
+                          <a className="detail-link" href={`/artifacts/${artifact.id}`}>
+                            {artifact.title || artifact.type}
+                          </a>
+                        </strong>
                         <span>{formatDate(artifact.createdAt)}</span>
                       </div>
                       <p>{artifact.type}</p>
@@ -210,6 +214,9 @@ export default async function RunDetailPage({ params }) {
                           {summarizeText(artifact.content, "No inline artifact content.")}
                         </pre>
                       )}
+                      <a className="detail-link" href={`/artifacts/${artifact.id}`}>
+                        Open artifact viewer
+                      </a>
                     </div>
                   ))}
                 </div>

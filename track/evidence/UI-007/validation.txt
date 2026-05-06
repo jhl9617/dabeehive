@@ -1,0 +1,36 @@
+# UI-007 Validation Evidence
+
+Validated At: 2026-05-06 15:25:58 KST
+
+## Commands
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Notes:
+
+- Next.js production build compiled successfully.
+- `/artifacts/[id]` appeared in the route table as a dynamic server-rendered route.
+
+### `pnpm lint`
+
+Result: Passed
+
+Notes:
+
+- `scripts/lint-basic.mjs` completed with `basic lint passed`.
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "Artifact viewer|loadArtifact|getPrismaClient|Artifact data unavailable|Artifact not found|artifact-content|metadata-preview|/api/artifacts|Open artifact viewer|/artifacts/" 'apps/server/app/artifacts/[id]/page.js' 'apps/server/app/runs/[id]/page.js' apps/server/app/globals.css
+```
+
+Result: Passed
+
+Notes:
+
+- Confirmed artifact viewer route, Prisma loader, unavailable/missing states, fixed-width content styling, metadata display, API link, and run detail viewer links.
