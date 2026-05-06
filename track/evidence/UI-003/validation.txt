@@ -1,0 +1,37 @@
+# UI-003 Validation Evidence
+
+Validated At: 2026-05-06 15:08:28 KST
+
+## Commands
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Notes:
+
+- Next.js production build compiled successfully.
+- `/issues` appeared in the route table as a dynamic server-rendered route.
+- Type/lint checks performed by Next build completed successfully.
+
+### `pnpm lint`
+
+Result: Passed
+
+Notes:
+
+- `scripts/lint-basic.mjs` completed with `basic lint passed`.
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "Issue list|Create Issue|loadIssues|getPrismaClient|Issue data unavailable|resource-list|_count|summarizeBody|/api/issues" apps/server/app/issues/page.js
+```
+
+Result: Passed
+
+Notes:
+
+- Confirmed `/issues` page structure, create action, Prisma loader, unavailable-state copy, related record counts, body summary, and API link.
