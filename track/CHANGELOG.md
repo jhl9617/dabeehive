@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | API-014 | verified | Added `GET /api/runs/[id]/stream` with Zod query/route validation, SSE formatting, DB-backed run/event polling, cursor resume support, and terminal/error stream events without adding external queue or integration dependencies. | Server typecheck, Next build, root lint, and SSE source checks passed; local PostgreSQL was unavailable for DB-backed runtime smoke. |
 | 2026-05-06 | DB-012 | verified | Added additive server DB repository helper layer for projects, issues, documents, agent runs, run events, approvals, and artifacts without refactoring existing routes. | Server typecheck, source checks, root lint, and MASTER status helper passed. |
 | 2026-05-06 | DB-011 | blocked | Confirmed the initial Prisma migration artifact and valid schema, then recorded that local migration execution is blocked because PostgreSQL at `localhost:55432` is unreachable. | Migration artifact check, Prisma schema validation, and root lint passed; `prisma migrate deploy` failed due unreachable local DB. |
 | 2026-05-06 | DB-010 | implemented | Confirmed the existing Prisma seed script contains demo project, issue, document, and related PoC data upserts; actual DB execution remains blocked by missing local PostgreSQL. | Seed syntax/source checks, Prisma schema validation, and root lint passed; `prisma db seed` failed because PostgreSQL at `localhost:55432` is unreachable. |

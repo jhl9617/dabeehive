@@ -1,0 +1,72 @@
+# API-014 Validation Evidence
+
+Date: 2026-05-06
+Task: API-014 — Run SSE stream API
+
+## Commands
+
+### TypeScript noEmit
+
+Command:
+`pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result:
+Passed with no output.
+
+### Next.js production build
+
+Command:
+`pnpm --filter @dabeehive/server run build`
+
+Result:
+Passed. Build output included:
+
+```txt
+✓ Compiled successfully
+└ ƒ /api/runs/[id]/stream                  165 B         102 kB
+```
+
+Note:
+The existing Next.js warning remains:
+`TypeScript project references are not fully supported. Attempting to build in incremental mode.`
+
+### Root lint
+
+Command:
+`pnpm lint`
+
+Result:
+Passed.
+
+```txt
+basic lint passed
+```
+
+### SSE source check
+
+Command:
+`rg -n "text/event-stream|run\\.event|run\\.status|ReadableStream|last-event-id" 'apps/server/app/api/runs/[id]/stream/route.ts'`
+
+Result:
+Passed. The route contains:
+
+- `Content-Type: text/event-stream; charset=utf-8`
+- `ReadableStream<Uint8Array>`
+- `last-event-id` cursor support
+- `run.status` events
+- `run.event` events
+
+### Local PostgreSQL readiness
+
+Command:
+`pg_isready -h localhost -p 55432`
+
+Result:
+Failed because the local database is not running.
+
+```txt
+localhost:55432 - no response
+```
+
+Impact:
+DB-backed end-to-end SSE runtime smoke for an existing persisted run was not executable in this environment. API-014 validation used typecheck, production build route discovery, lint, and source checks.
