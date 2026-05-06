@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 96 |
-| verified | 78 |
+| verified | 79 |
 | implemented | 3 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 15 |
+| not_started | 14 |
 
 ---
 
@@ -243,7 +243,7 @@ P3 = 후속 확장
 | TST-002 | implemented | P0 | Test | DB migrate/seed 검증 | demo data가 생성된다 |
 | TST-003 | implemented | P0 | Test | REST happy path 검증 | project→issue→run→approval 흐름이 동작한다 |
 | TST-004 | implemented | P0 | Test | MCP smoke 검증 | 핵심 MCP tools 호출이 성공한다 |
-| TST-005 | not_started | P0 | Test | Extension activation 검증 | extension host에서 activate 된다 |
+| TST-005 | verified | P0 | Test | Extension activation 검증 | extension host에서 activate 된다 |
 | TST-006 | not_started | P0 | Test | SDK fake run 검증 | fake adapter로 run event 흐름이 동작한다 |
 | TST-007 | not_started | P0 | Test | end-to-end demo scenario | VS Code에서 issue→plan→approval→coding→review 흐름이 재현된다 |
 | TST-008 | not_started | P1 | Test | final acceptance checklist | PoC 수용 기준 체크리스트가 채워진다 |

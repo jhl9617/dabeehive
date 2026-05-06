@@ -1,0 +1,46 @@
+TST-005 validation evidence
+Date: 2026-05-06 10:28:05 KST
+Branch: poc/TST-005-extension-activation
+
+Context inspected:
+- apps/vscode-extension/package.json includes main ./dist/extension.js.
+- activationEvents include onStartupFinished, commands, and the three contributed views.
+- apps/vscode-extension/src/extension.ts exports activate/deactivate and registers status bar, commands, and tree providers.
+
+Command: pnpm --filter @dabeehive/vscode-extension exec tsc --noEmit
+Result: FAILED
+Summary:
+- Extension package has no direct tsc executable.
+- Failure: Command "tsc" not found.
+- Follow-up command used the workspace TypeScript executable through the server package.
+
+Command: pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: pnpm --filter @dabeehive/vscode-extension run compile
+Result: PASS
+Summary:
+- Package compile script completed.
+- Emitted ignored dist output under apps/vscode-extension/dist.
+
+Command: node -e mock activation smoke
+Result: PASS
+Summary:
+- Required compiled extension from apps/vscode-extension/dist/extension.js.
+- Mocked the vscode module.
+- activate(context) registered 9 subscriptions.
+- Verified commands: dabeehive.refresh, dabeehive.setApiToken, dabeehive.clearApiToken, dabeehive.createIssue, dabeehive.startRun.
+- Verified views: dabeehive.views.issues, dabeehive.views.runs, dabeehive.views.approvals.
+- Verified initial status bar text: Dabeehive: Disconnected.
+- deactivate() completed.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Status:
+- TST-005 is verified.
+- A real VS Code Extension Host GUI was not launched, but the compiled activation entrypoint was executed with a mocked vscode host API.
