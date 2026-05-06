@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | SDK-012 | verified | Added pure shared validation command inference from lockfile/package script metadata, covering pnpm/npm/yarn/bun formatting, lint/typecheck/test/build script candidates, and optional pnpm workspace filters without executing commands. | Shared no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | SDK-011 | verified | Added shared command policy detection for SDK runner bash commands with `allowed`, `requires_approval`, and `blocked` decisions covering destructive commands, deploy/infra mutation, secret access, dependency changes, DB migration/direct SQL mutation, shell operators, and automatic merge. | Shared no-emit typecheck passed after one readonly-array narrowing fix; root lint and source checks passed. |
 | 2026-05-06 | SDK-010 | verified | Added provider-neutral Agent SDK allowed tool settings for read/search/edit/bash, wired them through run input and the Claude adapter skeleton, and surfaced effective tools in coder instructions without adding tool execution logic. | Shared no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | EXT-016 | verified | Centralized VS Code webview CSP generation so read-only Run Console/Artifact Viewer panels explicitly deny scripts and the Approval Panel keeps only nonce-authorized script execution. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |

@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 99 |
+| verified | 100 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 24 |
+| not_started | 23 |
 
 ---
 
@@ -170,7 +170,7 @@ P3 = 후속 확장
 | SDK-009 | verified | P0 | SDK | Run cancellation handling | cancel command가 adapter에 전달된다 |
 | SDK-010 | verified | P1 | SDK | allowed tools 설정 | read/edit/bash/search 등 허용 tool 설정이 명시된다 |
 | SDK-011 | verified | P1 | SDK | blocked command detector | 위험 명령 실행 전 차단 또는 승인 요구가 가능하다 |
-| SDK-012 | not_started | P1 | SDK | test command detection | package manager 기준 test/lint 명령을 추론한다 |
+| SDK-012 | verified | P1 | SDK | test command detection | package manager 기준 test/lint 명령을 추론한다 |
 | SDK-013 | not_started | P1 | SDK | SDK Runner dry-run mode | 실제 수정 없이 prompt/plan 검증이 가능하다 |
 | SDK-014 | not_started | P1 | SDK | SDK adapter smoke test | fake adapter 또는 mock으로 event stream 테스트가 있다 |
 
