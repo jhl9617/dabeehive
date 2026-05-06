@@ -1,8 +1,11 @@
+const { scryptSync } = require("node:crypto");
+
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
 const DEMO_USER_ID = "demo-user";
+const DEMO_API_TOKEN_ID = "demo-api-token";
 const DEMO_PROJECT_ID = "demo-project";
 const DEMO_ISSUE_ID = "demo-issue";
 const DEMO_DOCUMENT_ID = "demo-prd";
@@ -10,6 +13,7 @@ const DEMO_RUN_ID = "demo-run";
 const DEMO_EVENT_ID = "demo-run-event";
 const DEMO_APPROVAL_ID = "demo-approval";
 const DEMO_ARTIFACT_ID = "demo-plan-artifact";
+const DEMO_MCP_TOKEN = "demo-local-mcp-token";
 
 async function main() {
   const user = await prisma.user.upsert({
@@ -23,6 +27,22 @@ async function main() {
       email: "demo@dabeehive.local",
       name: "Demo Developer",
       role: "developer"
+    }
+  });
+
+  await prisma.apiToken.upsert({
+    where: { id: DEMO_API_TOKEN_ID },
+    update: {
+      name: "Demo MCP token",
+      tokenHash: hashDemoApiToken(DEMO_MCP_TOKEN),
+      expiresAt: null
+    },
+    create: {
+      id: DEMO_API_TOKEN_ID,
+      userId: user.id,
+      name: "Demo MCP token",
+      tokenHash: hashDemoApiToken(DEMO_MCP_TOKEN),
+      expiresAt: null
     }
   });
 
@@ -186,6 +206,7 @@ async function main() {
     JSON.stringify(
       {
         userId: user.id,
+        apiTokenId: DEMO_API_TOKEN_ID,
         projectId: project.id,
         issueId: issue.id,
         documentId: document.id,
@@ -197,6 +218,25 @@ async function main() {
       2
     )
   );
+}
+
+function hashDemoApiToken(token) {
+  const salt = Buffer.from("dabeehive-demo01");
+  const hash = scryptSync(token, salt, 32, {
+    cost: 16384,
+    blockSize: 8,
+    parallelization: 1
+  });
+
+  return [
+    "api-token-scrypt-v1",
+    16384,
+    8,
+    1,
+    32,
+    salt.toString("base64url"),
+    hash.toString("base64url")
+  ].join("$");
 }
 
 main()
