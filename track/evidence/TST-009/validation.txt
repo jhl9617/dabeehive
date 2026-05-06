@@ -1,0 +1,59 @@
+# TST-009 Validation
+
+Date: 2026-05-06
+Task: TST-009
+
+## Commands
+
+### pnpm lint
+
+Result: Passed
+
+Output summary:
+
+```txt
+basic lint passed
+```
+
+### rg section check
+
+Command:
+
+```sh
+rg -n "Known issues|Blocked|Implemented but not runtime verified|Residual risks|Out of scope|Production readiness|TST-010" track/evidence/TST-009/known-issues.md
+```
+
+Result: Passed
+
+Matched sections:
+
+```txt
+7:## Known issues summary
+11:## Blocked validation
+19:## Implemented but not runtime verified
+28:## Residual risks
+39:## Out of scope
+53:## Production readiness gaps
+88:TST-010 should turn this known issue inventory and the TST-008 acceptance checklist into a demo script with ordered steps, expected results, and explicit skip/blocker callouts.
+```
+
+### MASTER dry-run
+
+Command:
+
+```sh
+pnpm track:status -- --task TST-009 --status verified --dry-run
+```
+
+Result: Passed
+
+Output summary:
+
+```txt
+dry-run: TST-009 in_progress -> verified
+total=131; not_started=1, planned=0, in_progress=0, blocked=2, implemented=6, verified=122, skipped=0
+```
+
+## Result
+
+TST-009 validation passed. The known issues inventory is documentation-only and introduced no product source changes or package dependencies.

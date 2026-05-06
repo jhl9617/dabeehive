@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | TST-009 | verified | Added a known issues document covering DB/Docker blockers, implemented-but-not-runtime-verified areas, residual security/workflow risks, explicit PoC exclusions, production readiness gaps, non-claimed acceptance areas, and revalidation steps. | Root lint, known issue section checks, and MASTER status dry-run passed. |
 | 2026-05-06 | TST-008 | verified | Added a filled final PoC acceptance checklist mapping PRD expectations to AGENTS PoC scope, MASTER task status, verified evidence, blocked DB-backed items, explicit out-of-scope items, and re-run steps for full DB-backed acceptance. | Root lint and checklist source checks passed. |
 | 2026-05-06 | SEC-007 | verified | Added a process-local basic abuse guard for API token authentication calls, returning REST 429 responses with retry/rate headers and gating MCP bearer verification before DB-backed token checks while redacting raw token values from guard keys. | Server typecheck, abuse guard smoke, root lint, server build, and source checks passed. |
 | 2026-05-06 | SEC-006 | verified | Added server startup env validation for required `DATABASE_URL`, rejecting missing, placeholder, or non-PostgreSQL values with redacted errors via a Next instrumentation hook and local smoke command. | Server typecheck, env smoke, root lint, server build, and source checks passed. |
