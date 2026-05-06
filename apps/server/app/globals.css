@@ -1,13 +1,17 @@
 :root {
   color-scheme: light;
-  --background: #f7f8fb;
+  --background: #f5f7fa;
   --surface: #ffffff;
-  --surface-muted: #eef3f8;
+  --surface-muted: #eef2f6;
   --text: #172033;
   --muted: #5c687a;
   --line: #d9e0ea;
   --accent: #0f766e;
   --accent-soft: #d7f2ee;
+  --warning: #b7791f;
+  --warning-soft: #fff4d6;
+  --neutral: #57606f;
+  --neutral-soft: #edf0f4;
 }
 
 * {
@@ -29,11 +33,167 @@ body {
     sans-serif;
 }
 
+a {
+  color: inherit;
+}
+
 button,
 input,
 textarea,
 select {
   font: inherit;
+}
+
+.dashboard-shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.dashboard-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 28px;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.dashboard-title {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.dashboard-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.dashboard-nav a,
+.surface-link {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  text-decoration: none;
+}
+
+.dashboard-nav a:hover,
+.surface-link:hover {
+  border-color: var(--accent);
+}
+
+.dashboard-nav span,
+.surface-link span {
+  font-weight: 700;
+}
+
+.dashboard-nav small,
+.surface-link small,
+.section-heading span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.dashboard-main {
+  display: grid;
+  align-content: start;
+  gap: 20px;
+  padding: 28px;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-header h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.status-strip {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.status-strip div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 14px;
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.link-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.workflow-panel {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  font-size: 18px;
+  letter-spacing: 0;
+}
+
+.workflow-table {
+  display: grid;
+  gap: 1px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.workflow-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(160px, 1fr) minmax(200px, 1.3fr);
+  gap: 1px;
+  background: var(--line);
+}
+
+.workflow-row span {
+  min-height: 52px;
+  padding: 14px;
+  background: var(--surface);
+  overflow-wrap: anywhere;
+}
+
+.workflow-row span:first-child {
+  font-weight: 700;
 }
 
 .shell {
@@ -98,9 +258,20 @@ h1 {
 .status-dot {
   width: 14px;
   height: 14px;
+  flex: 0 0 auto;
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 0 8px var(--accent-soft);
+}
+
+.status-dot.warning {
+  background: var(--warning);
+  box-shadow: 0 0 0 8px var(--warning-soft);
+}
+
+.status-dot.neutral {
+  background: var(--neutral);
+  box-shadow: 0 0 0 8px var(--neutral-soft);
 }
 
 .status-label {
@@ -206,6 +377,33 @@ article p {
 }
 
 @media (max-width: 760px) {
+  .dashboard-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dashboard-main {
+    padding: 20px;
+  }
+
+  .dashboard-header {
+    display: grid;
+  }
+
+  .dashboard-header h2 {
+    font-size: 24px;
+  }
+
+  .status-strip,
+  .link-grid,
+  .workflow-row {
+    grid-template-columns: 1fr;
+  }
+
   .shell {
     padding: 28px 18px;
   }

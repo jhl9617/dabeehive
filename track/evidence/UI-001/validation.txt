@@ -1,0 +1,53 @@
+# UI-001 Validation Evidence
+
+Date: 2026-05-06
+Branch: poc/UI-001-dashboard-layout
+
+## Commands
+
+### pnpm --filter @dabeehive/server run build
+
+Result: Passed
+
+Notes:
+- First build passed with an autoprefixer warning for `align-items: start`.
+- CSS was changed to `align-items: flex-start`.
+- Second build passed without that warning.
+
+Output summary:
+
+```txt
+> @dabeehive/server@0.0.0 build /Users/jongha/Documents/repository/dabeehive/apps/server
+> next build
+
+✓ Compiled successfully
+✓ Generating static pages (4/4)
+Route (app)                                 Size  First Load JS
+┌ ○ /                                      168 B         102 kB
+...
+```
+
+### pnpm lint
+
+Result: Passed
+
+Output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+### rg source check
+
+Command:
+
+```txt
+rg -n "dashboard-shell|dashboard-sidebar|dashboard-nav|dashboard-main|status-strip|link-grid|workflow-panel|/projects|/issues|/runs|/approvals|/api/artifacts|/api/health|/api/mcp" apps/server/app/page.js apps/server/app/globals.css
+```
+
+Result: Passed
+
+Summary: Confirmed dashboard layout classes and project/issue/run/approval/artifact/API links.

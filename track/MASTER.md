@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 108 |
+| verified | 109 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 15 |
+| not_started | 14 |
 
 ---
 
@@ -210,7 +210,7 @@ P3 = 후속 확장
 
 | ID | 상태 | 우선순위 | 영역 | 작업 | 수용 기준 |
 |---|---|---:|---|---|---|
-| UI-001 | not_started | P1 | UI | 기본 dashboard layout | 프로젝트/이슈/run 접근 링크가 있다 |
+| UI-001 | verified | P1 | UI | 기본 dashboard layout | 프로젝트/이슈/run 접근 링크가 있다 |
 | UI-002 | not_started | P1 | UI | Project list page | 프로젝트 목록이 보인다 |
 | UI-003 | not_started | P1 | UI | Issue list page | 이슈 목록과 생성 버튼이 있다 |
 | UI-004 | not_started | P1 | UI | Run detail page | run 상태/event/artifact가 보인다 |
