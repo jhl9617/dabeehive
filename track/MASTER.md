@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 90 |
+| verified | 91 |
 | implemented | 5 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 34 |
+| not_started | 33 |
 
 ---
 
@@ -127,7 +127,7 @@ P3 = 후속 확장
 | MCP-008 | verified | P0 | MCP | `artifact.create/get` tools | MCP로 산출물 저장/조회가 가능하다 |
 | MCP-009 | verified | P1 | MCP | `context.search` tool | 문서/이슈 기반 간단 검색이 가능하다 |
 | MCP-010 | verified | P1 | MCP | MCP resources 구현 | issue/document/run resource를 읽을 수 있다 |
-| MCP-011 | not_started | P1 | MCP | MCP prompts 구현 | implementation-plan/review-diff prompt가 있다 |
+| MCP-011 | verified | P1 | MCP | MCP prompts 구현 | implementation-plan/review-diff prompt가 있다 |
 | MCP-012 | not_started | P1 | MCP | MCP smoke test 작성 | tool 호출 smoke test가 통과한다 |
 
 ---

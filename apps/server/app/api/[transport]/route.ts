@@ -24,6 +24,7 @@ const mcpHandler = createMcpHandler(
     registerArtifactTools(server);
     registerContextTools(server);
     registerContextResources(server);
+    registerPromptTemplates(server);
   },
   {
     serverInfo: {
@@ -1362,6 +1363,51 @@ function registerContextResources(server: McpServer): void {
   );
 }
 
+function registerPromptTemplates(server: McpServer): void {
+  server.registerPrompt(
+    "implementation-plan",
+    {
+      title: "Implementation plan",
+      description: "Build a PoC-scoped implementation plan for an issue.",
+      argsSchema: {
+        objective: z.string().trim().min(1).max(5000),
+        issueId: z.string().trim().min(1).optional(),
+        projectId: z.string().trim().min(1).optional(),
+        contextSummary: z.string().trim().max(20000).optional(),
+        constraints: z.array(z.string().trim().min(1).max(500)).max(20).default([])
+      }
+    },
+    (args) =>
+      textPromptResult(
+        "PoC implementation planning prompt.",
+        buildImplementationPlanPrompt(args)
+      )
+  );
+
+  server.registerPrompt(
+    "review-diff",
+    {
+      title: "Review diff",
+      description: "Review a diff and validation summary for PoC risk.",
+      argsSchema: {
+        diffSummary: z.string().trim().min(1).max(50000),
+        runId: z.string().trim().min(1).optional(),
+        changedFiles: z
+          .array(z.string().trim().min(1).max(1000))
+          .max(100)
+          .default([]),
+        testSummary: z.string().trim().max(20000).optional(),
+        reviewFocus: z.string().trim().max(5000).optional()
+      }
+    },
+    (args) =>
+      textPromptResult(
+        "PoC diff review prompt.",
+        buildReviewDiffPrompt(args)
+      )
+  );
+}
+
 async function verifyBearerToken(
   _request: Request,
   bearerToken?: string
@@ -1585,6 +1631,93 @@ function buildContextExcerpt(
   const suffix = start + maxLength < text.length ? "..." : "";
 
   return `${prefix}${excerpt}${suffix}`;
+}
+
+function buildImplementationPlanPrompt(args: {
+  objective: string;
+  issueId?: string;
+  projectId?: string;
+  contextSummary?: string;
+  constraints: string[];
+}): string {
+  const lines = [
+    "Create a concise implementation plan for this AI Agent Orchestrator PoC task.",
+    "",
+    `Objective: ${args.objective}`,
+    args.projectId ? `Project ID: ${args.projectId}` : undefined,
+    args.issueId ? `Issue ID: ${args.issueId}` : undefined,
+    args.contextSummary ? `Context summary: ${args.contextSummary}` : undefined,
+    args.constraints.length > 0
+      ? `Additional constraints:\n${args.constraints.map((item) => `- ${item}`).join("\n")}`
+      : undefined,
+    "",
+    "Hard constraints:",
+    "- Stay inside PoC scope.",
+    "- Do not implement Jira, Slack, deployment, automatic merge, or full external integrations.",
+    "- Do not build a custom AI code editing engine.",
+    "- Use the Agent SDK adapter approach for code generation tasks.",
+    "- Prefer small, independently verifiable changes.",
+    "",
+    "Return:",
+    "- Proposed scope",
+    "- Files likely to change",
+    "- Validation commands",
+    "- Risks or approvals needed"
+  ];
+
+  return compactPromptLines(lines);
+}
+
+function buildReviewDiffPrompt(args: {
+  diffSummary: string;
+  runId?: string;
+  changedFiles: string[];
+  testSummary?: string;
+  reviewFocus?: string;
+}): string {
+  const lines = [
+    "Review this PoC diff for correctness, regressions, missing tests, and scope creep.",
+    "",
+    args.runId ? `Run ID: ${args.runId}` : undefined,
+    `Diff summary: ${args.diffSummary}`,
+    args.changedFiles.length > 0
+      ? `Changed files:\n${args.changedFiles.map((file) => `- ${file}`).join("\n")}`
+      : "Changed files: not provided",
+    args.testSummary ? `Validation summary: ${args.testSummary}` : undefined,
+    args.reviewFocus ? `Review focus: ${args.reviewFocus}` : undefined,
+    "",
+    "Review rules:",
+    "- Prioritize bugs, behavioral regressions, missing validation, and PoC scope violations.",
+    "- Flag Jira, Slack, deployment, automatic merge, custom AI editing engines, and external integration creep.",
+    "- Treat Agent SDK adapter boundaries as intentional.",
+    "- Keep findings concrete and tied to files or behavior.",
+    "",
+    "Return:",
+    "- Findings ordered by severity",
+    "- Open questions",
+    "- Residual risk and recommended validation"
+  ];
+
+  return compactPromptLines(lines);
+}
+
+function textPromptResult(description: string, text: string) {
+  return {
+    description,
+    messages: [
+      {
+        role: "user" as const,
+        content: {
+          type: "text" as const,
+          text
+        }
+      }
+    ]
+  };
+}
+
+function compactPromptLines(lines: Array<string | undefined>): string {
+  return lines.filter((line): line is string => line !== undefined).join("\n");
 }
 
 function mapApprovalStatus(

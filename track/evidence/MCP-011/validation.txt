@@ -1,0 +1,72 @@
+# MCP-011 Validation Evidence
+
+Date: 2026-05-06
+Task: MCP-011 — MCP prompts
+
+## Commands
+
+### TypeScript noEmit
+
+Command:
+`pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result:
+Passed with no output.
+
+### Next.js production build
+
+Command:
+`pnpm --filter @dabeehive/server run build`
+
+Result:
+Passed.
+
+```txt
+✓ Compiled successfully
+├ ƒ /api/[transport]                       168 B         102 kB
+```
+
+Note:
+The existing Next.js warning remains:
+`TypeScript project references are not fully supported. Attempting to build in incremental mode.`
+
+### Root lint
+
+Command:
+`pnpm lint`
+
+Result:
+Passed.
+
+```txt
+basic lint passed
+```
+
+### Source check
+
+Command:
+`rg -n "registerPromptTemplates|implementation-plan|review-diff|buildImplementationPlanPrompt|buildReviewDiffPrompt|textPromptResult|Agent SDK adapter|custom AI code editing" 'apps/server/app/api/[transport]/route.ts'`
+
+Result:
+Passed. Confirmed:
+
+- MCP prompt registration is called
+- `implementation-plan` prompt exists
+- `review-diff` prompt exists
+- prompt builders return provider-neutral text
+- PoC constraints mention Agent SDK adapter and no custom AI editing engine
+
+### Local PostgreSQL readiness
+
+Command:
+`pg_isready -h localhost -p 55432`
+
+Result:
+Failed.
+
+```txt
+localhost:55432 - no response
+```
+
+Impact:
+Authenticated MCP runtime prompt list/get smoke was not executable in this environment because MCP Bearer token verification depends on local PostgreSQL. Validation used typecheck, production build, lint, and source checks.
