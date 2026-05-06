@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-06 | Server startup now intentionally fails when required env such as `DATABASE_URL` is missing, placeholder-based, or not PostgreSQL. | Medium | SEC-006 adds redacted startup validation and smoke coverage; developers must provide a real local `DATABASE_URL` in `.env.local` or process env before running DB-backed server flows. | mitigated | SEC-006 |
 | 2026-05-06 | MCP-012 common MCP smoke command cannot pass until local PostgreSQL is reachable at `localhost:55432` and the demo API token seed exists. | High | Start local PostgreSQL or Docker Compose, apply migration/seed, then rerun `DABEEHIVE_MCP_BASE_URL=<server>/api/mcp DABEEHIVE_MCP_TOKEN=demo-local-mcp-token pnpm test:mcp` and promote MCP-012/TST-004 evidence if successful. | open | MCP-012 |
 | 2026-05-06 | MCP-010 exposes issue/document/run records as MCP resources before full scope/role filtering exists. | Medium | Require existing MCP Bearer auth, keep resources read-only, return JSON for single requested IDs only, and defer role/scope filtering to later security tasks. | open | MCP-010 |
 | 2026-05-06 | MCP-009 exposes issue/document context through a new authenticated keyword search surface before full scope/role filtering exists. | Medium | Require existing MCP Bearer auth, keep the tool read-only, bound query/limit inputs, return excerpts instead of full documents, and defer role/scope filtering to later security tasks. | open | MCP-009 |

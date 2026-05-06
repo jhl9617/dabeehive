@@ -1,0 +1,83 @@
+# SEC-006 Validation Evidence
+
+Date: 2026-05-06 15:50:11 KST
+Branch: poc/SEC-006-env-validation
+
+## Commands
+
+### `pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result: Passed
+
+Output summary:
+
+```txt
+No TypeScript errors.
+```
+
+### `pnpm test:server-env`
+
+Result: Passed
+
+Output summary:
+
+```txt
+"checked": "server-env-validation"
+"requiredKeys": ["DATABASE_URL"]
+"invalidCases": [
+  "missing DATABASE_URL",
+  "placeholder DATABASE_URL",
+  "non-postgres DATABASE_URL"
+]
+"errorValuesRedacted": true
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Output summary:
+
+```txt
+basic lint passed
+```
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Output summary:
+
+```txt
+Compiled successfully.
+Route build completed for App Router pages and API routes.
+```
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "validateServerEnv|REQUIRED_SERVER_ENV_KEYS|DATABASE_URL|instrumentation|test:server-env|server-env-validation" apps/server/instrumentation.ts apps/server/src/lib/security/env-validation.ts apps/server/tsconfig.json package.json scripts/server-env-validation-smoke.mjs
+```
+
+Result: Passed
+
+### `pnpm track:status -- --task SEC-006 --status verified --dry-run`
+
+Result: Passed
+
+Output summary:
+
+```txt
+dry-run: SEC-006 verified -> verified
+file: track/MASTER.md
+total=131; not_started=4, planned=0, in_progress=0, blocked=2, implemented=6, verified=119, skipped=0
+```
+
+## Notes
+
+- `DATABASE_URL` is the only required startup env for the current PoC server scope.
+- Validation errors name env keys and guidance without echoing actual env values.
+- No `.env`, secret, package dependency, DB schema, migration, auth/session behavior, deployment, or external integration was added.
+- Existing unrelated dirty file `docs/codex-implementation-rules.md` was not touched.
