@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | SDK-014 | verified | Added root SDK adapter smoke validation covering Claude adapter dry-run handle/report behavior, mock event normalization, validation command inference, and command policy checks without invoking an external SDK. | Shared no-emit typecheck, `pnpm test:sdk`, root lint, and source checks passed. |
 | 2026-05-06 | SDK-013 | verified | Added explicit shared SDK dry-run mode types/reporting, deterministic prompt/context readiness reporting, Claude adapter skeleton dry-run handle support, and coder prompt no-edit/no-command dry-run wording. | Shared no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | SDK-012 | verified | Added pure shared validation command inference from lockfile/package script metadata, covering pnpm/npm/yarn/bun formatting, lint/typecheck/test/build script candidates, and optional pnpm workspace filters without executing commands. | Shared no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | SDK-011 | verified | Added shared command policy detection for SDK runner bash commands with `allowed`, `requires_approval`, and `blocked` decisions covering destructive commands, deploy/infra mutation, secret access, dependency changes, DB migration/direct SQL mutation, shell operators, and automatic merge. | Shared no-emit typecheck passed after one readonly-array narrowing fix; root lint and source checks passed. |
