@@ -1,0 +1,86 @@
+# TST-012 Validation Evidence
+
+Date: 2026-05-06
+Task: TST-012
+
+## Commands
+
+### pnpm test:temp-db
+
+Result: PASS
+
+Notes:
+- Ran with local localhost port binding available for the PGlite socket server.
+- The script created a temporary PGlite data directory, applied Prisma migrations, ran the Prisma seed, verified seeded core tables, and cleaned up on exit.
+
+Output summary:
+
+```json
+{
+  "database": "pglite",
+  "mode": "temporary",
+  "commands": {
+    "migrate": {
+      "durationMs": 1434,
+      "exitCode": 0,
+      "stderrLines": 2,
+      "stdoutLines": 9
+    },
+    "seed": {
+      "durationMs": 872,
+      "exitCode": 0,
+      "stderrLines": 2,
+      "stdoutLines": 12
+    }
+  },
+  "verification": {
+    "agentRuns": 1,
+    "apiTokens": 1,
+    "approvals": 1,
+    "artifacts": 1,
+    "documents": 1,
+    "issues": 1,
+    "projects": 1,
+    "users": 1
+  }
+}
+```
+
+### pnpm lint
+
+Result: PASS
+
+```txt
+basic lint passed
+```
+
+### pnpm test:shared
+
+Result: PASS
+
+```json
+{
+  "tests": [
+    "draft-pr-command-planning",
+    "draft-pr-command-runner",
+    "pr-body-template",
+    "git-diff-summary"
+  ],
+  "result": "passed"
+}
+```
+
+### pnpm track:status -- --task TST-012 --status verified --dry-run
+
+Result: PASS
+
+```txt
+dry-run: TST-012 in_progress -> verified
+total=133; not_started=0, planned=0, in_progress=0, blocked=2, implemented=6, verified=125, skipped=0
+```
+
+### git diff --check
+
+Result: PASS
+
+No whitespace errors.

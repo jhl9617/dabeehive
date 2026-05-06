@@ -19,7 +19,7 @@ This repository is intentionally scoped to the PoC. It does not implement Jira, 
 - PostgreSQL 16 or newer for DB-backed API/MCP smoke tests.
 - VS Code for extension host testing.
 
-Docker Compose is not implemented in this PoC yet. If PostgreSQL or Docker is not available locally, DB-backed migrate/seed, REST happy path, MCP authenticated smoke, and full E2E demo validation will be blocked.
+Docker Compose is not implemented in this PoC yet. If PostgreSQL or Docker is not available locally, use the temporary PGlite smoke below for isolated migrate/seed validation. REST happy path, MCP authenticated smoke, and full E2E demo validation still require a reachable database while the server is running.
 
 ## Setup
 
@@ -56,6 +56,14 @@ Seed demo data:
 ```sh
 pnpm --filter @dabeehive/server exec prisma db seed --schema prisma/schema.prisma
 ```
+
+Run isolated migrate/seed validation without PostgreSQL or Docker:
+
+```sh
+pnpm test:temp-db
+```
+
+This starts a temporary local PGlite PostgreSQL socket, runs `prisma migrate deploy`, runs `prisma db seed`, verifies the seeded core tables, and deletes the temporary data directory on exit. The script binds a localhost port for Prisma CLI compatibility.
 
 ## Run Server
 
@@ -148,7 +156,8 @@ The extension does not implement its own AI patch engine or shell tool loop. Cod
 
 ## Known Local Blockers
 
-- Full DB-backed validation requires reachable PostgreSQL. Without it, `prisma migrate deploy`, `prisma db seed`, REST happy path, authenticated MCP smoke, and the full VS Code E2E scenario cannot be verified.
+- Full REST/MCP/E2E validation requires a reachable database for the running server. Without it, REST happy path, authenticated MCP smoke, and the full VS Code E2E scenario cannot be verified.
+- Isolated migrate/seed validation can run without PostgreSQL or Docker through `pnpm test:temp-db`.
 - The current PoC has a fake SDK smoke flow and adapter skeleton; real external SDK execution is intentionally not part of the verified default flow.
 - Draft PR creation, SSE UI, and richer web dashboard features are tracked as follow-up tasks.
 
