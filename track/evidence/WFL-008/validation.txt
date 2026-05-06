@@ -1,0 +1,62 @@
+# WFL-008 Validation Evidence
+
+Date: 2026-05-06
+Branch: poc/WFL-008-approval-evidence-rendering
+
+## Commands
+
+### pnpm --filter @dabeehive/vscode-extension exec tsc --noEmit
+
+Result: Failed
+
+Output:
+
+```txt
+undefined
+/Users/jongha/Documents/repository/dabeehive/apps/vscode-extension:
+ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "tsc" not found
+```
+
+Reason: The extension package does not expose a local `tsc` binary. This is an existing repository setup limitation, so the workspace TypeScript executable was used for the no-emit check.
+
+### pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+
+Result: Passed
+
+Output: no output; TypeScript completed successfully.
+
+### pnpm --filter @dabeehive/vscode-extension run compile
+
+Result: Passed
+
+Output:
+
+```txt
+> @dabeehive/vscode-extension@0.0.0 compile /Users/jongha/Documents/repository/dabeehive/apps/vscode-extension
+> pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json
+```
+
+### pnpm lint
+
+Result: Passed
+
+Output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+### rg source check
+
+Command:
+
+```txt
+rg -n "renderApprovalEvidence|buildApprovalEvidence|formatRiskEvidence|getRiskLevelLabel|Evidence|Diff summary is available below|No changed files were reported" apps/vscode-extension/src/extension.ts
+```
+
+Result: Passed
+
+Summary: Confirmed Approval Panel calls the evidence renderer and includes evidence helper functions/content.

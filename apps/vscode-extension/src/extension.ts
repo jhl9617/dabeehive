@@ -1167,6 +1167,7 @@ function renderApprovalPanelHtml(
         .join("")}
     </dl>
     ${renderApprovalActions(approval)}
+    ${renderApprovalEvidence(approval)}
     ${renderRunMessage("Required action", approval.requiredAction)}
     ${renderRunMessage("Reason", approval.reason)}
     ${renderRunMessage("Diff summary", approval.diffSummary)}
@@ -1418,6 +1419,111 @@ function renderApprovalActions(approval: OrchestratorApproval): string {
       <button type="button" class="secondary" data-approval-action="request_changes">Request changes</button>
       <button type="button" class="secondary" data-approval-action="reject">Reject</button>
     </div>`;
+}
+
+type ApprovalEvidenceItem = {
+  label: string;
+  value: string;
+};
+
+function renderApprovalEvidence(approval: OrchestratorApproval): string {
+  const evidence = buildApprovalEvidence(approval);
+
+  if (evidence.length === 0) {
+    return "";
+  }
+
+  return `
+    <section>
+      <h2>Evidence</h2>
+      <ul>
+        ${evidence
+          .map(
+            (item) =>
+              `<li><strong>${escapeHtml(item.label)}:</strong> ${escapeHtml(item.value)}</li>`
+          )
+          .join("")}
+      </ul>
+    </section>`;
+}
+
+function buildApprovalEvidence(
+  approval: OrchestratorApproval
+): ApprovalEvidenceItem[] {
+  const evidence: ApprovalEvidenceItem[] = [];
+  const riskEvidence = formatRiskEvidence(approval.riskScore);
+
+  if (riskEvidence) {
+    evidence.push({
+      label: "Risk",
+      value: riskEvidence
+    });
+  }
+
+  evidence.push({
+    label: "Scope",
+    value:
+      approval.changedFiles.length === 0
+        ? "No changed files were reported."
+        : `${approval.changedFiles.length} changed file${approval.changedFiles.length === 1 ? "" : "s"} reported.`
+  });
+
+  evidence.push({
+    label: "Diff summary",
+    value: approval.diffSummary?.trim()
+      ? "Diff summary is available below."
+      : "No diff summary was provided."
+  });
+
+  const requiredAction = approval.requiredAction?.trim();
+
+  if (requiredAction) {
+    evidence.push({
+      label: "Required action",
+      value: requiredAction
+    });
+  }
+
+  const reason = approval.reason?.trim();
+
+  if (reason) {
+    evidence.push({
+      label: "Reason",
+      value: reason
+    });
+  }
+
+  return evidence;
+}
+
+function formatRiskEvidence(riskScore: number | null): string | null {
+  if (riskScore === null) {
+    return null;
+  }
+
+  const riskLevel = getRiskLevelLabel(riskScore);
+  const reviewCue =
+    riskScore >= 60
+      ? "manual approval evidence should be reviewed closely"
+      : "routine review evidence is sufficient";
+
+  return `${riskLevel} risk (${riskScore}/100); ${reviewCue}.`;
+}
+
+function getRiskLevelLabel(riskScore: number): string {
+  if (riskScore >= 85) {
+    return "Critical";
+  }
+
+  if (riskScore >= 60) {
+    return "High";
+  }
+
+  if (riskScore >= 30) {
+    return "Medium";
+  }
+
+  return "Low";
 }
 
 function renderChangedFiles(changedFiles: string[]): string {

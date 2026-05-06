@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | WFL-008 | verified | Added a VS Code Approval Panel Evidence section that derives reviewer-facing risk, changed-file scope, diff-summary availability, required action, and reason from existing approval fields without changing API or persistence schema. | Direct extension package `tsc` remained unavailable; workspace no-emit check, extension compile, root lint, and source checks passed. |
 | 2026-05-06 | WFL-007 | verified | Added deterministic workflow sensitive file detection for auth/security, DB schema/migration, and deploy/infra paths, then wired risk assessment to reuse those detector categories. | Server no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | WFL-006 | verified | Added deterministic changed-file risk assessment with score/level/reason/approval output and wired final diff approval defaults to calculate risk from changed files when no explicit score is provided. | Server no-emit typecheck passed after one return-type fix; root lint and source checks passed. |
 | 2026-05-06 | SDK-014 | verified | Added root SDK adapter smoke validation covering Claude adapter dry-run handle/report behavior, mock event normalization, validation command inference, and command policy checks without invoking an external SDK. | Shared no-emit typecheck, `pnpm test:sdk`, root lint, and source checks passed. |

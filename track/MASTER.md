@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 104 |
+| verified | 105 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 19 |
+| not_started | 18 |
 
 ---
 
@@ -187,7 +187,7 @@ P3 = 후속 확장
 | WFL-005 | verified | P0 | Workflow | Artifact 저장 규칙 구현 | plan/diff/test/review artifact가 저장된다 |
 | WFL-006 | verified | P1 | Workflow | Risk assessment helper | 변경 파일 기반 risk score가 계산된다 |
 | WFL-007 | verified | P1 | Workflow | sensitive file detector | auth/db/deploy 파일 변경을 감지한다 |
-| WFL-008 | not_started | P1 | Workflow | approval evidence rendering | approval 상세에 근거가 표시된다 |
+| WFL-008 | verified | P1 | Workflow | approval evidence rendering | approval 상세에 근거가 표시된다 |
 
 ---
 
