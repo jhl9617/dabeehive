@@ -1,0 +1,65 @@
+# SEC-004 Validation Evidence
+
+Date: 2026-05-06 15:36:00 KST
+Branch: poc/SEC-004-secretstorage-audit
+
+## Commands
+
+### `pnpm test:extension-secrets`
+
+Result: Passed
+
+Output summary:
+
+```txt
+Extension SecretStorage audit passed.
+Checked 1 contributed setting(s) and 3 TypeScript source file(s).
+```
+
+### `pnpm --filter @dabeehive/vscode-extension run compile`
+
+Result: Passed
+
+Output summary:
+
+```txt
+> @dabeehive/vscode-extension@0.0.0 compile /Users/jongha/Documents/repository/dabeehive/apps/vscode-extension
+> pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Output summary:
+
+```txt
+basic lint passed
+```
+
+### `pnpm track:status -- --task SEC-004 --status verified --dry-run`
+
+Result: Passed
+
+Output summary:
+
+```txt
+dry-run: SEC-004 verified -> verified
+file: track/MASTER.md
+total=131; not_started=6, planned=0, in_progress=0, blocked=2, implemented=6, verified=117, skipped=0
+```
+
+## Failed Attempt
+
+- `pnpm track:status -- --dry-run SEC-004 verified` failed because the helper requires explicit `--task` and `--status` flags. The corrected command above passed.
+
+## SecretStorage Audit Scope
+
+- Confirmed `dabeehive.apiToken` is handled through `context.secrets.get/store/delete`.
+- Confirmed contributed Extension settings include non-sensitive `dabeehive.serverUrl`.
+- Added regression checks for sensitive setting access and sensitive `globalState`/`workspaceState` persistence.
+
+## Notes
+
+- No package dependency was added.
+- Existing unrelated dirty file `docs/codex-implementation-rules.md` was not touched.
