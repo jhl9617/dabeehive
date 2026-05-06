@@ -1,0 +1,29 @@
+Task: EXT-016
+Date: 2026-05-06
+Status: verified
+
+Validation commands
+
+1. pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+Result: passed
+
+2. pnpm --filter @dabeehive/vscode-extension run compile
+Result: passed
+Output:
+> @dabeehive/vscode-extension@0.0.0 compile /Users/jongha/Documents/repository/dabeehive/apps/vscode-extension
+> pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json
+
+3. pnpm lint
+Result: passed
+Output:
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+
+Source checks
+
+Command:
+rg -n "renderWebviewCspMeta|buildWebviewCsp|script-src 'none'|script-src 'nonce|Content-Security-Policy|enableScripts: false|enableScripts: true" apps/vscode-extension/src/extension.ts
+
+Result: passed. Centralized CSP helper, read-only script denial, nonce script CSP, and existing webview script settings are present.

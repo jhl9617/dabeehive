@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 96 |
+| verified | 97 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 27 |
+| not_started | 26 |
 
 ---
 
@@ -151,7 +151,7 @@ P3 = 후속 확장
 | EXT-013 | verified | P1 | Extension | Artifact/Diff view command | diff/test artifact를 열 수 있다 |
 | EXT-014 | verified | P1 | Extension | notification 구현 | run 완료/승인 요청 알림이 뜬다 |
 | EXT-015 | verified | P1 | Extension | refresh/reconnect command | 수동 갱신과 재연결이 가능하다 |
-| EXT-016 | not_started | P2 | Extension | Webview CSP 정리 | 기본 CSP가 설정된다 |
+| EXT-016 | verified | P2 | Extension | Webview CSP 정리 | 기본 CSP가 설정된다 |
 
 ---
 

@@ -1051,6 +1051,26 @@ function createNonce(): string {
   ).join("");
 }
 
+function renderWebviewCspMeta(scriptNonce?: string): string {
+  return `<meta http-equiv="Content-Security-Policy" content="${buildWebviewCsp(scriptNonce)}">`;
+}
+
+function buildWebviewCsp(scriptNonce?: string): string {
+  const scriptSource = scriptNonce
+    ? `script-src 'nonce-${scriptNonce}'`
+    : "script-src 'none'";
+
+  return [
+    "default-src 'none'",
+    "base-uri 'none'",
+    "form-action 'none'",
+    "frame-ancestors 'none'",
+    "img-src https: data:",
+    "style-src 'unsafe-inline'",
+    scriptSource
+  ].join("; ") + ";";
+}
+
 function renderRunConsoleLoadingHtml(runId: string): string {
   return renderRunConsoleShell(
     `Run ${escapeHtml(formatShortId(runId))}`,
@@ -1275,7 +1295,7 @@ function renderApprovalPanelShell(
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+  ${renderWebviewCspMeta(nonce)}
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
   <style>
@@ -1419,7 +1439,7 @@ function renderRunConsoleShell(title: string, body: string): string {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';">
+  ${renderWebviewCspMeta()}
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
   <style>
