@@ -49,6 +49,7 @@ export function buildCoderInstruction(input: CoderInstructionInput): string {
     "Output Requirements:",
     "- Modify only files required by the approved plan.",
     "- Do not implement excluded integrations or custom AI editing engines.",
+    "- Before running bash commands, stop for commands that are blocked or require approval by policy.",
     "- Report changed files and validation results.",
     "- Stop and report blockers if the approved plan cannot be followed."
   ].join("\n");

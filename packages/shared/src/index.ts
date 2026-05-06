@@ -1,6 +1,7 @@
 export * from "./allowed-tools";
 export type * from "./agent-sdk";
 export type * from "./api";
+export * from "./blocked-command-detector";
 export * from "./claude-agent-sdk-adapter";
 export * from "./coder-instruction";
 export type * from "./domain";
