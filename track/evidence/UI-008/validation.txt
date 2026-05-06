@@ -1,0 +1,35 @@
+# UI-008 Validation Evidence
+
+Validated At: 2026-05-06 15:30:14 KST
+
+## Commands
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Notes:
+
+- Next.js production build compiled successfully.
+
+### `pnpm lint`
+
+Result: Passed
+
+Notes:
+
+- `scripts/lint-basic.mjs` completed with `basic lint passed`.
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "Loading orchestrator|loading-meter|@keyframes loading-meter|Something went wrong|Page not found|state-page|state-panel" apps/server/app/loading.js apps/server/app/error.js apps/server/app/not-found.js apps/server/app/globals.css
+```
+
+Result: Passed
+
+Notes:
+
+- Confirmed global loading state, loading meter CSS, existing error state, and existing not-found state.

@@ -687,6 +687,38 @@ article p {
   overflow-wrap: anywhere;
 }
 
+.loading-meter {
+  position: relative;
+  height: 8px;
+  margin-top: 28px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-muted);
+}
+
+.loading-meter span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 45%;
+  border-radius: inherit;
+  background: var(--accent);
+  animation: loading-meter 1.2s ease-in-out infinite;
+}
+
+@keyframes loading-meter {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(60%);
+  }
+
+  100% {
+    transform: translateX(230%);
+  }
+}
+
 @media (max-width: 760px) {
   .dashboard-shell {
     grid-template-columns: 1fr;
