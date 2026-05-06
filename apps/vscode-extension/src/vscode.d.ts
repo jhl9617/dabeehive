@@ -21,6 +21,7 @@ declare module "vscode" {
   }
 
   export interface TreeDataProvider<T> {
+    onDidChangeTreeData?: Event<T | undefined | null | void>;
     getChildren(element?: T): T[] | Thenable<T[]>;
     getTreeItem(element: T): TreeItem | Thenable<TreeItem>;
   }
@@ -51,6 +52,14 @@ declare module "vscode" {
     One = 1,
     Two = 2,
     Three = 3
+  }
+
+  export type Event<T> = (listener: (event: T) => unknown) => Disposable;
+
+  export class EventEmitter<T> implements Disposable {
+    event: Event<T>;
+    dispose(): unknown;
+    fire(data?: T): void;
   }
 
   export interface Webview {

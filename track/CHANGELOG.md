@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | EXT-015 | verified | Added explicit VS Code refresh/reconnect behavior with tree provider refresh events, reconnect command contribution, connection recheck wiring, and notification de-duplication reset without background polling. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-014 | verified | Added refresh-time VS Code notifications for newly observed terminal runs and pending approvals with local de-duplication and notification failure isolation from connection health. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-013 | verified | Added read-only VS Code artifact viewer support with `dabeehive.openArtifactViewer`, Runs tree integration, artifact list client support for existing `GET /api/artifacts`, run/type prompts, and escaped diff/test/log content rendering. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-012 | verified | Added VS Code Approval Panel webview support with `dabeehive.openApprovalPanel`, Approvals tree integration, approval detail/respond client methods, nonce-based webview action handling, and approve/reject/request changes buttons. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |

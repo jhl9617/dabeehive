@@ -22,6 +22,7 @@ const VIEW_IDS = [
 const API_TOKEN_SECRET_KEY = "dabeehive.apiToken";
 const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const REFRESH_COMMAND = "dabeehive.refresh";
+const RECONNECT_COMMAND = "dabeehive.reconnect";
 const CREATE_ISSUE_COMMAND = "dabeehive.createIssue";
 const START_RUN_COMMAND = "dabeehive.startRun";
 const OPEN_RUN_CONSOLE_COMMAND = "dabeehive.openRunConsole";
@@ -70,7 +71,16 @@ type ProjectsIssuesTreeNode =
 class ProjectsIssuesTreeProvider
   implements vscode.TreeDataProvider<ProjectsIssuesTreeNode>
 {
+  private readonly treeDataChangeEmitter =
+    new vscode.EventEmitter<ProjectsIssuesTreeNode | undefined>();
+
+  readonly onDidChangeTreeData = this.treeDataChangeEmitter.event;
+
   constructor(private readonly createClient: () => Promise<OrchestratorClient>) {}
+
+  refresh(): void {
+    this.treeDataChangeEmitter.fire(undefined);
+  }
 
   async getChildren(
     element?: ProjectsIssuesTreeNode
@@ -153,7 +163,16 @@ type RunsTreeNode =
     };
 
 class RunsTreeProvider implements vscode.TreeDataProvider<RunsTreeNode> {
+  private readonly treeDataChangeEmitter =
+    new vscode.EventEmitter<RunsTreeNode | undefined>();
+
+  readonly onDidChangeTreeData = this.treeDataChangeEmitter.event;
+
   constructor(private readonly createClient: () => Promise<OrchestratorClient>) {}
+
+  refresh(): void {
+    this.treeDataChangeEmitter.fire(undefined);
+  }
 
   async getChildren(element?: RunsTreeNode): Promise<RunsTreeNode[]> {
     try {
@@ -235,7 +254,16 @@ type NotificationState = {
 class ApprovalsTreeProvider
   implements vscode.TreeDataProvider<ApprovalsTreeNode>
 {
+  private readonly treeDataChangeEmitter =
+    new vscode.EventEmitter<ApprovalsTreeNode | undefined>();
+
+  readonly onDidChangeTreeData = this.treeDataChangeEmitter.event;
+
   constructor(private readonly createClient: () => Promise<OrchestratorClient>) {}
+
+  refresh(): void {
+    this.treeDataChangeEmitter.fire(undefined);
+  }
 
   async getChildren(element?: ApprovalsTreeNode): Promise<ApprovalsTreeNode[]> {
     if (element) {
@@ -296,10 +324,30 @@ export function activate(context: ExtensionContext): void {
   const approvalsTreeProvider = new ApprovalsTreeProvider(() =>
     createOrchestratorClient(context)
   );
+  const refreshViews = () => {
+    projectsIssuesTreeProvider.refresh();
+    runsTreeProvider.refresh();
+    approvalsTreeProvider.refresh();
+  };
 
   context.subscriptions.push(
     vscode.commands.registerCommand(REFRESH_COMMAND, () =>
-      refreshOrchestrator(context, statusBarItem, notificationState)
+      refreshOrchestrator(
+        context,
+        statusBarItem,
+        notificationState,
+        refreshViews
+      )
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(RECONNECT_COMMAND, () =>
+      reconnectOrchestrator(
+        context,
+        statusBarItem,
+        notificationState,
+        refreshViews
+      )
     )
   );
   context.subscriptions.push(
@@ -792,12 +840,14 @@ function isArtifactType(value: string): value is ArtifactType {
 async function refreshOrchestrator(
   context: ExtensionContext,
   statusBarItem: vscode.StatusBarItem,
-  notificationState: NotificationState
+  notificationState: NotificationState,
+  refreshViews: () => void
 ): Promise<void> {
   try {
     const client = await createOrchestratorClient(context);
     const health = await client.getHealth();
     setConnectionStatus(statusBarItem, "connected");
+    refreshViews();
 
     try {
       await notifyObservedChanges(client, notificationState);
@@ -812,8 +862,26 @@ async function refreshOrchestrator(
     );
   } catch {
     setConnectionStatus(statusBarItem, "disconnected");
+    refreshViews();
     await vscode.window.showWarningMessage("Dabeehive orchestrator request failed.");
   }
+}
+
+async function reconnectOrchestrator(
+  context: ExtensionContext,
+  statusBarItem: vscode.StatusBarItem,
+  notificationState: NotificationState,
+  refreshViews: () => void
+): Promise<void> {
+  resetNotificationState(notificationState);
+  setConnectionStatus(statusBarItem, "disconnected");
+  refreshViews();
+  await refreshOrchestrator(
+    context,
+    statusBarItem,
+    notificationState,
+    refreshViews
+  );
 }
 
 function createNotificationState(): NotificationState {
@@ -821,6 +889,11 @@ function createNotificationState(): NotificationState {
     pendingApprovalIds: new Set<string>(),
     terminalRunKeys: new Set<string>()
   };
+}
+
+function resetNotificationState(state: NotificationState): void {
+  state.pendingApprovalIds.clear();
+  state.terminalRunKeys.clear();
 }
 
 async function notifyObservedChanges(

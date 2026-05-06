@@ -12,6 +12,7 @@
   "activationEvents": [
     "onStartupFinished",
     "onCommand:dabeehive.refresh",
+    "onCommand:dabeehive.reconnect",
     "onCommand:dabeehive.setApiToken",
     "onCommand:dabeehive.clearApiToken",
     "onCommand:dabeehive.createIssue",
@@ -31,6 +32,11 @@
       {
         "command": "dabeehive.refresh",
         "title": "Dabeehive: Refresh",
+        "category": "Dabeehive"
+      },
+      {
+        "command": "dabeehive.reconnect",
+        "title": "Dabeehive: Reconnect",
         "category": "Dabeehive"
       },
       {
