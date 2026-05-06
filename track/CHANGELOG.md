@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | UI-004 | verified | Added a dynamic read-only `/runs/[id]` page showing run status, project/issue/model metadata, timing, event/artifact/approval counts, recent events, artifacts, and missing/unavailable states. | Server Next build, root lint, and quoted source checks passed. |
 | 2026-05-06 | UI-003 | verified | Added a dynamic read-only `/issues` page that lists Prisma-backed issues with status, project context, type/priority, assignee, labels, related run/approval/artifact counts, and a visible create issue API entry point. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-002 | verified | Added a dynamic read-only `/projects` page that lists Prisma-backed projects with status, repository/workspace metadata, updated time, related record counts, and empty/database-unavailable states. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-001 | verified | Replaced the basic server home page with a responsive operational dashboard layout linking to projects, issues, runs, approvals, artifacts, REST health, MCP, and core API surfaces without adding dependencies or data fetching. | Next build passed after fixing one CSS warning; root lint and source checks passed. |

@@ -1,0 +1,37 @@
+# UI-004 Validation Evidence
+
+Validated At: 2026-05-06 15:13:09 KST
+
+## Commands
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Notes:
+
+- Next.js production build compiled successfully.
+- `/runs/[id]` appeared in the route table as a dynamic server-rendered route.
+- Type/lint checks performed by Next build completed successfully.
+
+### `pnpm lint`
+
+Result: Passed
+
+Notes:
+
+- `scripts/lint-basic.mjs` completed with `basic lint passed`.
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "Run detail|loadRun|getPrismaClient|Run data unavailable|Run not found|Recent events|Artifacts|detail-grid|metadata-preview|_count|/api/runs" 'apps/server/app/runs/[id]/page.js' apps/server/app/globals.css
+```
+
+Result: Passed
+
+Notes:
+
+- Confirmed `/runs/[id]` page structure, Prisma loader, run status/error states, event/artifact sections, counts, and CSS hooks.

@@ -365,6 +365,82 @@ select {
   font-size: 20px;
 }
 
+.detail-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+}
+
+.detail-panel {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.detail-list {
+  display: grid;
+  gap: 10px;
+}
+
+.detail-item {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.detail-item-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.detail-item-header strong {
+  overflow-wrap: anywhere;
+}
+
+.detail-item-header span,
+.detail-empty {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.detail-item p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.metadata-preview {
+  max-width: 100%;
+  margin: 0;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--surface-muted);
+  color: var(--text);
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    "Liberation Mono",
+    monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+.detail-link {
+  color: var(--accent);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
 .shell {
   display: flex;
   min-height: 100vh;
@@ -571,7 +647,8 @@ article p {
   .link-grid,
   .workflow-row,
   .resource-card,
-  .resource-meta {
+  .resource-meta,
+  .detail-grid {
     grid-template-columns: 1fr;
   }
 
@@ -598,6 +675,10 @@ article p {
 
   .resource-counts div:first-child {
     border-top: 0;
+  }
+
+  .detail-item-header {
+    display: grid;
   }
 
   .shell {
