@@ -8,6 +8,10 @@ import { z } from "zod";
 
 import { getPrismaClient } from "../../../src/lib/db/prisma";
 import {
+  buildApiTokenAbuseGuardKey,
+  checkBasicAbuseGuard
+} from "../../../src/lib/security/basic-abuse-guard";
+import {
   authenticateBearerToken,
   type BearerAuthPrismaClient
 } from "../../../src/lib/security/bearer-auth";
@@ -1415,6 +1419,14 @@ async function verifyBearerToken(
   const token = bearerToken?.trim();
 
   if (!token) {
+    return undefined;
+  }
+
+  const abuseGuardDecision = checkBasicAbuseGuard(
+    buildApiTokenAbuseGuardKey(_request, token)
+  );
+
+  if (!abuseGuardDecision.allowed) {
     return undefined;
   }
 

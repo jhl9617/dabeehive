@@ -9,6 +9,7 @@
     "test:sdk": "node scripts/sdk-adapter-smoke.mjs",
     "test:extension-secrets": "node scripts/extension-secretstorage-audit.mjs",
     "test:server-env": "node scripts/server-env-validation-smoke.mjs",
+    "test:abuse-guard": "node scripts/api-token-abuse-guard-smoke.mjs",
     "track:status": "node scripts/track-status.mjs"
   },
   "packageManager": "pnpm@10.23.0",

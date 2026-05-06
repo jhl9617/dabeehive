@@ -1,6 +1,13 @@
 import { apiError } from "../api-response";
 import { getPrismaClient } from "../db/prisma";
 import {
+  type BasicAbuseGuardDecision,
+  type BasicAbuseGuardOptions,
+  buildApiTokenAbuseGuardKey,
+  checkBasicAbuseGuard,
+  createBasicAbuseGuardHeaders
+} from "./basic-abuse-guard";
+import {
   type BearerAuthContext,
   type BearerAuthenticatedRouteHandler,
   type BearerAuthFailureReason,
@@ -11,6 +18,7 @@ import {
 export type ApiTokenAuthContext = BearerAuthContext;
 
 export type ApiTokenAuthMiddlewareOptions = {
+  abuseGuard?: BasicAbuseGuardOptions | false;
   getPrismaClient?: () => Promise<BearerAuthPrismaClient>;
   unauthorizedResponse?: (reason: BearerAuthFailureReason) => Response;
 };
@@ -19,11 +27,26 @@ export function withApiTokenAuth<TContext = unknown>(
   handler: BearerAuthenticatedRouteHandler<TContext>,
   options: ApiTokenAuthMiddlewareOptions = {}
 ): (request: Request, context: TContext) => Promise<Response> {
-  return withBearerAuth(handler, {
+  const authenticatedHandler = withBearerAuth(handler, {
     getPrismaClient: options.getPrismaClient ?? getBearerAuthPrismaClient,
     unauthorizedResponse:
       options.unauthorizedResponse ?? createApiTokenUnauthorizedResponse
   });
+
+  return async (request, context) => {
+    if (options.abuseGuard !== false) {
+      const decision = checkBasicAbuseGuard(
+        buildApiTokenAbuseGuardKey(request),
+        options.abuseGuard
+      );
+
+      if (!decision.allowed) {
+        return createApiTokenRateLimitedResponse(decision);
+      }
+    }
+
+    return authenticatedHandler(request, context);
+  };
 }
 
 export function createApiTokenUnauthorizedResponse(
@@ -34,6 +57,15 @@ export function createApiTokenUnauthorizedResponse(
     headers: {
       "WWW-Authenticate": "Bearer"
     }
+  });
+}
+
+export function createApiTokenRateLimitedResponse(
+  decision: BasicAbuseGuardDecision
+): Response {
+  return apiError("RATE_LIMITED", "Too many API token requests. Retry later.", {
+    status: 429,
+    headers: createBasicAbuseGuardHeaders(decision)
   });
 }
 

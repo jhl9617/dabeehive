@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 119 |
+| verified | 120 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 4 |
+| not_started | 3 |
 
 ---
 
@@ -231,7 +231,7 @@ P3 = 후속 확장
 | SEC-004 | verified | P1 | Security | Extension SecretStorage audit | 민감값이 settings에 남지 않는다 |
 | SEC-005 | verified | P1 | Security | dangerous command denylist | deploy/delete/pipe shell 등 차단 목록이 있다 |
 | SEC-006 | verified | P1 | Security | env validation | 서버 시작 시 필수 env 검증이 있다 |
-| SEC-007 | not_started | P2 | Security | rate/basic abuse guard | API token 호출에 기본 방어가 있다 |
+| SEC-007 | verified | P2 | Security | rate/basic abuse guard | API token 호출에 기본 방어가 있다 |
 
 ---
 

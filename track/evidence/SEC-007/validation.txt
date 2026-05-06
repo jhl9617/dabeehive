@@ -1,0 +1,85 @@
+# SEC-007 Validation Evidence
+
+Date: 2026-05-06 15:58:05 KST
+Branch: poc/SEC-007-basic-abuse-guard
+
+## Commands
+
+### `pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result: Passed
+
+Output summary:
+
+```txt
+No TypeScript errors.
+```
+
+### `pnpm test:abuse-guard`
+
+Result: Passed
+
+Output summary:
+
+```txt
+"checked": "api-token-abuse-guard"
+"limit": 2
+"firstAllowed": true
+"secondAllowed": true
+"thirdAllowed": false
+"retryAfterSeconds": 1
+"resetAllowed": true
+"rawTokenRedacted": true
+```
+
+### `pnpm lint`
+
+Result: Passed
+
+Output summary:
+
+```txt
+basic lint passed
+```
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Output summary:
+
+```txt
+Compiled successfully.
+Route build completed for App Router pages and API routes.
+```
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "checkBasicAbuseGuard|buildApiTokenAbuseGuardKey|createApiTokenRateLimitedResponse|RATE_LIMITED|Retry-After|test:abuse-guard|api-token-abuse-guard" apps/server/src/lib/security/basic-abuse-guard.ts apps/server/src/lib/security/api-token-auth.ts 'apps/server/app/api/[transport]/route.ts' package.json scripts/api-token-abuse-guard-smoke.mjs
+```
+
+Result: Passed
+
+### `pnpm track:status -- --task SEC-007 --status verified --dry-run`
+
+Result: Passed
+
+Output summary:
+
+```txt
+dry-run: SEC-007 verified -> verified
+file: track/MASTER.md
+total=131; not_started=3, planned=0, in_progress=0, blocked=2, implemented=6, verified=120, skipped=0
+```
+
+## Notes
+
+- REST API token middleware returns `RATE_LIMITED` with HTTP 429 and retry/rate headers when the guard is exceeded.
+- MCP bearer verification uses the same guard before DB-backed token verification, returning unauthenticated to the MCP auth layer when limited.
+- Guard state is process-local and suitable only for PoC/basic abuse mitigation.
+- No raw Bearer token values are stored in guard keys.
+- No package dependency, DB schema, migration, distributed rate-limit service, deployment, or external integration was added.
+- Existing unrelated dirty file `docs/codex-implementation-rules.md` was not touched.
