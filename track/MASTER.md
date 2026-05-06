@@ -23,10 +23,10 @@ P3 = 후속 확장
 |---|---:|
 | 전체 작업 수 | 96 |
 | verified | 78 |
-| implemented | 1 |
+| implemented | 2 |
 | in_progress | 0 |
 | blocked | 0 |
-| not_started | 17 |
+| not_started | 16 |
 
 ---
 
@@ -241,7 +241,7 @@ P3 = 후속 확장
 |---|---|---:|---|---|---|
 | TST-001 | verified | P0 | Test | server typecheck/lint 통과 | type/lint 명령이 성공한다 |
 | TST-002 | implemented | P0 | Test | DB migrate/seed 검증 | demo data가 생성된다 |
-| TST-003 | not_started | P0 | Test | REST happy path 검증 | project→issue→run→approval 흐름이 동작한다 |
+| TST-003 | implemented | P0 | Test | REST happy path 검증 | project→issue→run→approval 흐름이 동작한다 |
 | TST-004 | not_started | P0 | Test | MCP smoke 검증 | 핵심 MCP tools 호출이 성공한다 |
 | TST-005 | not_started | P0 | Test | Extension activation 검증 | extension host에서 activate 된다 |
 | TST-006 | not_started | P0 | Test | SDK fake run 검증 | fake adapter로 run event 흐름이 동작한다 |

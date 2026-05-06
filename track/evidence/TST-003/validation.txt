@@ -1,0 +1,57 @@
+TST-003 validation evidence
+Date: 2026-05-06 10:13:33 KST
+Branch: poc/TST-003-rest-happy-path
+
+Changes:
+- Added REST POST /api/approvals for pending approval request creation.
+- Added scripts/rest-happy-path-smoke.mjs for project -> issue -> run -> approval request -> approval response.
+
+Command: pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: node -c scripts/rest-happy-path-smoke.mjs
+Result: PASS
+Summary:
+- Smoke script syntax is valid.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+- Prisma schema loaded from prisma/schema.prisma.
+- The schema is valid.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec next dev --hostname 127.0.0.1 --port 18081
+Result: PASS
+Summary:
+- Initial sandbox attempt failed with listen EPERM on 0.0.0.0:18081.
+- Escalated local server start succeeded at http://127.0.0.1:18081.
+
+Command: curl -i http://127.0.0.1:18081/api/health
+Result: PASS
+Summary:
+- HTTP 200.
+- Response included service dabeehive-orchestrator and status ok.
+
+Command: curl -i -X POST http://127.0.0.1:18081/api/approvals -H 'content-type: application/json' -d '{}'
+Result: PASS
+Summary:
+- HTTP 400.
+- New route returned VALIDATION_ERROR because approval must be linked to an issue or run.
+
+Command: DABEEHIVE_REST_BASE_URL=http://127.0.0.1:18081 node scripts/rest-happy-path-smoke.mjs
+Result: BLOCKED
+Summary:
+- The first request, POST /api/projects, returned HTTP 500.
+- Response body: PROJECT_CREATE_FAILED.
+- Server log showed Prisma cannot reach database server at localhost:55432.
+
+Status:
+- TST-003 is implemented, not verified.
+- Full REST happy path requires a reachable PostgreSQL database with TST-002 migration and seed applied.

@@ -31,6 +31,23 @@ const listApprovalsSchema = z.object({
   type: approvalTypeSchema.optional()
 });
 
+const createApprovalSchema = z
+  .object({
+    issueId: z.string().trim().min(1).nullable().optional(),
+    runId: z.string().trim().min(1).nullable().optional(),
+    requestedById: z.string().trim().min(1).nullable().optional(),
+    type: approvalTypeSchema.default("general"),
+    reason: z.string().trim().min(1).max(100000).nullable().optional(),
+    changedFiles: z.array(z.string().trim().min(1).max(2048)).max(200).default([]),
+    diffSummary: z.string().trim().min(1).max(100000).nullable().optional(),
+    riskScore: z.number().int().min(0).max(100).nullable().optional(),
+    requiredAction: z.string().trim().min(1).max(100000).nullable().optional()
+  })
+  .refine((input) => input.issueId || input.runId, {
+    message: "Approval must be linked to an issue or run.",
+    path: ["issueId"]
+  });
+
 const approvalSelect = {
   id: true,
   issueId: true,
@@ -92,9 +109,17 @@ type ApprovalFindManyArgs = {
   select: typeof approvalSelect;
 };
 
+type ApprovalCreateArgs = {
+  data: z.infer<typeof createApprovalSchema> & {
+    status: "pending";
+  };
+  select: typeof approvalSelect;
+};
+
 type ApprovalPrismaClient = {
   approval: {
     findMany: (args: ApprovalFindManyArgs) => Promise<ApprovalRecord[]>;
+    create: (args: ApprovalCreateArgs) => Promise<ApprovalRecord>;
   };
 };
 
@@ -134,6 +159,58 @@ export async function GET(request: NextRequest) {
   }
 }
 
+export async function POST(request: Request) {
+  let body: unknown;
+
+  try {
+    body = await request.json();
+  } catch {
+    return apiError("INVALID_JSON", "Request body must be valid JSON.", {
+      status: 400
+    });
+  }
+
+  const validation = validateInput(createApprovalSchema, body, {
+    message: "Invalid approval input."
+  });
+
+  if (!validation.success) {
+    return apiError(validation.error.code, validation.error.message, {
+      status: 400,
+      details: validation.error.details
+    });
+  }
+
+  try {
+    const prisma = (await getPrismaClient()) as unknown as ApprovalPrismaClient;
+    const approval = await prisma.approval.create({
+      data: {
+        ...validation.data,
+        status: "pending"
+      },
+      select: approvalSelect
+    });
+
+    return apiSuccess(serializeApproval(approval), {
+      status: 201
+    });
+  } catch (error) {
+    if (hasPrismaErrorCode(error, "P2003")) {
+      return apiError(
+        "APPROVAL_LINK_NOT_FOUND",
+        "Approval issue, run, or requester does not exist.",
+        {
+          status: 400
+        }
+      );
+    }
+
+    return apiError("APPROVAL_CREATE_FAILED", "Failed to create approval.", {
+      status: 500
+    });
+  }
+}
+
 function serializeApproval(approval: ApprovalRecord): ApprovalResponse {
   return {
     ...approval,
@@ -141,4 +218,13 @@ function serializeApproval(approval: ApprovalRecord): ApprovalResponse {
     createdAt: approval.createdAt.toISOString(),
     updatedAt: approval.updatedAt.toISOString()
   };
+}
+
+function hasPrismaErrorCode(error: unknown, code: string): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === code
+  );
 }

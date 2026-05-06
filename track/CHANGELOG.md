@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | TST-003 | implemented | Added minimal REST `POST /api/approvals` support and a reusable REST happy path smoke script for project, issue, run, approval request, and approval response. | Server typecheck, root lint, Prisma validate, smoke script syntax, local server startup, health HTTP 200, and approval validation HTTP 400 passed; full REST happy path is blocked because PostgreSQL at `localhost:55432` is unreachable. |
 | 2026-05-04 | TST-002 | implemented | Added initial Prisma migration SQL and deterministic demo seed entrypoint for user/project/issue/document/run/event/approval/artifact data. | Prisma validate/generate, migration SQL generation, seed syntax, server typecheck, and root lint passed; DB-backed migrate deploy and seed execution are blocked because no local PostgreSQL server or Docker daemon is available. |
 | 2026-05-04 | TST-001 | verified | Validated the server TypeScript no-emit check and repository lint command after the PoC implementation sequence. | `pnpm --filter @dabeehive/server exec tsc --noEmit` and `pnpm lint` passed. |
 | 2026-05-04 | SEC-003 | verified | Added reusable secret redaction helper for Bearer tokens, assignment-style secrets, URL credentials, sensitive object keys, nested arrays/objects, and circular references. | Server typecheck, secret redaction smoke via existing TypeScript compiler API, root lint, and source/risk checks passed. |

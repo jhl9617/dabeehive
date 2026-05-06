@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-04 | REST approval request endpoint can create pending approvals before full route-wide authorization and workflow policy exist. | Medium | Keep TST-003 POST /api/approvals minimal, validate issue/run/requester links and risk fields, leave automatic workflow progression out of scope, and rely on existing follow-up auth/security tasks. | open | TST-003 |
 | 2026-05-04 | TST-002 introduces an initial Prisma migration artifact and demo seed entrypoint during validation. | Medium | Generate and apply only against a temporary local PostgreSQL instance, keep production DB access out of scope, and record the exact commands/evidence before marking verified. | open | TST-002 |
 | 2026-05-04 | Secret redaction helper exists before every log, event, and artifact write/read path is wired through it. | High | Keep SEC-003 helper dependency-free and reusable, validate common token patterns now, and require follow-up tasks to apply redaction at SDK event, command, and artifact boundaries. | open | SEC-003 |
 | 2026-05-04 | Bearer auth verification scans active API token hashes because the PoC token model has no lookup prefix or scope model yet. | High | Keep SEC-002 as a shared verifier and MCP wiring only, reject expired tokens, store no plaintext tokens, and defer route-wide REST enforcement, scopes, roles, and indexed token lookup to follow-up security tasks. | open | SEC-002 |
