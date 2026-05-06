@@ -1,0 +1,37 @@
+# UI-002 Validation Evidence
+
+Validated At: 2026-05-06 15:03:55 KST
+
+## Commands
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Notes:
+
+- Next.js production build compiled successfully.
+- `/projects` appeared in the route table as a dynamic server-rendered route.
+- Type/lint checks performed by Next build completed successfully.
+
+### `pnpm lint`
+
+Result: Passed
+
+Notes:
+
+- `scripts/lint-basic.mjs` completed with `basic lint passed`.
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "resource-shell|resource-list|Project list|loadProjects|getPrismaClient|Project data unavailable|/api/projects|_count" apps/server/app/projects/page.js apps/server/app/globals.css
+```
+
+Result: Passed
+
+Notes:
+
+- Confirmed `/projects` page structure, Prisma loader, unavailable-state copy, API link, related record counts, and CSS hooks.
