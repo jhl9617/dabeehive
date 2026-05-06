@@ -1,0 +1,45 @@
+FND-006 validation evidence
+Date: 2026-05-06 10:49:28 KST
+Branch: poc/FND-006-env-example
+
+Changes:
+- Added root .env.example with safe placeholders only.
+- Did not create .env, .env.local, real tokens, API keys, or production URLs.
+- Did not add Jira or Slack placeholders.
+
+Command: test -f .env.example
+Result: PASS
+Summary:
+- Root .env.example exists.
+
+Command: rg "DATABASE_URL" .env.example
+Result: PASS
+Output:
+- DATABASE_URL=postgresql://<db_user>:<db_password>@localhost:5432/dabeehive
+
+Command: rg "DABEEHIVE_MCP_TOKEN" .env.example
+Result: PASS
+Output:
+- DABEEHIVE_MCP_TOKEN=<local-mcp-api-token>
+
+Command: rg "ANTHROPIC_API_KEY" .env.example
+Result: PASS
+Output:
+- ANTHROPIC_API_KEY=<anthropic-api-key>
+
+Command: node -e "const fs=require('fs'); const s=fs.readFileSync('.env.example','utf8'); for (const x of ['SLACK','JIRA','demo-local-mcp-token']) if (s.includes(x)) process.exit(1);"
+Result: PASS
+Summary:
+- `.env.example` does not include Slack/Jira placeholders or the literal demo MCP token.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: node scripts/track-status.mjs --task FND-006 --status verified
+Result: PASS
+Output summary:
+- updated: FND-006 in_progress -> verified
+- file: track/MASTER.md
+- total=131; not_started=45, planned=0, in_progress=0, blocked=1, implemented=3, verified=82, skipped=0

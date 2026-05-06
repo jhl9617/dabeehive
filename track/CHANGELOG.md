@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | FND-006 | verified | Added root `.env.example` with placeholder-only values for Prisma, REST/MCP smoke scripts, and the approved Agent SDK adapter key placeholder while keeping real secrets and excluded integrations out. | Env file existence/content checks, excluded-string smoke, root lint, and MASTER status helper passed. |
 | 2026-05-06 | TRK-006 | verified | Added a dependency-free `track:status` helper that updates one task row in `track/MASTER.md`, validates allowed statuses, prevents multiple `in_progress` rows, supports dry-run, and recalculates summary counts from task rows. | Script syntax/help/dry-run, npm script entrypoint, temp-copy write path, real MASTER status update, and root lint passed. |
 | 2026-05-06 | TST-007 | blocked | Recorded end-to-end demo readiness evidence and confirmed the full VS Code issue -> plan -> approval -> coding -> review scenario cannot run without a reachable local PostgreSQL database or Docker fallback. | Root lint, server/shared/extension TypeScript checks, extension compile, REST/MCP smoke script syntax, and SDK fake run passed; PostgreSQL readiness and Docker daemon checks failed, blocking full DB-backed E2E. |
 | 2026-05-06 | TST-006 | verified | Added and ran a deterministic SDK fake run smoke script using existing shared adapter/event normalization/cancellation helpers without invoking a real external SDK or custom code editing engine. | Shared typecheck, fake run smoke, smoke script syntax, and root lint passed. |
