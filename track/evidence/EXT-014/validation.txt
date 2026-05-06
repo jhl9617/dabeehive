@@ -1,0 +1,29 @@
+EXT-014 validation evidence
+Date: 2026-05-06
+Branch: poc/EXT-014-notifications
+
+Commands:
+
+1. pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+Result: PASS
+Notes: No-emit TypeScript validation passed through the existing workspace TypeScript executable.
+
+2. pnpm --filter @dabeehive/vscode-extension run compile
+Result: PASS
+Output:
+> @dabeehive/vscode-extension@0.0.0 compile /Users/jongha/Documents/repository/dabeehive/apps/vscode-extension
+> pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json
+
+3. pnpm lint
+Result: PASS
+Output:
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+basic lint passed
+
+4. rg -n 'NotificationState|createNotificationState|notifyObservedChanges|RUN_TERMINAL_STATUSES|pendingApprovalIds|terminalRunKeys|notification check failed|approval requested|Dabeehive run' apps/vscode-extension/src/extension.ts
+Result: PASS
+Notes: Confirmed notification state, terminal run/pending approval de-duplication, refresh-time checks, and failure isolation.
+
+Conclusion:
+EXT-014 is verified with no-emit typecheck, extension compile, root lint, and source checks. Runtime VS Code notification interaction was not launched in this session.

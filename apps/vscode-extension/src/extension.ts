@@ -46,6 +46,7 @@ const RUN_STATUS_ORDER = [
   "failed",
   "cancelled"
 ];
+const RUN_TERMINAL_STATUSES = ["succeeded", "failed", "cancelled"] as const;
 
 const emptyTreeProvider: vscode.TreeDataProvider<never> = {
   getChildren: () => [],
@@ -226,6 +227,11 @@ type ApprovalsTreeNode =
       label: string;
     };
 
+type NotificationState = {
+  pendingApprovalIds: Set<string>;
+  terminalRunKeys: Set<string>;
+};
+
 class ApprovalsTreeProvider
   implements vscode.TreeDataProvider<ApprovalsTreeNode>
 {
@@ -278,6 +284,7 @@ class ApprovalsTreeProvider
 
 export function activate(context: ExtensionContext): void {
   const statusBarItem = createConnectionStatusBarItem();
+  const notificationState = createNotificationState();
   setConnectionStatus(statusBarItem, "disconnected");
   context.subscriptions.push(statusBarItem);
   const projectsIssuesTreeProvider = new ProjectsIssuesTreeProvider(() =>
@@ -292,7 +299,7 @@ export function activate(context: ExtensionContext): void {
 
   context.subscriptions.push(
     vscode.commands.registerCommand(REFRESH_COMMAND, () =>
-      refreshOrchestrator(context, statusBarItem)
+      refreshOrchestrator(context, statusBarItem, notificationState)
     )
   );
   context.subscriptions.push(
@@ -784,12 +791,22 @@ function isArtifactType(value: string): value is ArtifactType {
 
 async function refreshOrchestrator(
   context: ExtensionContext,
-  statusBarItem: vscode.StatusBarItem
+  statusBarItem: vscode.StatusBarItem,
+  notificationState: NotificationState
 ): Promise<void> {
   try {
     const client = await createOrchestratorClient(context);
     const health = await client.getHealth();
     setConnectionStatus(statusBarItem, "connected");
+
+    try {
+      await notifyObservedChanges(client, notificationState);
+    } catch {
+      await vscode.window.showWarningMessage(
+        "Dabeehive notification check failed."
+      );
+    }
+
     await vscode.window.showInformationMessage(
       `Dabeehive orchestrator is ${health.status}.`
     );
@@ -797,6 +814,55 @@ async function refreshOrchestrator(
     setConnectionStatus(statusBarItem, "disconnected");
     await vscode.window.showWarningMessage("Dabeehive orchestrator request failed.");
   }
+}
+
+function createNotificationState(): NotificationState {
+  return {
+    pendingApprovalIds: new Set<string>(),
+    terminalRunKeys: new Set<string>()
+  };
+}
+
+async function notifyObservedChanges(
+  client: OrchestratorClient,
+  state: NotificationState
+): Promise<void> {
+  const [runs, approvals] = await Promise.all([
+    client.listRuns(),
+    client.listPendingApprovals()
+  ]);
+
+  for (const run of runs) {
+    if (!isTerminalRunStatus(run.status)) {
+      continue;
+    }
+
+    const runKey = `${run.id}:${run.status}`;
+
+    if (state.terminalRunKeys.has(runKey)) {
+      continue;
+    }
+
+    state.terminalRunKeys.add(runKey);
+    await vscode.window.showInformationMessage(
+      `Dabeehive run ${formatShortId(run.id)} ${formatStatus(run.status)}.`
+    );
+  }
+
+  for (const approval of approvals) {
+    if (state.pendingApprovalIds.has(approval.id)) {
+      continue;
+    }
+
+    state.pendingApprovalIds.add(approval.id);
+    await vscode.window.showInformationMessage(
+      `Dabeehive approval requested: ${formatApprovalLabel(approval)}.`
+    );
+  }
+}
+
+function isTerminalRunStatus(status: string): boolean {
+  return (RUN_TERMINAL_STATUSES as readonly string[]).includes(status);
 }
 
 function createConnectionStatusBarItem(): vscode.StatusBarItem {
@@ -888,6 +954,10 @@ function formatApprovalDescription(approval: OrchestratorApproval): string {
 
 function formatApprovalType(type: string): string {
   return type.replace(/_/g, " ");
+}
+
+function formatStatus(status: string): string {
+  return status.replace(/_/g, " ");
 }
 
 function formatApprovalAction(action: ApprovalResponseAction): string {

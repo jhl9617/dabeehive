@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | EXT-014 | verified | Added refresh-time VS Code notifications for newly observed terminal runs and pending approvals with local de-duplication and notification failure isolation from connection health. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-013 | verified | Added read-only VS Code artifact viewer support with `dabeehive.openArtifactViewer`, Runs tree integration, artifact list client support for existing `GET /api/artifacts`, run/type prompts, and escaped diff/test/log content rendering. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-012 | verified | Added VS Code Approval Panel webview support with `dabeehive.openApprovalPanel`, Approvals tree integration, approval detail/respond client methods, nonce-based webview action handling, and approve/reject/request changes buttons. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-011 | verified | Added read-only VS Code Run Console webview support with `dabeehive.openRunConsole`, Runs tree integration, `GET /api/runs/[id]` client support, escaped event/log rendering, and scripts disabled in the webview. | No-emit extension typecheck through the existing workspace TypeScript executable, extension compile, root lint, and source checks passed; direct extension package `tsc` remains unavailable. |
