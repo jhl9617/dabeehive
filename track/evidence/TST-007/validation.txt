@@ -1,0 +1,80 @@
+TST-007 validation evidence
+Date: 2026-05-06 10:38:36 KST
+Branch: poc/TST-007-e2e-demo-scenario
+
+Objective:
+- Validate whether the PoC end-to-end demo scenario can be reproduced from VS Code issue selection through plan approval, coding, review artifacts, and final approval.
+
+Result:
+- BLOCKED.
+- The full VS Code issue -> plan -> approval -> coding -> review scenario requires a DB-backed Orchestrator server and authenticated MCP/REST flows.
+- Local PostgreSQL at localhost:55432 is unreachable.
+- Docker daemon is unavailable, so there is no local container fallback in this environment.
+
+Executable validation:
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: pnpm --filter @dabeehive/server exec tsc -p ../vscode-extension/tsconfig.json --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: pnpm --filter @dabeehive/vscode-extension run compile
+Result: PASS
+Summary:
+- Extension compile completed through the workspace TypeScript executable.
+
+Command: pnpm --filter @dabeehive/server exec node ../../scripts/sdk-fake-run-smoke.mjs
+Result: PASS
+Summary:
+- Fake adapter emitted normalized message, tool_call, tool_result, file_change, command, test_result, and done events.
+- Cancellation dispatch returned the expected runId, reason, and requestedAt summary.
+- No real external coding SDK was invoked.
+- No custom AI code editing engine was implemented.
+
+Command: node -c scripts/rest-happy-path-smoke.mjs
+Result: PASS
+Summary:
+- REST happy path smoke script syntax is valid.
+
+Command: node -c scripts/mcp-smoke.mjs
+Result: PASS
+Summary:
+- MCP smoke script syntax is valid.
+
+Command: pg_isready -h localhost -p 55432
+Result: FAILED / BLOCKER
+Summary:
+- localhost:55432 returned no response.
+- TST-002 migration/seed cannot be applied or verified in this environment.
+
+Command: docker ps --format '{{.Names}}'
+Result: FAILED / BLOCKER
+Summary:
+- Docker daemon socket is unavailable at unix:///Users/jongha/.docker/run/docker.sock.
+- A containerized PostgreSQL fallback is not available.
+
+Prerequisite evidence reviewed:
+- track/evidence/TST-002/validation.txt: migration SQL and seed support exist, but migrate deploy and db seed are blocked by missing PostgreSQL/Docker.
+- track/evidence/TST-003/validation.txt: REST health and route validation passed, but full REST happy path is blocked by database unreachability.
+- track/evidence/TST-004/validation.txt: unauthenticated MCP 401 and script syntax passed, but authenticated MCP smoke is blocked because token verification needs the database.
+- track/evidence/TST-005/validation.txt: extension compile and mocked activation passed; a real VS Code Extension Host GUI was not launched.
+- track/evidence/TST-006/validation.txt: SDK fake run flow passed without invoking a real external SDK.
+
+Decision:
+- Mark TST-007 as blocked, not verified.
+- Re-run after local PostgreSQL or Docker Compose is available and TST-002, TST-003, and TST-004 can be verified against the same seeded DB.
