@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | SRV-007 | verified | Added root App Router error and not-found pages with shared state-page styling and recovery actions, without changing API error contracts. | Server typecheck, Next build, source checks, root lint, and MASTER status helper passed. |
 | 2026-05-06 | SRV-006 | verified | Added dependency-free server logger wrapper with JSON console sink, API request/error helpers, run event helper, child context, injectable sink/clock, min-level filtering, error normalization, and secret redaction. | Server typecheck, source checks, root lint, and MASTER status helper passed. |
 | 2026-05-06 | FND-007 | verified | Added root README with local PoC setup, database, server, validation, REST/MCP smoke, VS Code extension, known blocker, and tracking instructions. | README existence/content checks, excluded env setup check, root lint, and MASTER status helper passed. |
 | 2026-05-06 | FND-006 | verified | Added root `.env.example` with placeholder-only values for Prisma, REST/MCP smoke scripts, and the approved Agent SDK adapter key placeholder while keeping real secrets and excluded integrations out. | Env file existence/content checks, excluded-string smoke, root lint, and MASTER status helper passed. |

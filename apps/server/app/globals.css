@@ -149,6 +149,62 @@ article p {
   line-height: 1.5;
 }
 
+.state-page {
+  justify-content: center;
+}
+
+.state-panel {
+  width: min(100%, 760px);
+  padding: 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.state-page h1 {
+  margin-bottom: 16px;
+  font-size: 48px;
+  line-height: 1.05;
+}
+
+.state-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button.secondary {
+  background: var(--surface);
+  color: var(--accent);
+}
+
+.error-digest {
+  display: inline-flex;
+  max-width: 100%;
+  margin: 20px 0 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--surface-muted);
+  color: var(--muted);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 760px) {
   .shell {
     padding: 28px 18px;
@@ -161,5 +217,13 @@ article p {
 
   h1 {
     font-size: 42px;
+  }
+
+  .state-panel {
+    padding: 24px;
+  }
+
+  .state-page h1 {
+    font-size: 36px;
   }
 }
