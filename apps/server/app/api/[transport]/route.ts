@@ -1,5 +1,8 @@
 import type { AuthInfo } from "@modelcontextprotocol/sdk/server/auth/types.js";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import {
+  ResourceTemplate,
+  type McpServer
+} from "@modelcontextprotocol/sdk/server/mcp.js";
 import { createMcpHandler, withMcpAuth } from "mcp-handler";
 import { z } from "zod";
 
@@ -20,6 +23,7 @@ const mcpHandler = createMcpHandler(
     registerApprovalTools(server);
     registerArtifactTools(server);
     registerContextTools(server);
+    registerContextResources(server);
   },
   {
     serverInfo: {
@@ -371,6 +375,14 @@ type DocumentContextRecord = {
   updatedAt: Date;
 };
 
+type DocumentContextResponse = Omit<
+  DocumentContextRecord,
+  "createdAt" | "updatedAt"
+> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
 type ContextSearchResult = {
   sourceType: ContextSearchSourceType;
   id: string;
@@ -622,6 +634,21 @@ type ContextSearchPrismaClient = {
     findMany: (
       args: ContextSearchDocumentFindManyArgs
     ) => Promise<DocumentContextRecord[]>;
+  };
+};
+
+type DocumentContextFindUniqueArgs = {
+  where: {
+    id: string;
+  };
+  select: typeof documentContextSelect;
+};
+
+type DocumentContextPrismaClient = {
+  document: {
+    findUnique: (
+      args: DocumentContextFindUniqueArgs
+    ) => Promise<DocumentContextRecord | null>;
   };
 };
 
@@ -1239,6 +1266,102 @@ function registerContextTools(server: McpServer): void {
   );
 }
 
+function registerContextResources(server: McpServer): void {
+  server.registerResource(
+    "issue",
+    new ResourceTemplate("issue://{id}", {
+      list: undefined
+    }),
+    {
+      title: "Issue resource",
+      description: "Read one orchestrator issue as JSON.",
+      mimeType: "application/json"
+    },
+    async (uri, variables) => {
+      const id = getResourceId(variables, "id");
+      const prisma = (await getPrismaClient()) as unknown as IssuePrismaClient;
+      const issue = await prisma.issue.findUnique({
+        where: {
+          id
+        },
+        select: issueSelect
+      });
+
+      if (!issue) {
+        throw resourceReadError("ISSUE_NOT_FOUND", "Issue was not found.");
+      }
+
+      return jsonResourceResult(uri, {
+        data: serializeIssue(issue)
+      });
+    }
+  );
+
+  server.registerResource(
+    "document",
+    new ResourceTemplate("document://{id}", {
+      list: undefined
+    }),
+    {
+      title: "Document resource",
+      description: "Read one orchestrator context document as JSON.",
+      mimeType: "application/json"
+    },
+    async (uri, variables) => {
+      const id = getResourceId(variables, "id");
+      const prisma =
+        (await getPrismaClient()) as unknown as DocumentContextPrismaClient;
+      const document = await prisma.document.findUnique({
+        where: {
+          id
+        },
+        select: documentContextSelect
+      });
+
+      if (!document) {
+        throw resourceReadError(
+          "DOCUMENT_NOT_FOUND",
+          "Document was not found."
+        );
+      }
+
+      return jsonResourceResult(uri, {
+        data: serializeDocumentContext(document)
+      });
+    }
+  );
+
+  server.registerResource(
+    "run",
+    new ResourceTemplate("run://{id}", {
+      list: undefined
+    }),
+    {
+      title: "Run resource",
+      description: "Read one orchestrator agent run as JSON.",
+      mimeType: "application/json"
+    },
+    async (uri, variables) => {
+      const id = getResourceId(variables, "id");
+      const prisma = (await getPrismaClient()) as unknown as RunPrismaClient;
+      const run = await prisma.agentRun.findUnique({
+        where: {
+          id
+        },
+        select: runSelect
+      });
+
+      if (!run) {
+        throw resourceReadError("RUN_NOT_FOUND", "Run was not found.");
+      }
+
+      return jsonResourceResult(uri, {
+        data: serializeRun(run)
+      });
+    }
+  );
+}
+
 async function verifyBearerToken(
   _request: Request,
   bearerToken?: string
@@ -1318,6 +1441,16 @@ function serializeArtifact(artifact: ArtifactRecord): ArtifactResponse {
     ...artifact,
     createdAt: artifact.createdAt.toISOString(),
     updatedAt: artifact.updatedAt.toISOString()
+  };
+}
+
+function serializeDocumentContext(
+  document: DocumentContextRecord
+): DocumentContextResponse {
+  return {
+    ...document,
+    createdAt: document.createdAt.toISOString(),
+    updatedAt: document.updatedAt.toISOString()
   };
 }
 
@@ -1528,6 +1661,27 @@ function contextToolError(code: string, message: string) {
   );
 }
 
+function getResourceId(
+  variables: Record<string, string | string[]>,
+  name: string
+): string {
+  const value = variables[name];
+  const id = Array.isArray(value) ? value[0] : value;
+
+  if (!id || id.trim().length === 0) {
+    throw resourceReadError(
+      "RESOURCE_ID_REQUIRED",
+      `Resource variable ${name} is required.`
+    );
+  }
+
+  return id.trim();
+}
+
+function resourceReadError(code: string, message: string): Error {
+  return new Error(`${code}: ${message}`);
+}
+
 function hasPrismaErrorCode(error: unknown, code: string): boolean {
   return (
     typeof error === "object" &&
@@ -1543,6 +1697,18 @@ function jsonToolResult(value: unknown, isError = false) {
     content: [
       {
         type: "text" as const,
+        text: JSON.stringify(value)
+      }
+    ]
+  };
+}
+
+function jsonResourceResult(uri: URL, value: unknown) {
+  return {
+    contents: [
+      {
+        uri: uri.href,
+        mimeType: "application/json",
         text: JSON.stringify(value)
       }
     ]

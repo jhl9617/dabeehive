@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-06 | MCP-010 exposes issue/document/run records as MCP resources before full scope/role filtering exists. | Medium | Require existing MCP Bearer auth, keep resources read-only, return JSON for single requested IDs only, and defer role/scope filtering to later security tasks. | open | MCP-010 |
 | 2026-05-06 | MCP-009 exposes issue/document context through a new authenticated keyword search surface before full scope/role filtering exists. | Medium | Require existing MCP Bearer auth, keep the tool read-only, bound query/limit inputs, return excerpts instead of full documents, and defer role/scope filtering to later security tasks. | open | MCP-009 |
 | 2026-05-06 | API-016 common API happy-path command cannot pass until local PostgreSQL is reachable at `localhost:55432`. | High | Start local PostgreSQL or Docker Compose, apply migration/seed, then rerun `DABEEHIVE_REST_BASE_URL=<server> pnpm test:api` and promote API-016/TST-003 evidence if successful. | open | API-016 |
 | 2026-05-06 | API-015 adds a REST API token auth middleware and token context endpoint before full route-wide enforcement, token scopes, and role checks exist. | High | Return only sanitized token metadata, reuse DB-backed scrypt hash verification, keep raw token/hash out of responses, require `WWW-Authenticate: Bearer` for 401s, and defer full REST rollout/scopes to follow-up tasks. | open | API-015 |

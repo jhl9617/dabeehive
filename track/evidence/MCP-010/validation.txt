@@ -1,0 +1,72 @@
+# MCP-010 Validation Evidence
+
+Date: 2026-05-06
+Task: MCP-010 — MCP resources
+
+## Commands
+
+### TypeScript noEmit
+
+Command:
+`pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result:
+Passed with no output.
+
+### Next.js production build
+
+Command:
+`pnpm --filter @dabeehive/server run build`
+
+Result:
+Passed.
+
+```txt
+✓ Compiled successfully
+├ ƒ /api/[transport]                       168 B         102 kB
+```
+
+Note:
+The existing Next.js warning remains:
+`TypeScript project references are not fully supported. Attempting to build in incremental mode.`
+
+### Root lint
+
+Command:
+`pnpm lint`
+
+Result:
+Passed.
+
+```txt
+basic lint passed
+```
+
+### Source check
+
+Command:
+`rg -n "registerContextResources|issue://\\{id\\}|document://\\{id\\}|run://\\{id\\}|jsonResourceResult|resourceReadError|MCP-010" 'apps/server/app/api/[transport]/route.ts' track/RISKS.md`
+
+Result:
+Passed. Confirmed:
+
+- MCP resource registration is called
+- `issue://{id}`, `document://{id}`, and `run://{id}` templates exist
+- JSON resource result helper exists
+- readable resource errors exist
+- MCP-010 risk note exists
+
+### Local PostgreSQL readiness
+
+Command:
+`pg_isready -h localhost -p 55432`
+
+Result:
+Failed.
+
+```txt
+localhost:55432 - no response
+```
+
+Impact:
+Authenticated MCP runtime resource read smoke was not executable in this environment because MCP Bearer token verification and resource reads depend on local PostgreSQL. Validation used typecheck, production build, lint, and source checks.
