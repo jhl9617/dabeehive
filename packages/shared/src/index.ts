@@ -14,6 +14,7 @@ export * from "./git-changed-files";
 export * from "./git-diff-summary";
 export * from "./git-status";
 export * from "./planner-instruction";
+export * from "./pr-body-template";
 export * from "./reviewer-instruction";
 export * from "./run-cancellation";
 export * from "./run-state-machine";

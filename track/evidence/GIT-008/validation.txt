@@ -1,0 +1,37 @@
+# GIT-008 Validation Evidence
+
+Date: 2026-05-06
+Branch: poc/GIT-008-pr-body-template
+
+## Commands
+
+### pnpm --filter @dabeehive/server exec tsc -p ../../packages/shared/tsconfig.json --noEmit
+
+Result: Passed
+
+Output: no output; TypeScript completed successfully.
+
+### pnpm lint
+
+Result: Passed
+
+Output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+### rg source check
+
+Command:
+
+```txt
+rg -n "PrBody|buildPrBody|buildReferencesSection|buildArtifactSection|buildValidationSection|buildChangedFilesSection|Plan|Diff|Test|Approval|Artifacts|pr-body-template" packages/shared/src/pr-body-template.ts packages/shared/src/index.ts
+```
+
+Result: Passed
+
+Summary: Confirmed PR body template exports and deterministic sections for references, artifacts, changed files, and validation.

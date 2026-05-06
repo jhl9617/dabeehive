@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 107 |
+| verified | 108 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 16 |
+| not_started | 15 |
 
 ---
 
@@ -202,7 +202,7 @@ P3 = 후속 확장
 | GIT-005 | verified | P0 | Git | test result artifact 생성 | 테스트 결과가 artifact로 저장된다 |
 | GIT-006 | verified | P1 | Git | Draft PR config | GitHub repo/token 설정 구조가 있다 |
 | GIT-007 | verified | P1 | Git | optional Draft PR command | 최종 승인 후에만 Draft PR 생성이 가능하다 |
-| GIT-008 | not_started | P2 | Git | PR body template | plan/diff/test/approval 링크가 포함된다 |
+| GIT-008 | verified | P2 | Git | PR body template | plan/diff/test/approval 링크가 포함된다 |
 
 ---
 
