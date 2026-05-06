@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-06 | DB-011 local migration execution is blocked because no local PostgreSQL server is reachable at `localhost:55432`. | High | Start local PostgreSQL or Docker Compose, then rerun `prisma migrate deploy --schema prisma/schema.prisma` with a local `DATABASE_URL`. | open | DB-011 |
 | 2026-05-06 | DB-010 seed execution cannot be verified because no local PostgreSQL server is reachable at `localhost:55432`. | High | Start local PostgreSQL or Docker Compose, rerun `prisma migrate deploy`, then rerun `prisma db seed` and promote DB-010/DB-011 evidence if successful. | open | DB-010 |
 | 2026-05-06 | End-to-end demo cannot run until local PostgreSQL or Docker is available and DB-backed migrate/seed, REST, and MCP smoke validations are rerun. | High | Start local PostgreSQL or Docker Compose, apply TST-002 migration/seed, rerun TST-003 REST happy path and TST-004 authenticated MCP smoke, then rerun TST-007. | open | TST-007 |
 | 2026-05-06 | Demo seed now includes an API token hash for MCP smoke validation. | Medium | Store only the scrypt hash in seed data, keep the plaintext token limited to local smoke scripts, and require production deployments to use real token provisioning outside the seed. | open | TST-004 |

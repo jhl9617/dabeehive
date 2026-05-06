@@ -1,0 +1,46 @@
+DB-011 validation evidence
+Date: 2026-05-06 11:09:17 KST
+Branch: poc/DB-011-migration-validation
+
+Changes:
+- No product source changes.
+- Existing migration execution was validated as far as local environment allows.
+
+Command: test -f apps/server/prisma/migrations/20260504201000_init/migration.sql
+Result: PASS
+Summary:
+- Initial migration artifact exists.
+
+Command: DATABASE_URL=postgresql://user:pass@localhost:5432/dabeehive pnpm --filter @dabeehive/server exec prisma validate --schema prisma/schema.prisma
+Result: PASS
+Summary:
+- Prisma schema loaded from prisma/schema.prisma.
+- The schema is valid.
+- Prisma emitted existing package.json#prisma deprecation and update notices.
+
+Command: pg_isready -h localhost -p 55432
+Result: FAILED / BLOCKER
+Summary:
+- localhost:55432 returned no response.
+
+Command: DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec prisma migrate deploy --schema prisma/schema.prisma
+Result: FAILED / BLOCKER
+Summary:
+- Prisma loaded datasource `dabeehive_tst_002` at `localhost:55432`.
+- Migration deploy failed with a schema engine error because the database server is unreachable.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: node scripts/track-status.mjs --task DB-011 --status blocked
+Result: PASS
+Output summary:
+- updated: DB-011 in_progress -> blocked
+- file: track/MASTER.md
+- total=131; not_started=40, planned=0, in_progress=0, blocked=2, implemented=4, verified=85, skipped=0
+
+Status:
+- DB-011 is blocked.
+- Full verification requires reachable local PostgreSQL.
