@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | SDK-010 | verified | Added provider-neutral Agent SDK allowed tool settings for read/search/edit/bash, wired them through run input and the Claude adapter skeleton, and surfaced effective tools in coder instructions without adding tool execution logic. | Shared no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | EXT-016 | verified | Centralized VS Code webview CSP generation so read-only Run Console/Artifact Viewer panels explicitly deny scripts and the Approval Panel keeps only nonce-authorized script execution. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-015 | verified | Added explicit VS Code refresh/reconnect behavior with tree provider refresh events, reconnect command contribution, connection recheck wiring, and notification de-duplication reset without background polling. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |
 | 2026-05-06 | EXT-014 | verified | Added refresh-time VS Code notifications for newly observed terminal runs and pending approvals with local de-duplication and notification failure isolation from connection health. | Extension no-emit typecheck, Extension compile, root lint, and source checks passed. |

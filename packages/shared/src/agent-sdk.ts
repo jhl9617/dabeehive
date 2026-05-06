@@ -6,6 +6,7 @@ import type {
   Project,
   RunEventType
 } from "./domain";
+import type { CodingAgentToolName } from "./allowed-tools";
 
 export type CodingRunWorkspace = {
   path: string;
@@ -31,6 +32,7 @@ export type CodingRunInput = {
   workspace: CodingRunWorkspace;
   systemInstruction: string;
   agentRole?: AgentRole;
+  allowedTools?: readonly CodingAgentToolName[];
   model?: CodingRunModel;
   context?: Record<string, unknown>;
   metadata?: Record<string, unknown>;
@@ -49,6 +51,7 @@ export type CodingAgentEvent = {
 export type LocalCodingAgentRunHandle = {
   runId: EntityId;
   adapterRunId?: string;
+  allowedTools?: readonly CodingAgentToolName[];
 };
 
 export type LocalCodingAgentCancelRequest = {
@@ -58,6 +61,7 @@ export type LocalCodingAgentCancelRequest = {
 
 export interface LocalCodingAgentAdapter {
   readonly name: string;
+  readonly allowedTools: readonly CodingAgentToolName[];
   start(request: CodingRunInput): Promise<LocalCodingAgentRunHandle>;
   cancel(request: LocalCodingAgentCancelRequest): Promise<void>;
 }
