@@ -1,0 +1,63 @@
+# TST-010 Validation
+
+Date: 2026-05-06
+Task: TST-010
+
+## Commands
+
+### pnpm lint
+
+Result: Passed
+
+Output summary:
+
+```txt
+basic lint passed
+```
+
+### rg section check
+
+Command:
+
+```sh
+rg -n "Demo script|Prerequisites|Baseline validation|Server walkthrough|REST walkthrough|MCP walkthrough|VS Code walkthrough|SDK walkthrough|Expected results|Blocked steps|Out of scope" track/evidence/TST-010/demo-script.md
+```
+
+Result: Passed
+
+Matched sections:
+
+```txt
+7:## Demo script overview
+13:## Prerequisites
+37:## Baseline validation
+61:## Server walkthrough
+77:## REST walkthrough
+103:## MCP walkthrough
+127:## VS Code walkthrough
+157:## SDK walkthrough
+200:## Expected results
+211:## Blocked steps
+224:## Out of scope
+```
+
+### MASTER dry-run
+
+Command:
+
+```sh
+pnpm track:status -- --task TST-010 --status verified --dry-run
+```
+
+Result: Passed
+
+Output summary:
+
+```txt
+dry-run: TST-010 in_progress -> verified
+total=131; not_started=0, planned=0, in_progress=0, blocked=2, implemented=6, verified=123, skipped=0
+```
+
+## Result
+
+TST-010 validation passed. The demo script is documentation-only and introduced no product source changes or package dependencies.
