@@ -1,0 +1,116 @@
+# API-015 Validation Evidence
+
+Date: 2026-05-06
+Task: API-015 — API token auth middleware
+
+## Commands
+
+### TypeScript noEmit
+
+Command:
+`pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result:
+Passed with no output.
+
+### Next.js production build
+
+Command:
+`pnpm --filter @dabeehive/server run build`
+
+Result:
+Passed. Build output included:
+
+```txt
+✓ Compiled successfully
+├ ƒ /api/auth/token                        168 B         102 kB
+```
+
+Note:
+The existing Next.js warning remains:
+`TypeScript project references are not fully supported. Attempting to build in incremental mode.`
+
+### Root lint
+
+Command:
+`pnpm lint`
+
+Result:
+Passed.
+
+```txt
+basic lint passed
+```
+
+### Source check
+
+Command:
+`rg -n "withApiTokenAuth|WWW-Authenticate|Valid Bearer token|api/auth/token|tokenId|api-token-auth|API-015" apps/server/src/lib/security/api-token-auth.ts apps/server/app/api/auth/token/route.ts track/RISKS.md`
+
+Result:
+Passed. Confirmed:
+
+- route-bound `withApiTokenAuth` helper exists
+- 401 responses include `WWW-Authenticate: Bearer`
+- `/api/auth/token` returns sanitized token context fields
+- API-015 risk note exists
+
+### HTTP unauthenticated smoke
+
+Command:
+`pnpm --filter @dabeehive/server exec next start --hostname 127.0.0.1 --port 18085`
+
+Command:
+`curl -i http://127.0.0.1:18085/api/auth/token`
+
+Result:
+Passed. Response:
+
+```txt
+HTTP/1.1 401 Unauthorized
+content-type: application/json
+www-authenticate: Bearer
+
+{"error":{"code":"UNAUTHORIZED","message":"Valid Bearer token is required."}}
+```
+
+### Middleware fake Prisma smoke
+
+Command:
+`pnpm --filter @dabeehive/server exec tsc --ignoreConfig --module commonjs --target es2022 --moduleResolution node --ignoreDeprecations 6.0 --skipLibCheck --outDir /private/tmp/api015-smoke src/lib/security/api-token-auth.ts src/lib/security/bearer-auth.ts src/lib/security/api-token.ts src/lib/api-response.ts src/lib/db/prisma.ts`
+
+Result:
+Passed.
+
+Command:
+`NODE_PATH=/Users/jongha/Documents/repository/dabeehive/apps/server/node_modules:/Users/jongha/Documents/repository/dabeehive/node_modules node -e "<api token auth fake prisma smoke>"`
+
+Result:
+Passed.
+
+```json
+{
+  "validStatus": 200,
+  "validUserId": "user_1",
+  "invalidStatus": 401,
+  "invalidWwwAuthenticate": "Bearer",
+  "missingStatus": 401,
+  "missingWwwAuthenticate": "Bearer",
+  "queries": 2
+}
+```
+
+### Local PostgreSQL readiness
+
+Command:
+`pg_isready -h localhost -p 55432`
+
+Result:
+Failed because the local database is not running.
+
+```txt
+localhost:55432 - no response
+```
+
+Impact:
+DB-backed HTTP smoke with a real persisted token was not executable in this environment. Middleware success/failure behavior was validated with fake Prisma and the real token hash verifier.

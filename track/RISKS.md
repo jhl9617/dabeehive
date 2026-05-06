@@ -2,6 +2,7 @@
 
 | Date | Risk | Severity | Mitigation | Status | Related Task |
 |---|---|---:|---|---|---|
+| 2026-05-06 | API-015 adds a REST API token auth middleware and token context endpoint before full route-wide enforcement, token scopes, and role checks exist. | High | Return only sanitized token metadata, reuse DB-backed scrypt hash verification, keep raw token/hash out of responses, require `WWW-Authenticate: Bearer` for 401s, and defer full REST rollout/scopes to follow-up tasks. | open | API-015 |
 | 2026-05-06 | DB-011 local migration execution is blocked because no local PostgreSQL server is reachable at `localhost:55432`. | High | Start local PostgreSQL or Docker Compose, then rerun `prisma migrate deploy --schema prisma/schema.prisma` with a local `DATABASE_URL`. | open | DB-011 |
 | 2026-05-06 | DB-010 seed execution cannot be verified because no local PostgreSQL server is reachable at `localhost:55432`. | High | Start local PostgreSQL or Docker Compose, rerun `prisma migrate deploy`, then rerun `prisma db seed` and promote DB-010/DB-011 evidence if successful. | open | DB-010 |
 | 2026-05-06 | End-to-end demo cannot run until local PostgreSQL or Docker is available and DB-backed migrate/seed, REST, and MCP smoke validations are rerun. | High | Start local PostgreSQL or Docker Compose, apply TST-002 migration/seed, rerun TST-003 REST happy path and TST-004 authenticated MCP smoke, then rerun TST-007. | open | TST-007 |

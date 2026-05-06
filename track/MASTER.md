@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 87 |
+| verified | 88 |
 | implemented | 4 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 38 |
+| not_started | 37 |
 
 ---
 
@@ -108,7 +108,7 @@ P3 = 후속 확장
 | API-012 | verified | P0 | API | Approval respond API | approve/reject/request_changes 처리가 가능하다 |
 | API-013 | verified | P0 | API | Artifact create/list API | plan/diff/test artifact 저장과 조회가 가능하다 |
 | API-014 | verified | P1 | API | Run SSE stream API | run event가 SSE로 스트리밍된다 |
-| API-015 | not_started | P1 | API | API token 인증 middleware | Bearer token 인증이 가능하다 |
+| API-015 | verified | P1 | API | API token 인증 middleware | Bearer token 인증이 가능하다 |
 | API-016 | not_started | P1 | API | 공통 API 테스트 작성 | 핵심 API happy path 테스트가 있다 |
 
 ---
