@@ -1,0 +1,42 @@
+SRV-006 validation evidence
+Date: 2026-05-06 10:58:01 KST
+Branch: poc/SRV-006-server-logger
+
+Changes:
+- Added apps/server/src/lib/logger.ts.
+- Added createServerLogger and default serverLogger.
+- Added API request/error logging helpers and run event logging helper.
+- Reused redactSecrets before writing log entries.
+- No new dependencies or route-wide integration changes.
+
+Command: pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: rg "createServerLogger" apps/server/src/lib/logger.ts
+Result: PASS
+Summary:
+- Factory and default logger are present.
+
+Command: rg "logRunEvent" apps/server/src/lib/logger.ts
+Result: PASS
+Summary:
+- Run event helper is present.
+
+Command: rg "redactSecrets" apps/server/src/lib/logger.ts
+Result: PASS
+Summary:
+- Logger redacts structured entries before writing.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: node scripts/track-status.mjs --task SRV-006 --status verified
+Result: PASS
+Output summary:
+- updated: SRV-006 in_progress -> verified
+- file: track/MASTER.md
+- total=131; not_started=43, planned=0, in_progress=0, blocked=1, implemented=3, verified=84, skipped=0

@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | SRV-006 | verified | Added dependency-free server logger wrapper with JSON console sink, API request/error helpers, run event helper, child context, injectable sink/clock, min-level filtering, error normalization, and secret redaction. | Server typecheck, source checks, root lint, and MASTER status helper passed. |
 | 2026-05-06 | FND-007 | verified | Added root README with local PoC setup, database, server, validation, REST/MCP smoke, VS Code extension, known blocker, and tracking instructions. | README existence/content checks, excluded env setup check, root lint, and MASTER status helper passed. |
 | 2026-05-06 | FND-006 | verified | Added root `.env.example` with placeholder-only values for Prisma, REST/MCP smoke scripts, and the approved Agent SDK adapter key placeholder while keeping real secrets and excluded integrations out. | Env file existence/content checks, excluded-string smoke, root lint, and MASTER status helper passed. |
 | 2026-05-06 | TRK-006 | verified | Added a dependency-free `track:status` helper that updates one task row in `track/MASTER.md`, validates allowed statuses, prevents multiple `in_progress` rows, supports dry-run, and recalculates summary counts from task rows. | Script syntax/help/dry-run, npm script entrypoint, temp-copy write path, real MASTER status update, and root lint passed. |
