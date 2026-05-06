@@ -1,0 +1,58 @@
+# TST-008 Validation Evidence
+
+Date: 2026-05-06 16:03:54 KST
+Branch: poc/TST-008-final-acceptance-checklist
+
+## Commands
+
+### `pnpm lint`
+
+Result: Passed
+
+Output summary:
+
+```txt
+basic lint passed
+```
+
+### Checklist section check
+
+Command:
+
+```txt
+rg -n "Overall status|Scope alignment|Acceptance checklist|Blocked|Out of scope|Final acceptance decision|Re-run checklist" track/evidence/TST-008/final-acceptance-checklist.md
+```
+
+Result: Passed
+
+Matched required sections and status labels.
+
+### Checklist status/source coverage check
+
+Command:
+
+```txt
+rg -n "PostgreSQL|Docker|Out of scope|Verified|Implemented|Blocked|AGENTS|TST-007" track/evidence/TST-008/final-acceptance-checklist.md
+```
+
+Result: Passed
+
+Confirmed checklist records blocker context, scope exclusions, status legend, and TST-007 dependency.
+
+### `pnpm track:status -- --task TST-008 --status verified --dry-run`
+
+Result: Passed
+
+Output summary:
+
+```txt
+dry-run: TST-008 verified -> verified
+file: track/MASTER.md
+total=131; not_started=2, planned=0, in_progress=0, blocked=2, implemented=6, verified=121, skipped=0
+```
+
+## Notes
+
+- This is a documentation/evidence task only.
+- No product code, DB schema, auth behavior, dependency, deployment, external integration, automatic merge, or custom AI code editing engine was added.
+- Existing unrelated dirty file `docs/codex-implementation-rules.md` was not touched.
