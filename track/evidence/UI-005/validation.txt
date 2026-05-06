@@ -1,0 +1,37 @@
+# UI-005 Validation Evidence
+
+Validated At: 2026-05-06 15:17:30 KST
+
+## Commands
+
+### `pnpm --filter @dabeehive/server run build`
+
+Result: Passed
+
+Notes:
+
+- Next.js production build compiled successfully.
+- `/approvals` appeared in the route table as a dynamic server-rendered route.
+- Type/lint checks performed by Next build completed successfully.
+
+### `pnpm lint`
+
+Result: Passed
+
+Notes:
+
+- `scripts/lint-basic.mjs` completed with `basic lint passed`.
+
+### Source Check
+
+Command:
+
+```txt
+rg -n "Pending approvals|loadPendingApprovals|getPrismaClient|status: \"pending\"|Approval data unavailable|No pending approvals|riskScore|changedFiles|/api/approvals|API record" apps/server/app/approvals/page.js
+```
+
+Result: Passed
+
+Notes:
+
+- Confirmed `/approvals` page structure, pending filter, Prisma loader, unavailable/empty state copy, risk/file context, and API links.

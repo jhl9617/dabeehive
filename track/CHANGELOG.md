@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | UI-005 | verified | Added a dynamic read-only `/approvals` page showing pending approvals with type, risk, changed file count, issue/run context, required action, diff summary, timestamps, and detail API links while leaving response actions to UI-006. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-004 | verified | Added a dynamic read-only `/runs/[id]` page showing run status, project/issue/model metadata, timing, event/artifact/approval counts, recent events, artifacts, and missing/unavailable states. | Server Next build, root lint, and quoted source checks passed. |
 | 2026-05-06 | UI-003 | verified | Added a dynamic read-only `/issues` page that lists Prisma-backed issues with status, project context, type/priority, assignee, labels, related run/approval/artifact counts, and a visible create issue API entry point. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-002 | verified | Added a dynamic read-only `/projects` page that lists Prisma-backed projects with status, repository/workspace metadata, updated time, related record counts, and empty/database-unavailable states. | Server Next build, root lint, and source checks passed. |
