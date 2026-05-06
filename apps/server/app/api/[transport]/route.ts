@@ -19,6 +19,7 @@ const mcpHandler = createMcpHandler(
     registerRunEventTools(server);
     registerApprovalTools(server);
     registerArtifactTools(server);
+    registerContextTools(server);
   },
   {
     serverInfo: {
@@ -114,6 +115,7 @@ const artifactTypeSchema = z.enum([
   "pr_url",
   "log"
 ]);
+const contextSearchSourceTypeSchema = z.enum(["issue", "document"]);
 
 const projectSelect = {
   id: true,
@@ -204,6 +206,18 @@ const artifactSelect = {
   updatedAt: true
 };
 
+const documentContextSelect = {
+  id: true,
+  projectId: true,
+  type: true,
+  title: true,
+  content: true,
+  version: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true
+};
+
 type ProjectStatus = z.infer<typeof projectStatusSchema>;
 type IssueType = z.infer<typeof issueTypeSchema>;
 type IssueStatus = z.infer<typeof issueStatusSchema>;
@@ -215,6 +229,7 @@ type ApprovalStatus = z.infer<typeof approvalStatusSchema>;
 type ApprovalType = z.infer<typeof approvalTypeSchema>;
 type ApprovalResponseAction = z.infer<typeof approvalResponseActionSchema>;
 type ArtifactType = z.infer<typeof artifactTypeSchema>;
+type ContextSearchSourceType = z.infer<typeof contextSearchSourceTypeSchema>;
 type JsonObject = Record<string, unknown>;
 
 type ProjectRecord = {
@@ -340,6 +355,29 @@ type ArtifactRecord = {
 };
 
 type ArtifactResponse = Omit<ArtifactRecord, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+type DocumentContextRecord = {
+  id: string;
+  projectId: string;
+  type: string;
+  title: string;
+  content: string;
+  version: number;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type ContextSearchResult = {
+  sourceType: ContextSearchSourceType;
+  id: string;
+  projectId: string;
+  title: string;
+  excerpt: string;
+  metadata: JsonObject;
   createdAt: string;
   updatedAt: string;
 };
@@ -537,6 +575,53 @@ type ArtifactPrismaClient = {
   artifact: {
     findUnique: (args: ArtifactFindUniqueArgs) => Promise<ArtifactRecord | null>;
     create: (args: ArtifactCreateArgs) => Promise<ArtifactRecord>;
+  };
+};
+
+type ContextSearchStringFilter = {
+  contains: string;
+  mode: "insensitive";
+};
+
+type ContextSearchIssueFindManyArgs = {
+  where: {
+    projectId?: string;
+    OR: Array<{
+      title?: ContextSearchStringFilter;
+      body?: ContextSearchStringFilter;
+    }>;
+  };
+  orderBy: {
+    updatedAt: "desc";
+  };
+  take: number;
+  select: typeof issueSelect;
+};
+
+type ContextSearchDocumentFindManyArgs = {
+  where: {
+    projectId?: string;
+    OR: Array<{
+      title?: ContextSearchStringFilter;
+      content?: ContextSearchStringFilter;
+      type?: ContextSearchStringFilter;
+    }>;
+  };
+  orderBy: {
+    updatedAt: "desc";
+  };
+  take: number;
+  select: typeof documentContextSelect;
+};
+
+type ContextSearchPrismaClient = {
+  issue: {
+    findMany: (args: ContextSearchIssueFindManyArgs) => Promise<IssueRecord[]>;
+  };
+  document: {
+    findMany: (
+      args: ContextSearchDocumentFindManyArgs
+    ) => Promise<DocumentContextRecord[]>;
   };
 };
 
@@ -1099,6 +1184,61 @@ function registerArtifactTools(server: McpServer): void {
   );
 }
 
+function registerContextTools(server: McpServer): void {
+  server.registerTool(
+    "context.search",
+    {
+      title: "Search context",
+      description: "Search issue and document context by keyword.",
+      inputSchema: {
+        query: z.string().trim().min(2).max(200),
+        projectId: z.string().trim().min(1).optional(),
+        types: z
+          .array(contextSearchSourceTypeSchema)
+          .min(1)
+          .max(2)
+          .default(["issue", "document"]),
+        limit: z.number().int().min(1).max(25).default(10)
+      }
+    },
+    async (args) => {
+      try {
+        const prisma =
+          (await getPrismaClient()) as unknown as ContextSearchPrismaClient;
+        const requestedTypes = new Set(args.types);
+        const searches: Array<Promise<ContextSearchResult[]>> = [];
+
+        if (requestedTypes.has("issue")) {
+          searches.push(searchIssueContext(prisma, args));
+        }
+
+        if (requestedTypes.has("document")) {
+          searches.push(searchDocumentContext(prisma, args));
+        }
+
+        const results = (await Promise.all(searches))
+          .flat()
+          .sort((left, right) => right.updatedAt.localeCompare(left.updatedAt))
+          .slice(0, args.limit);
+
+        return jsonToolResult({
+          data: results,
+          meta: {
+            query: args.query,
+            count: results.length,
+            types: args.types
+          }
+        });
+      } catch {
+        return contextToolError(
+          "CONTEXT_SEARCH_FAILED",
+          "Failed to search context."
+        );
+      }
+    }
+  );
+}
+
 async function verifyBearerToken(
   _request: Request,
   bearerToken?: string
@@ -1181,6 +1321,139 @@ function serializeArtifact(artifact: ArtifactRecord): ArtifactResponse {
   };
 }
 
+async function searchIssueContext(
+  prisma: ContextSearchPrismaClient,
+  args: {
+    query: string;
+    projectId?: string;
+    limit: number;
+  }
+): Promise<ContextSearchResult[]> {
+  const issues = await prisma.issue.findMany({
+    where: {
+      ...(args.projectId
+        ? {
+            projectId: args.projectId
+          }
+        : {}),
+      OR: [
+        {
+          title: buildContainsFilter(args.query)
+        },
+        {
+          body: buildContainsFilter(args.query)
+        }
+      ]
+    },
+    orderBy: {
+      updatedAt: "desc"
+    },
+    take: args.limit,
+    select: issueSelect
+  });
+
+  return issues.map((issue) => ({
+    sourceType: "issue",
+    id: issue.id,
+    projectId: issue.projectId,
+    title: issue.title,
+    excerpt: buildContextExcerpt([issue.title, issue.body], args.query),
+    metadata: {
+      type: issue.type,
+      status: issue.status,
+      priority: issue.priority,
+      assigneeRole: issue.assigneeRole,
+      labels: issue.labels
+    },
+    createdAt: issue.createdAt.toISOString(),
+    updatedAt: issue.updatedAt.toISOString()
+  }));
+}
+
+async function searchDocumentContext(
+  prisma: ContextSearchPrismaClient,
+  args: {
+    query: string;
+    projectId?: string;
+    limit: number;
+  }
+): Promise<ContextSearchResult[]> {
+  const documents = await prisma.document.findMany({
+    where: {
+      ...(args.projectId
+        ? {
+            projectId: args.projectId
+          }
+        : {}),
+      OR: [
+        {
+          title: buildContainsFilter(args.query)
+        },
+        {
+          content: buildContainsFilter(args.query)
+        },
+        {
+          type: buildContainsFilter(args.query)
+        }
+      ]
+    },
+    orderBy: {
+      updatedAt: "desc"
+    },
+    take: args.limit,
+    select: documentContextSelect
+  });
+
+  return documents.map((document) => ({
+    sourceType: "document",
+    id: document.id,
+    projectId: document.projectId,
+    title: document.title,
+    excerpt: buildContextExcerpt(
+      [document.title, document.type, document.content],
+      args.query
+    ),
+    metadata: {
+      type: document.type,
+      status: document.status,
+      version: document.version
+    },
+    createdAt: document.createdAt.toISOString(),
+    updatedAt: document.updatedAt.toISOString()
+  }));
+}
+
+function buildContainsFilter(query: string): ContextSearchStringFilter {
+  return {
+    contains: query,
+    mode: "insensitive"
+  };
+}
+
+function buildContextExcerpt(
+  parts: Array<string | null>,
+  query: string,
+  maxLength = 240
+): string {
+  const text = parts
+    .filter((part): part is string => Boolean(part))
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!text) {
+    return "";
+  }
+
+  const matchIndex = text.toLowerCase().indexOf(query.toLowerCase());
+  const start = matchIndex < 0 ? 0 : Math.max(matchIndex - 80, 0);
+  const excerpt = text.slice(start, start + maxLength).trim();
+  const prefix = start > 0 ? "..." : "";
+  const suffix = start + maxLength < text.length ? "..." : "";
+
+  return `${prefix}${excerpt}${suffix}`;
+}
+
 function mapApprovalStatus(
   action: ApprovalResponseAction
 ): Exclude<ApprovalStatus, "pending"> {
@@ -1232,6 +1505,18 @@ function approvalToolError(code: string, message: string) {
 }
 
 function artifactToolError(code: string, message: string) {
+  return jsonToolResult(
+    {
+      error: {
+        code,
+        message
+      }
+    },
+    true
+  );
+}
+
+function contextToolError(code: string, message: string) {
   return jsonToolResult(
     {
       error: {

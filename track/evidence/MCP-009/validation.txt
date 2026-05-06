@@ -1,0 +1,72 @@
+# MCP-009 Validation Evidence
+
+Date: 2026-05-06
+Task: MCP-009 — context.search tool
+
+## Commands
+
+### TypeScript noEmit
+
+Command:
+`pnpm --filter @dabeehive/server exec tsc --noEmit`
+
+Result:
+Passed with no output.
+
+### Next.js production build
+
+Command:
+`pnpm --filter @dabeehive/server run build`
+
+Result:
+Passed.
+
+```txt
+✓ Compiled successfully
+├ ƒ /api/[transport]                       168 B         102 kB
+```
+
+Note:
+The existing Next.js warning remains:
+`TypeScript project references are not fully supported. Attempting to build in incremental mode.`
+
+### Root lint
+
+Command:
+`pnpm lint`
+
+Result:
+Passed.
+
+```txt
+basic lint passed
+```
+
+### Source check
+
+Command:
+`rg -n "context\\.search|Search context|searchIssueContext|searchDocumentContext|CONTEXT_SEARCH_FAILED|contextSearchSourceTypeSchema|MCP-009" 'apps/server/app/api/[transport]/route.ts' track/RISKS.md`
+
+Result:
+Passed. Confirmed:
+
+- `context.search` tool registration exists
+- input source type schema exists
+- issue and document search helpers exist
+- controlled `CONTEXT_SEARCH_FAILED` error exists
+- MCP-009 risk note exists
+
+### Local PostgreSQL readiness
+
+Command:
+`pg_isready -h localhost -p 55432`
+
+Result:
+Failed.
+
+```txt
+localhost:55432 - no response
+```
+
+Impact:
+Authenticated MCP runtime smoke and DB-backed search execution were not executable in this environment because MCP Bearer token verification and context search both depend on local PostgreSQL. Validation used typecheck, production build, lint, and source checks.

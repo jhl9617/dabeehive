@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 88 |
+| verified | 89 |
 | implemented | 5 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 36 |
+| not_started | 35 |
 
 ---
 
@@ -125,7 +125,7 @@ P3 = 후속 확장
 | MCP-006 | verified | P0 | MCP | `run.append_event` tool | SDK 이벤트 업로드가 가능하다 |
 | MCP-007 | verified | P0 | MCP | `approval.list/request/respond` tools | MCP로 승인 플로우 제어가 가능하다 |
 | MCP-008 | verified | P0 | MCP | `artifact.create/get` tools | MCP로 산출물 저장/조회가 가능하다 |
-| MCP-009 | not_started | P1 | MCP | `context.search` tool | 문서/이슈 기반 간단 검색이 가능하다 |
+| MCP-009 | verified | P1 | MCP | `context.search` tool | 문서/이슈 기반 간단 검색이 가능하다 |
 | MCP-010 | not_started | P1 | MCP | MCP resources 구현 | issue/document/run resource를 읽을 수 있다 |
 | MCP-011 | not_started | P1 | MCP | MCP prompts 구현 | implementation-plan/review-diff prompt가 있다 |
 | MCP-012 | not_started | P1 | MCP | MCP smoke test 작성 | tool 호출 smoke test가 통과한다 |
