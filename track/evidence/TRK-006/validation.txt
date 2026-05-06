@@ -1,0 +1,60 @@
+TRK-006 validation evidence
+Date: 2026-05-06 10:45:11 KST
+Branch: poc/TRK-006-status-script
+
+Changes:
+- Added scripts/track-status.mjs.
+- Added root package.json script: track:status.
+- Used the helper to close TRK-006 as verified in track/MASTER.md.
+
+Command: node -c scripts/track-status.mjs
+Result: PASS
+Summary:
+- Script syntax is valid.
+
+Command: node scripts/track-status.mjs --help
+Result: PASS
+Summary:
+- Usage text prints successfully.
+- Allowed statuses are shown.
+- The help text states that only track/MASTER.md is updated.
+
+Command: node scripts/track-status.mjs --task TRK-006 --status in_progress --dry-run
+Result: PASS
+Output summary:
+- dry-run: TRK-006 in_progress -> in_progress
+- file: track/MASTER.md
+- total=131; not_started=46, planned=0, in_progress=1, blocked=1, implemented=3, verified=80, skipped=0
+
+Command: pnpm track:status -- --task TRK-006 --status in_progress --dry-run
+Result: PASS
+Summary:
+- Root npm script entrypoint works.
+- The helper accepts the standalone `--` passed by pnpm.
+
+Command: node scripts/track-status.mjs --file /private/tmp/dabeehive-TRK-006-MASTER.md --task TRK-006 --status verified
+Result: PASS
+Output summary:
+- updated: TRK-006 in_progress -> verified
+- file: /private/tmp/dabeehive-TRK-006-MASTER.md
+- total=131; not_started=46, planned=0, in_progress=0, blocked=1, implemented=3, verified=81, skipped=0
+
+Temp file checks:
+- Summary count rows showed total=131, verified=81, in_progress=0, blocked=1, not_started=46.
+- TRK-006 row changed to verified.
+
+Command: node scripts/track-status.mjs --task TRK-006 --status verified
+Result: PASS
+Output summary:
+- updated: TRK-006 in_progress -> verified
+- file: track/MASTER.md
+- total=131; not_started=46, planned=0, in_progress=0, blocked=1, implemented=3, verified=81, skipped=0
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Notes:
+- The helper recalculates summary counts from all task rows in track/MASTER.md.
+- This exposed that the existing summary count was stale; closing TRK-006 normalized it to the actual 131 task rows currently present in MASTER.

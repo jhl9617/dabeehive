@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "format:check": "node scripts/lint-basic.mjs",
-    "lint": "node scripts/lint-basic.mjs"
+    "lint": "node scripts/lint-basic.mjs",
+    "track:status": "node scripts/track-status.mjs"
   },
   "packageManager": "pnpm@10.23.0",
   "engines": {
