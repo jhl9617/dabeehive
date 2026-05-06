@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | SEC-005 | verified | Added an explicit shared dangerous command denylist for destructive delete, Git history rewrite, automatic merge, deploy/infra mutation, secret access, and shell control operators, while keeping dependency and database mutation commands approval-gated. | Shared typecheck, SDK smoke, root lint, and source checks passed. |
 | 2026-05-06 | SEC-004 | verified | Added a dependency-free VS Code Extension SecretStorage audit and root validation command to guard against sensitive token/key persistence in settings or extension state while confirming the existing API token flow uses `SecretStorage`. | Extension secret audit, Extension compile, and root lint passed. |
 | 2026-05-06 | UI-008 | verified | Added a global App Router `loading.js` state using the existing state-page layout and a small loading meter, while confirming existing error and not-found states remain available. | Server Next build, root lint, and source checks passed. |
 | 2026-05-06 | UI-007 | verified | Added a dynamic read-only `/artifacts/[id]` viewer for artifact metadata, run/issue context, URI fallback, JSON metadata, and fixed-width markdown/test/diff/review/log content, with run detail links into the viewer. | Server Next build, root lint, and source checks passed. |

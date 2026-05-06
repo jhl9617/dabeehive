@@ -14,6 +14,7 @@ const moduleCache = new Map();
 const {
   assessCommandPolicy,
   ClaudeAgentSdkAdapter,
+  DEFAULT_DANGEROUS_COMMAND_DENYLIST,
   inferValidationCommands,
   normalizeCodingAgentEvent
 } = loadTsModule("packages/shared/src/index.ts").exports;
@@ -149,6 +150,63 @@ assertEqual(
   "blocked",
   "blocked destructive command"
 );
+assertEqual(
+  DEFAULT_DANGEROUS_COMMAND_DENYLIST.map((rule) => rule.code).join(","),
+  "destructive_file_operation,git_history_rewrite,auto_merge,deploy_or_infra,secret_access,shell_control_operator",
+  "dangerous command denylist codes"
+);
+
+for (const { command, decision, label } of [
+  {
+    command: "vercel deploy --prod",
+    decision: "blocked",
+    label: "blocked deploy command"
+  },
+  {
+    command: "kubectl delete deployment app",
+    decision: "blocked",
+    label: "blocked infra delete command"
+  },
+  {
+    command: "pnpm lint | tee lint.log",
+    decision: "blocked",
+    label: "blocked shell pipe command"
+  },
+  {
+    command: "git reset --hard HEAD",
+    decision: "blocked",
+    label: "blocked git history rewrite command"
+  },
+  {
+    command: "gh pr merge 123 --merge",
+    decision: "blocked",
+    label: "blocked auto merge command"
+  },
+  {
+    command: "cat .env.local",
+    decision: "blocked",
+    label: "blocked secret access command"
+  },
+  {
+    command: "pnpm add zod",
+    decision: "requires_approval",
+    label: "approval required dependency command"
+  },
+  {
+    command: "prisma migrate deploy",
+    decision: "requires_approval",
+    label: "approval required migration command"
+  }
+]) {
+  assertEqual(
+    assessCommandPolicy({
+      command,
+      allowedTools: handle.allowedTools
+    }).decision,
+    decision,
+    label
+  );
+}
 
 console.log(
   JSON.stringify(
@@ -157,6 +215,9 @@ console.log(
       runId,
       mode: handle.mode,
       allowedTools: handle.allowedTools,
+      dangerousCommandDenylist: DEFAULT_DANGEROUS_COMMAND_DENYLIST.map(
+        (rule) => rule.code
+      ),
       eventTypes: events.map((event) => event.type),
       validationCommands: validationCommands.map((command) => command.command)
     },
