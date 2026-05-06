@@ -1,0 +1,45 @@
+FND-007 validation evidence
+Date: 2026-05-06 10:53:23 KST
+Branch: poc/FND-007-readme-local-run
+
+Changes:
+- Added root README.md.
+- Documented local setup, env placeholders, database migration/seed, server startup, validation, REST/MCP smoke, VS Code extension use, known blockers, and tracking helper use.
+- Did not implement Docker Compose, Jira, Slack, deployment, or runtime behavior changes.
+
+Command: test -f README.md
+Result: PASS
+Summary:
+- Root README.md exists.
+
+Command: rg "pnpm install" README.md
+Result: PASS
+Summary:
+- Setup install command is documented.
+
+Command: rg "prisma migrate deploy" README.md
+Result: PASS
+Summary:
+- Database migration command and blocker note are documented.
+
+Command: rg "MCP" README.md
+Result: PASS
+Summary:
+- MCP scope and smoke flow are documented.
+
+Command: node -e "const fs=require('fs'); const s=fs.readFileSync('README.md','utf8'); for (const x of ['SLACK_','JIRA_']) if (s.includes(x)) process.exit(1);"
+Result: PASS
+Summary:
+- README does not document Slack/Jira env setup variables.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: node scripts/track-status.mjs --task FND-007 --status verified
+Result: PASS
+Output summary:
+- updated: FND-007 in_progress -> verified
+- file: track/MASTER.md
+- total=131; not_started=44, planned=0, in_progress=0, blocked=1, implemented=3, verified=83, skipped=0

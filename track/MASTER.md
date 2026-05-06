@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 82 |
+| verified | 83 |
 | implemented | 3 |
 | in_progress | 0 |
 | blocked | 1 |
-| not_started | 45 |
+| not_started | 44 |
 
 ---
 
@@ -53,7 +53,7 @@ P3 = 후속 확장
 | FND-004 | verified | P0 | Foundation | lint/format 기본 설정 | lint 명령이 실행 가능하다 |
 | FND-005 | verified | P0 | Foundation | 공통 타입 package 생성 | shared package에서 API/domain 타입을 export한다 |
 | FND-006 | verified | P1 | Foundation | environment example 작성 | `.env.example`에 필요한 placeholder가 있다 |
-| FND-007 | not_started | P1 | Foundation | README PoC 실행 방법 작성 | 로컬 실행 순서가 문서화된다 |
+| FND-007 | verified | P1 | Foundation | README PoC 실행 방법 작성 | 로컬 실행 순서가 문서화된다 |
 
 ---
 
