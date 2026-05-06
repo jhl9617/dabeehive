@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | GIT-007 | verified | Added a guarded shared Draft PR command helper that only plans/runs through an injected runner after approved `final_approval`, requires complete Draft PR config, and builds explicit `gh pr create --draft` arguments without calling GitHub in validation. | Shared no-emit typecheck, root lint, and source checks passed; no `gh` or GitHub network call was executed. |
 | 2026-05-06 | GIT-006 | verified | Added shared placeholder-only Draft PR config helpers for GitHub owner/repo/token presence, env/project fallback, token redaction-by-design, and `.env.example` local keys without calling GitHub or creating PRs. | Shared no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | WFL-008 | verified | Added a VS Code Approval Panel Evidence section that derives reviewer-facing risk, changed-file scope, diff-summary availability, required action, and reason from existing approval fields without changing API or persistence schema. | Direct extension package `tsc` remained unavailable; workspace no-emit check, extension compile, root lint, and source checks passed. |
 | 2026-05-06 | WFL-007 | verified | Added deterministic workflow sensitive file detection for auth/security, DB schema/migration, and deploy/infra paths, then wired risk assessment to reuse those detector categories. | Server no-emit typecheck, root lint, and source checks passed. |

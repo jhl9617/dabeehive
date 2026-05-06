@@ -6,6 +6,7 @@ export * from "./claude-agent-sdk-adapter";
 export * from "./coder-instruction";
 export type * from "./domain";
 export * from "./dry-run";
+export * from "./draft-pr-command";
 export * from "./draft-pr-config";
 export * from "./event-normalization";
 export * from "./git-branch";
