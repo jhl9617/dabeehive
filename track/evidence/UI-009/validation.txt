@@ -1,0 +1,42 @@
+UI-009 validation evidence
+Date: 2026-05-06 KST
+
+Commands run:
+
+1. pnpm --filter @dabeehive/server run build
+   Result: PASS
+   Notes:
+   - Next.js 15.5.15 production build completed.
+   - App routes, dynamic resource pages, API routes, type checking, and static generation completed successfully.
+   - Warning observed: TypeScript project references are not fully supported by Next.js build. Existing warning, build exited 0.
+
+2. pnpm lint
+   Result: PASS
+   Notes:
+   - scripts/lint-basic.mjs completed with "basic lint passed".
+
+3. pnpm track:status -- --task UI-009 --status verified --dry-run
+   Result: PASS
+   Notes:
+   - Dry-run reported UI-009 in_progress -> verified.
+   - Summary after dry-run: total=135; not_started=0, planned=0, in_progress=0, blocked=2, implemented=6, verified=127, skipped=0.
+
+4. git diff --check
+   Result: PASS
+   Notes:
+   - No whitespace errors reported.
+
+5. pnpm dev:temp -- --smoke
+   Result: PASS
+   Notes:
+   - Temporary PGlite socket started.
+   - Prisma generate, migrate deploy, and seed completed.
+   - Next.js server smoke returned health ok.
+   - Seeded projects: 1.
+   - Temporary stack cleaned up after smoke mode.
+
+Scope notes:
+
+- Validation covered build-time route rendering, lint policy, tracking status transition, whitespace safety, and one-command temporary local stack smoke.
+- Review follow-up fixed the issue list project-status label path so project enum values use the Korean project status formatter instead of the issue status formatter. Build, lint, whitespace, and tracking dry-run were rerun after this change.
+- Existing unrelated worktree deletion remains outside UI-009: docs/codex-implementation-rules.md.

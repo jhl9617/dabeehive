@@ -58,18 +58,18 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
     <main className="resource-shell">
       <header className="resource-header">
         <div>
-          <p className="eyebrow">Approvals</p>
-          <h1>Approval detail</h1>
+          <p className="eyebrow">승인</p>
+          <h1>승인 상세</h1>
           <p className="lead">
-            Review evidence and record an approve or reject decision for a pending gate.
+            검토 근거를 확인하고 대기 중인 게이트에 승인 또는 반려 결정을 기록합니다.
           </p>
         </div>
         <div className="resource-actions">
           <a className="button secondary" href="/approvals">
-            Approval List
+            승인 목록
           </a>
           <a className="button" href={`/api/approvals/${id}`}>
-            Approval API
+            승인 API
           </a>
         </div>
       </header>
@@ -78,8 +78,8 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
         <section className="resource-state" role="status">
           <span className="status-dot" aria-hidden="true" />
           <div>
-            <h2>Approval updated</h2>
-            <p>{`Status is now ${query.responded}.`}</p>
+            <h2>승인이 업데이트되었습니다</h2>
+            <p>{`현재 상태: ${formatApprovalStatus(query.responded)}`}</p>
           </div>
         </section>
       ) : null}
@@ -88,8 +88,8 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
         <section className="resource-state" role="status">
           <span className="status-dot warning" aria-hidden="true" />
           <div>
-            <h2>Approval action failed</h2>
-            <p>The approval response could not be saved.</p>
+            <h2>승인 작업에 실패했습니다</h2>
+            <p>승인 응답을 저장하지 못했습니다.</p>
           </div>
         </section>
       ) : null}
@@ -98,7 +98,7 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
         <section className="resource-state" role="status">
           <span className="status-dot warning" aria-hidden="true" />
           <div>
-            <h2>Approval data unavailable</h2>
+            <h2>승인 데이터를 불러올 수 없습니다</h2>
             <p>{error}</p>
           </div>
         </section>
@@ -108,8 +108,8 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
         <section className="resource-state" role="status">
           <span className="status-dot neutral" aria-hidden="true" />
           <div>
-            <h2>Approval not found</h2>
-            <p>No approval exists for the requested identifier.</p>
+            <h2>승인을 찾을 수 없습니다</h2>
+            <p>요청한 식별자에 해당하는 승인이 없습니다.</p>
           </div>
         </section>
       ) : null}
@@ -120,48 +120,48 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
             <div className="resource-card-main">
               <div className="resource-title-row">
                 <h2>{formatApprovalTitle(approval)}</h2>
-                <span className="badge">{approval.status}</span>
+                <span className="badge">{formatApprovalStatus(approval.status)}</span>
               </div>
-              <p>{summarizeText(approval.reason, "No approval reason provided.")}</p>
+              <p>{summarizeText(approval.reason, "승인 사유가 없습니다.")}</p>
               <dl className="resource-meta">
                 <div>
-                  <dt>Type</dt>
-                  <dd>{approval.type}</dd>
+                  <dt>유형</dt>
+                  <dd>{formatApprovalType(approval.type)}</dd>
                 </div>
                 <div>
-                  <dt>Context</dt>
+                  <dt>컨텍스트</dt>
                   <dd>{formatContext(approval)}</dd>
                 </div>
                 <div>
-                  <dt>Risk</dt>
+                  <dt>위험도</dt>
                   <dd>{formatRisk(approval.riskScore)}</dd>
                 </div>
                 <div>
-                  <dt>Required Action</dt>
-                  <dd>{summarizeText(approval.requiredAction, "Review required")}</dd>
+                  <dt>필요한 조치</dt>
+                  <dd>{summarizeText(approval.requiredAction, "검토 필요")}</dd>
                 </div>
                 <div>
-                  <dt>Created</dt>
+                  <dt>생성일</dt>
                   <dd>{formatDate(approval.createdAt)}</dd>
                 </div>
                 <div>
-                  <dt>Responded</dt>
+                  <dt>응답일</dt>
                   <dd>{formatDate(approval.respondedAt)}</dd>
                 </div>
               </dl>
             </div>
-            <div className="resource-counts" aria-label={`${approval.id} approval evidence`}>
+            <div className="resource-counts" aria-label={`${approval.id} 승인 근거`}>
               <div>
                 <strong>{formatRisk(approval.riskScore)}</strong>
-                <span>Risk</span>
+                <span>위험도</span>
               </div>
               <div>
                 <strong>{approval.changedFiles.length}</strong>
-                <span>Files</span>
+                <span>파일</span>
               </div>
               <div>
-                <strong>{approval.run ? "Run" : "Issue"}</strong>
-                <span>Scope</span>
+                <strong>{approval.run ? "실행" : "이슈"}</strong>
+                <span>범위</span>
               </div>
             </div>
           </section>
@@ -169,25 +169,25 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
           <section className="detail-grid">
             <section className="detail-panel" aria-labelledby="approval-evidence-title">
               <div className="section-heading">
-                <h2 id="approval-evidence-title">Evidence</h2>
-                <span>Review context</span>
+                <h2 id="approval-evidence-title">근거</h2>
+                <span>검토 컨텍스트</span>
               </div>
               <div className="detail-list">
                 <div className="detail-item">
                   <div className="detail-item-header">
-                    <strong>Diff summary</strong>
+                    <strong>diff 요약</strong>
                   </div>
-                  <p>{summarizeText(approval.diffSummary, "No diff summary provided.")}</p>
+                  <p>{summarizeText(approval.diffSummary, "diff 요약이 없습니다.")}</p>
                 </div>
                 <div className="detail-item">
                   <div className="detail-item-header">
-                    <strong>Changed files</strong>
-                    <span>{approval.changedFiles.length} files</span>
+                    <strong>변경 파일</strong>
+                    <span>{approval.changedFiles.length}개 파일</span>
                   </div>
                   <pre className="metadata-preview">
                     {approval.changedFiles.length > 0
                       ? approval.changedFiles.join("\n")
-                      : "No changed files recorded."}
+                      : "기록된 변경 파일이 없습니다."}
                   </pre>
                 </div>
               </div>
@@ -195,24 +195,24 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
 
             <section className="detail-panel" aria-labelledby="approval-action-title">
               <div className="section-heading">
-                <h2 id="approval-action-title">Decision</h2>
-                <span>{approval.status}</span>
+                <h2 id="approval-action-title">결정</h2>
+                <span>{formatApprovalStatus(approval.status)}</span>
               </div>
               {approval.status === "pending" ? (
                 <form className="action-form" action={respondApproval}>
                   <input type="hidden" name="approvalId" value={approval.id} />
                   <label className="action-field">
-                    <span>Response note</span>
+                    <span>응답 메모</span>
                     <textarea
                       name="reason"
                       rows={5}
                       maxLength={100000}
-                      placeholder="Optional reviewer note"
+                      placeholder="선택 사항: 리뷰어 메모"
                     />
                   </label>
                   <div className="action-row">
                     <button className="button" type="submit" name="action" value="approve">
-                      Approve
+                      승인
                     </button>
                     <button
                       className="button danger"
@@ -220,12 +220,12 @@ export default async function ApprovalDetailPage({ params, searchParams }) {
                       name="action"
                       value="reject"
                     >
-                      Reject
+                      반려
                     </button>
                   </div>
                 </form>
               ) : (
-                <p className="detail-empty">This approval has already been responded to.</p>
+                <p className="detail-empty">이미 응답한 승인입니다.</p>
               )}
             </section>
           </section>
@@ -295,7 +295,7 @@ async function loadApproval(id) {
   } catch {
     return {
       approval: null,
-      error: "Check the local database connection and Prisma client generation.",
+      error: "로컬 데이터베이스 연결과 Prisma Client 생성 상태를 확인하세요.",
       notFound: false
     };
   }
@@ -318,24 +318,105 @@ function formatApprovalTitle(approval) {
     return approval.run.issue.title;
   }
 
-  return approval.run ? `Run ${approval.run.id}` : approval.id;
+  return approval.run ? `실행 ${approval.run.id}` : approval.id;
 }
 
 function formatContext(approval) {
   if (approval.issue) {
-    return `${approval.issue.project?.name || "Unknown project"} / ${approval.issue.status} / ${approval.issue.priority}`;
+    return `${approval.issue.project?.name || "알 수 없는 프로젝트"} / ${formatIssueStatus(approval.issue.status)} / ${formatPriority(approval.issue.priority)}`;
   }
 
   if (approval.run) {
-    return `${approval.run.project?.name || "Unknown project"} / ${approval.run.status} / ${approval.run.agentRole}`;
+    return `${approval.run.project?.name || "알 수 없는 프로젝트"} / ${formatRunStatus(approval.run.status)} / ${formatAgentRole(approval.run.agentRole)}`;
   }
 
-  return "Unlinked";
+  return "연결되지 않음";
+}
+
+function formatApprovalStatus(value) {
+  const labels = {
+    approved: "승인됨",
+    changes_requested: "변경 요청됨",
+    pending: "대기 중",
+    rejected: "반려됨"
+  };
+
+  return labels[value] || value;
+}
+
+function formatApprovalType(value) {
+  const labels = {
+    auth_change: "인증 변경",
+    billing_change: "결제 변경",
+    final_approval: "최종 승인",
+    general: "일반",
+    prod_deploy: "운영 배포",
+    risk_approval: "위험 승인",
+    schema_change: "스키마 변경",
+    spec_approval: "계획 승인"
+  };
+
+  return labels[value] || value;
+}
+
+function formatIssueStatus(value) {
+  const labels = {
+    backlog: "백로그",
+    done: "완료",
+    in_progress: "진행 중",
+    in_review: "리뷰 중",
+    qa: "QA",
+    ready: "준비됨"
+  };
+
+  return labels[value] || value;
+}
+
+function formatPriority(value) {
+  const labels = {
+    critical: "긴급",
+    high: "높음",
+    low: "낮음",
+    medium: "보통"
+  };
+
+  return labels[value] || value;
+}
+
+function formatRunStatus(value) {
+  const labels = {
+    cancelled: "취소됨",
+    coding: "코딩 중",
+    failed: "실패",
+    planning: "계획 중",
+    queued: "대기 중",
+    reviewing: "리뷰 중",
+    running: "실행 중",
+    succeeded: "성공",
+    waiting: "대기 중",
+    waiting_approval: "승인 대기"
+  };
+
+  return labels[value] || value;
+}
+
+function formatAgentRole(value) {
+  const labels = {
+    architect: "아키텍트",
+    backend: "백엔드",
+    coder: "코더",
+    frontend: "프론트엔드",
+    planner: "플래너",
+    qa: "QA",
+    release: "릴리스"
+  };
+
+  return labels[value] || value;
 }
 
 function formatRisk(value) {
   if (value === null || value === undefined) {
-    return "n/a";
+    return "해당 없음";
   }
 
   return value;
@@ -357,10 +438,10 @@ function summarizeText(value, fallback) {
 
 function formatDate(value) {
   if (!value) {
-    return "Not recorded";
+    return "기록 없음";
   }
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat("ko-KR", {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(value));

@@ -50,18 +50,18 @@ export default async function ArtifactViewerPage({ params }) {
     <main className="resource-shell">
       <header className="resource-header">
         <div>
-          <p className="eyebrow">Artifacts</p>
-          <h1>Artifact viewer</h1>
+          <p className="eyebrow">산출물</p>
+          <h1>산출물 뷰어</h1>
           <p className="lead">
-            Read stored plan, diff, test report, review, PR URL, or log output.
+            저장된 계획, diff, 테스트 보고서, 리뷰, PR URL, 로그 결과를 확인합니다.
           </p>
         </div>
         <div className="resource-actions">
           <a className="button secondary" href={artifact ? `/runs/${artifact.run.id}` : "/"}>
-            Run Detail
+            실행 상세
           </a>
           <a className="button" href={`/api/artifacts?runId=${artifact?.run.id || ""}`}>
-            Artifact API
+            산출물 API
           </a>
         </div>
       </header>
@@ -70,7 +70,7 @@ export default async function ArtifactViewerPage({ params }) {
         <section className="resource-state" role="status">
           <span className="status-dot warning" aria-hidden="true" />
           <div>
-            <h2>Artifact data unavailable</h2>
+            <h2>산출물 데이터를 불러올 수 없습니다</h2>
             <p>{error}</p>
           </div>
         </section>
@@ -80,8 +80,8 @@ export default async function ArtifactViewerPage({ params }) {
         <section className="resource-state" role="status">
           <span className="status-dot neutral" aria-hidden="true" />
           <div>
-            <h2>Artifact not found</h2>
-            <p>No artifact exists for the requested identifier.</p>
+            <h2>산출물을 찾을 수 없습니다</h2>
+            <p>요청한 식별자에 해당하는 산출물이 없습니다.</p>
           </div>
         </section>
       ) : null}
@@ -91,48 +91,48 @@ export default async function ArtifactViewerPage({ params }) {
           <section className="resource-card">
             <div className="resource-card-main">
               <div className="resource-title-row">
-                <h2>{artifact.title || artifact.type}</h2>
-                <span className="badge">{artifact.type}</span>
+                <h2>{artifact.title || formatArtifactType(artifact.type)}</h2>
+                <span className="badge">{formatArtifactType(artifact.type)}</span>
               </div>
               <p>{formatContext(artifact)}</p>
               <dl className="resource-meta">
                 <div>
-                  <dt>Run</dt>
+                  <dt>실행</dt>
                   <dd>{artifact.run.id}</dd>
                 </div>
                 <div>
-                  <dt>Run Status</dt>
-                  <dd>{artifact.run.status}</dd>
+                  <dt>실행 상태</dt>
+                  <dd>{formatRunStatus(artifact.run.status)}</dd>
                 </div>
                 <div>
-                  <dt>Agent</dt>
-                  <dd>{artifact.run.agentRole}</dd>
+                  <dt>에이전트</dt>
+                  <dd>{formatAgentRole(artifact.run.agentRole)}</dd>
                 </div>
                 <div>
-                  <dt>Issue</dt>
-                  <dd>{artifact.issue?.title || artifact.run.issue?.title || "No linked issue"}</dd>
+                  <dt>이슈</dt>
+                  <dd>{artifact.issue?.title || artifact.run.issue?.title || "연결된 이슈 없음"}</dd>
                 </div>
                 <div>
-                  <dt>Created</dt>
+                  <dt>생성일</dt>
                   <dd>{formatDate(artifact.createdAt)}</dd>
                 </div>
                 <div>
-                  <dt>Updated</dt>
+                  <dt>업데이트</dt>
                   <dd>{formatDate(artifact.updatedAt)}</dd>
                 </div>
               </dl>
             </div>
-            <div className="resource-counts" aria-label={`${artifact.id} artifact state`}>
+            <div className="resource-counts" aria-label={`${artifact.id} 산출물 상태`}>
               <div>
-                <strong>{artifact.content ? "Text" : "URI"}</strong>
-                <span>Storage</span>
+                <strong>{artifact.content ? "텍스트" : "URI"}</strong>
+                <span>저장 방식</span>
               </div>
               <div>
-                <strong>{artifact.metadata ? "Yes" : "No"}</strong>
-                <span>Metadata</span>
+                <strong>{artifact.metadata ? "있음" : "없음"}</strong>
+                <span>메타데이터</span>
               </div>
               <div>
-                <strong>{artifact.uri ? "Yes" : "No"}</strong>
+                <strong>{artifact.uri ? "있음" : "없음"}</strong>
                 <span>URI</span>
               </div>
             </div>
@@ -141,8 +141,8 @@ export default async function ArtifactViewerPage({ params }) {
           <section className="detail-grid">
             <section className="detail-panel" aria-labelledby="artifact-content-title">
               <div className="section-heading">
-                <h2 id="artifact-content-title">Content</h2>
-                <span>{artifact.type}</span>
+                <h2 id="artifact-content-title">내용</h2>
+                <span>{formatArtifactType(artifact.type)}</span>
               </div>
               {artifact.content ? (
                 <pre className="artifact-content">{artifact.content}</pre>
@@ -151,13 +151,13 @@ export default async function ArtifactViewerPage({ params }) {
                   {artifact.uri}
                 </a>
               ) : (
-                <p className="detail-empty">No artifact content or URI recorded.</p>
+                <p className="detail-empty">산출물 내용이나 URI가 기록되지 않았습니다.</p>
               )}
             </section>
 
             <section className="detail-panel" aria-labelledby="artifact-metadata-title">
               <div className="section-heading">
-                <h2 id="artifact-metadata-title">Metadata</h2>
+                <h2 id="artifact-metadata-title">메타데이터</h2>
                 <span>JSON</span>
               </div>
               <pre className="metadata-preview">{formatJson(artifact.metadata)}</pre>
@@ -187,14 +187,58 @@ async function loadArtifact(id) {
   } catch {
     return {
       artifact: null,
-      error: "Check the local database connection and Prisma client generation.",
+      error: "로컬 데이터베이스 연결과 Prisma Client 생성 상태를 확인하세요.",
       notFound: false
     };
   }
 }
 
+function formatArtifactType(value) {
+  const labels = {
+    diff: "diff",
+    log: "로그",
+    plan: "계획",
+    pr_url: "PR URL",
+    review: "리뷰",
+    test_report: "테스트 보고서"
+  };
+
+  return labels[value] || value;
+}
+
+function formatRunStatus(value) {
+  const labels = {
+    cancelled: "취소됨",
+    coding: "코딩 중",
+    failed: "실패",
+    planning: "계획 중",
+    queued: "대기 중",
+    reviewing: "리뷰 중",
+    running: "실행 중",
+    succeeded: "성공",
+    waiting: "대기 중",
+    waiting_approval: "승인 대기"
+  };
+
+  return labels[value] || value;
+}
+
+function formatAgentRole(value) {
+  const labels = {
+    architect: "아키텍트",
+    backend: "백엔드",
+    coder: "코더",
+    frontend: "프론트엔드",
+    planner: "플래너",
+    qa: "QA",
+    release: "릴리스"
+  };
+
+  return labels[value] || value;
+}
+
 function formatContext(artifact) {
-  const projectName = artifact.issue?.project?.name || artifact.run.project?.name || "Unknown project";
+  const projectName = artifact.issue?.project?.name || artifact.run.project?.name || "알 수 없는 프로젝트";
   const issueTitle = artifact.issue?.title || artifact.run.issue?.title;
 
   if (issueTitle) {
@@ -206,22 +250,22 @@ function formatContext(artifact) {
 
 function formatJson(value) {
   if (!value) {
-    return "No metadata recorded.";
+    return "기록된 메타데이터가 없습니다.";
   }
 
   try {
     return JSON.stringify(value, null, 2);
   } catch {
-    return "Metadata unavailable.";
+    return "메타데이터를 표시할 수 없습니다.";
   }
 }
 
 function formatDate(value) {
   if (!value) {
-    return "Not recorded";
+    return "기록 없음";
   }
 
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat("ko-KR", {
     dateStyle: "medium",
     timeStyle: "short"
   }).format(new Date(value));

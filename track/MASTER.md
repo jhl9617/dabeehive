@@ -21,8 +21,8 @@ P3 = 후속 확장
 
 | 항목 | 값 |
 |---|---:|
-| 전체 작업 수 | 134 |
-| verified | 126 |
+| 전체 작업 수 | 135 |
+| verified | 127 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
@@ -218,6 +218,7 @@ P3 = 후속 확장
 | UI-006 | verified | P1 | UI | Approval detail action | approve/reject가 가능하다 |
 | UI-007 | verified | P2 | UI | Artifact viewer | markdown/test/diff artifact를 볼 수 있다 |
 | UI-008 | verified | P2 | UI | basic loading/error states | 기본 로딩/에러 상태가 있다 |
+| UI-009 | verified | P2 | UI | Web page Korean copy | 서버 App Router page의 사용자 표시 문구가 한글로 표시된다 |
 
 ---
 

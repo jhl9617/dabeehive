@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | UI-009 | verified | Korean-localized visible server App Router page copy across dashboard, loading/error/not-found states, and project/issue/run/approval/artifact pages while preserving route behavior and API data values. | Server Next build, root lint, tracking dry-run, diff whitespace check, and temporary PGlite stack smoke passed. |
 | 2026-05-06 | TST-013 | verified | Added `pnpm dev:temp` to start a self-contained temporary local stack: PGlite socket, Prisma generate/migrate/seed, Next.js dev server, smoke validation, and cleanup on exit. | `pnpm dev:temp -- --smoke`, root lint, existing temporary DB smoke, help output, MASTER status dry-run, and diff whitespace check passed. |
 | 2026-05-06 | TST-012 | verified | Added an H2-like independent temporary DB smoke using PGlite, exposing a PostgreSQL-compatible localhost socket for Prisma migrate/seed, verifying seeded core tables, cleaning temporary data, and documenting `pnpm test:temp-db`. | Temporary PGlite migrate/seed smoke, root lint, shared helper regression tests, MASTER status dry-run, and diff whitespace check passed. |
 | 2026-05-06 | TST-011 | verified | Added dependency-free shared helper regression tests for Draft PR command planning/runner behavior, PR body normalization, and Git diff summary parsing/totals/omitted-file behavior, plus a root `pnpm test:shared` command and review evidence. | `pnpm test:shared`, root lint, SDK smoke, diff whitespace check, and MASTER status dry-run passed. |
