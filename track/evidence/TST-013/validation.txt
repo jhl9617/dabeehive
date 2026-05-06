@@ -1,0 +1,80 @@
+# TST-013 Validation Evidence
+
+Date: 2026-05-06
+Task: TST-013
+
+## Commands
+
+### pnpm dev:temp -- --smoke
+
+Result: PASS
+
+Notes:
+- Started a temporary PGlite PostgreSQL socket.
+- Ran Prisma generate, migrate deploy, and seed.
+- Started the Next.js dev server on `http://127.0.0.1:18081`.
+- Verified `GET /api/health`.
+- Verified DB-backed `GET /api/projects` returned seeded project data.
+- Stopped the server and cleaned the temporary DB directory.
+
+Output summary:
+
+```json
+{
+  "mode": "smoke",
+  "server": "http://127.0.0.1:18081",
+  "database": "pglite",
+  "health": "ok",
+  "seededProjects": 1
+}
+```
+
+### pnpm lint
+
+Result: PASS
+
+```txt
+basic lint passed
+```
+
+### pnpm test:temp-db
+
+Result: PASS
+
+```json
+{
+  "database": "pglite",
+  "mode": "temporary",
+  "verification": {
+    "agentRuns": 1,
+    "apiTokens": 1,
+    "approvals": 1,
+    "artifacts": 1,
+    "documents": 1,
+    "issues": 1,
+    "projects": 1,
+    "users": 1
+  }
+}
+```
+
+### pnpm dev:temp -- --help
+
+Result: PASS
+
+The command prints usage for normal, smoke, host, port, DB host, DB port, and timeout options.
+
+### pnpm track:status -- --task TST-013 --status verified --dry-run
+
+Result: PASS
+
+```txt
+dry-run: TST-013 in_progress -> verified
+total=134; not_started=0, planned=0, in_progress=0, blocked=2, implemented=6, verified=126, skipped=0
+```
+
+### git diff --check
+
+Result: PASS
+
+No whitespace errors.

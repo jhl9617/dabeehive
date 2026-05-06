@@ -67,6 +67,14 @@ This starts a temporary local PGlite PostgreSQL socket, runs `prisma migrate dep
 
 ## Run Server
 
+Start a self-contained temporary dev stack with one command:
+
+```sh
+pnpm dev:temp
+```
+
+This starts a temporary PGlite PostgreSQL socket, runs Prisma generate/migrate/seed, starts the Next.js server at `http://127.0.0.1:18081`, and deletes the temporary database when the command stops. Use `pnpm dev:temp -- --port 18090` to choose another server port.
+
 Start the Next.js server:
 
 ```sh
@@ -91,6 +99,12 @@ Run the basic repository lint:
 
 ```sh
 pnpm lint
+```
+
+Run a one-command temporary stack startup smoke:
+
+```sh
+pnpm dev:temp -- --smoke
 ```
 
 Run server TypeScript validation:
@@ -158,6 +172,7 @@ The extension does not implement its own AI patch engine or shell tool loop. Cod
 
 - Full REST/MCP/E2E validation requires a reachable database for the running server. Without it, REST happy path, authenticated MCP smoke, and the full VS Code E2E scenario cannot be verified.
 - Isolated migrate/seed validation can run without PostgreSQL or Docker through `pnpm test:temp-db`.
+- Local server startup with a temporary DB can run without PostgreSQL or Docker through `pnpm dev:temp`.
 - The current PoC has a fake SDK smoke flow and adapter skeleton; real external SDK execution is intentionally not part of the verified default flow.
 - Draft PR creation, SSE UI, and richer web dashboard features are tracked as follow-up tasks.
 

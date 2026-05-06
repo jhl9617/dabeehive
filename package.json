@@ -4,6 +4,7 @@
   "scripts": {
     "format:check": "node scripts/lint-basic.mjs",
     "lint": "node scripts/lint-basic.mjs",
+    "dev:temp": "node scripts/dev-temp-stack.mjs",
     "test:api": "node scripts/rest-happy-path-smoke.mjs",
     "test:temp-db": "node scripts/pglite-temp-db-smoke.mjs",
     "test:shared": "node scripts/shared-regression-tests.mjs",
