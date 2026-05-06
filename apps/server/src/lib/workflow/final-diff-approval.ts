@@ -1,3 +1,5 @@
+import { assessChangeRisk } from "./risk-assessment";
+
 export const FINAL_DIFF_APPROVAL_TYPE = "final_approval" as const;
 export const FINAL_DIFF_APPROVAL_STATUS = "pending" as const;
 export const DEFAULT_FINAL_DIFF_APPROVAL_REASON =
@@ -90,7 +92,7 @@ export function buildFinalDiffApprovalData(
     reason: normalizeText(input.reason, DEFAULT_FINAL_DIFF_APPROVAL_REASON),
     changedFiles: normalizeChangedFiles(input.changedFiles),
     diffSummary: normalizeText(input.diffSummary, "No diff summary provided."),
-    riskScore: normalizeRiskScore(input.riskScore),
+    riskScore: normalizeRiskScore(input.riskScore, input.changedFiles),
     requiredAction: normalizeText(
       input.requiredAction,
       DEFAULT_FINAL_DIFF_APPROVAL_REQUIRED_ACTION
@@ -114,9 +116,9 @@ function normalizeChangedFiles(changedFiles: string[]): string[] {
   );
 }
 
-function normalizeRiskScore(value: number | undefined): number {
+function normalizeRiskScore(value: number | undefined, changedFiles: string[]): number {
   if (value === undefined || !Number.isFinite(value)) {
-    return 40;
+    return assessChangeRisk({ changedFiles }).riskScore;
   }
 
   return Math.min(100, Math.max(0, Math.round(value)));
