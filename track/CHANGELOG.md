@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | WFL-007 | verified | Added deterministic workflow sensitive file detection for auth/security, DB schema/migration, and deploy/infra paths, then wired risk assessment to reuse those detector categories. | Server no-emit typecheck, root lint, and source checks passed. |
 | 2026-05-06 | WFL-006 | verified | Added deterministic changed-file risk assessment with score/level/reason/approval output and wired final diff approval defaults to calculate risk from changed files when no explicit score is provided. | Server no-emit typecheck passed after one return-type fix; root lint and source checks passed. |
 | 2026-05-06 | SDK-014 | verified | Added root SDK adapter smoke validation covering Claude adapter dry-run handle/report behavior, mock event normalization, validation command inference, and command policy checks without invoking an external SDK. | Shared no-emit typecheck, `pnpm test:sdk`, root lint, and source checks passed. |
 | 2026-05-06 | SDK-013 | verified | Added explicit shared SDK dry-run mode types/reporting, deterministic prompt/context readiness reporting, Claude adapter skeleton dry-run handle support, and coder prompt no-edit/no-command dry-run wording. | Shared no-emit typecheck, root lint, and source checks passed. |

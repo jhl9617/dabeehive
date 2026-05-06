@@ -1,0 +1,37 @@
+# WFL-007 Validation Evidence
+
+Date: 2026-05-06
+Branch: poc/WFL-007-sensitive-file-detector
+
+## Commands
+
+### pnpm --filter @dabeehive/server exec tsc --noEmit
+
+Result: Passed
+
+Output: no output; TypeScript completed successfully.
+
+### pnpm lint
+
+Result: Passed
+
+Output:
+
+```txt
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+
+basic lint passed
+```
+
+### rg source check
+
+Command:
+
+```txt
+rg -n "detectSensitiveFiles|SensitiveFileCategory|SENSITIVE_FILE_RULES|isSensitiveFilePath|buildSensitiveFileReasons|SENSITIVE_RISK_IMPACTS|auth_or_security|db_schema_or_migration|deploy_or_infra" apps/server/src/lib/workflow/sensitive-file-detector.ts apps/server/src/lib/workflow/risk-assessment.ts
+```
+
+Result: Passed
+
+Summary: Confirmed the detector exports auth/db/deploy categories and risk assessment reuses `detectSensitiveFiles`.

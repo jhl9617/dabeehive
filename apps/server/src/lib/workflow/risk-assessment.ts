@@ -1,3 +1,8 @@
+import {
+  detectSensitiveFiles,
+  type SensitiveFileCategory
+} from "./sensitive-file-detector";
+
 export type ChangeRiskLevel = "low" | "medium" | "high" | "critical";
 
 export type ChangeRiskReasonCode =
@@ -39,7 +44,7 @@ export type ChangeRiskAssessment = {
 };
 
 type RiskRule = {
-  code: ChangeRiskReasonCode;
+  code: Exclude<ChangeRiskReasonCode, SensitiveFileCategory>;
   scoreImpact: number;
   message: string;
   pattern: RegExp;
@@ -49,33 +54,18 @@ type RiskRule = {
 const HIGH_RISK_APPROVAL_THRESHOLD = 60;
 const MAX_REASON_FILES = 5;
 
+const SENSITIVE_RISK_IMPACTS: Record<SensitiveFileCategory, number> = {
+  auth_or_security: 30,
+  db_schema_or_migration: 35,
+  deploy_or_infra: 30
+};
+
 const RISK_RULES: readonly RiskRule[] = [
   {
     code: "env_or_secret",
     scoreImpact: 35,
     message: "Secrets, env files, credentials, or private key paths changed.",
     pattern: /(^|\/)(\.env|\.env\..*|.*secret.*|.*credential.*|.*private[_-]?key.*|id_rsa|id_ed25519)$/i,
-    requiresApproval: true
-  },
-  {
-    code: "db_schema_or_migration",
-    scoreImpact: 35,
-    message: "Database schema, migration, SQL, or DDL files changed.",
-    pattern: /(^|\/)(prisma\/schema\.prisma|prisma\/migrations\/|migrations\/|ddl\/|.*\.sql$)/i,
-    requiresApproval: true
-  },
-  {
-    code: "auth_or_security",
-    scoreImpact: 30,
-    message: "Authentication, authorization, session, token, or security code changed.",
-    pattern: /(^|\/)(auth|security|session|permission|permissions|token|tokens|middleware)(\/|\.|-|_)/i,
-    requiresApproval: true
-  },
-  {
-    code: "deploy_or_infra",
-    scoreImpact: 30,
-    message: "Deployment or infrastructure configuration changed.",
-    pattern: /(^|\/)(Dockerfile|docker-compose.*|\.github\/workflows\/|k8s\/|helm\/|terraform\/|pulumi\/|vercel\.json|netlify\.toml|fly\.toml|railway\.json)/i,
     requiresApproval: true
   },
   {
@@ -118,6 +108,7 @@ export function assessChangeRisk(
   }
 
   const reasons = [
+    ...buildSensitiveFileReasons(changedFiles),
     ...buildRuleReasons(changedFiles),
     ...buildVolumeReasons(changedFiles)
   ];
@@ -163,6 +154,25 @@ type NormalizedRiskFile = {
   path: string;
   status: string | null;
 };
+
+function buildSensitiveFileReasons(
+  files: NormalizedRiskFile[]
+): ChangeRiskReason[] {
+  const detection = detectSensitiveFiles({
+    changedFiles: files.map((file) => ({
+      path: file.path,
+      status: file.status
+    }))
+  });
+
+  return detection.matches.map((match) => ({
+    code: match.category,
+    message: match.message,
+    scoreImpact: SENSITIVE_RISK_IMPACTS[match.category],
+    files: match.files,
+    requiresApproval: match.requiresApproval
+  }));
+}
 
 function buildRuleReasons(files: NormalizedRiskFile[]): ChangeRiskReason[] {
   return RISK_RULES.flatMap((rule) => {
