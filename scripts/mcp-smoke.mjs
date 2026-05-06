@@ -15,7 +15,19 @@ const expectedTools = [
   "approval.request",
   "approval.respond",
   "artifact.create",
-  "artifact.get"
+  "artifact.get",
+  "context.search"
+];
+
+const expectedResourceTemplates = [
+  "issue://{id}",
+  "document://{id}",
+  "run://{id}"
+];
+
+const expectedPrompts = [
+  "implementation-plan",
+  "review-diff"
 ];
 
 let requestId = 1;
@@ -31,12 +43,29 @@ async function main() {
   });
 
   const toolsList = await mcpRequest("tools/list", {});
-  const toolNames = new Set((toolsList.tools ?? []).map((tool) => tool.name));
-  const missingTools = expectedTools.filter((name) => !toolNames.has(name));
+  assertIncludes(
+    new Set((toolsList.tools ?? []).map((tool) => tool.name)),
+    expectedTools,
+    "MCP tools"
+  );
 
-  if (missingTools.length > 0) {
-    throw new Error(`Missing MCP tools: ${missingTools.join(", ")}`);
-  }
+  const resourceTemplatesList = await mcpRequest("resources/templates/list", {});
+  assertIncludes(
+    new Set(
+      (resourceTemplatesList.resourceTemplates ?? []).map(
+        (template) => template.uriTemplate ?? template.uri
+      )
+    ),
+    expectedResourceTemplates,
+    "MCP resource templates"
+  );
+
+  const promptsList = await mcpRequest("prompts/list", {});
+  assertIncludes(
+    new Set((promptsList.prompts ?? []).map((prompt) => prompt.name)),
+    expectedPrompts,
+    "MCP prompts"
+  );
 
   const projectList = await mcpRequest("tools/call", {
     name: "project.list",
@@ -48,6 +77,8 @@ async function main() {
       {
         server: initialize.serverInfo?.name ?? "unknown",
         tools: expectedTools.length,
+        resourceTemplates: expectedResourceTemplates.length,
+        prompts: expectedPrompts.length,
         projectListContentItems: projectList.content?.length ?? 0
       },
       null,
@@ -91,6 +122,14 @@ async function mcpRequest(method, params) {
   }
 
   return payload.result ?? {};
+}
+
+function assertIncludes(actualValues, expectedValues, label) {
+  const missingValues = expectedValues.filter((value) => !actualValues.has(value));
+
+  if (missingValues.length > 0) {
+    throw new Error(`Missing ${label}: ${missingValues.join(", ")}`);
+  }
 }
 
 function parseMcpPayload(text) {

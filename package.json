@@ -5,6 +5,7 @@
     "format:check": "node scripts/lint-basic.mjs",
     "lint": "node scripts/lint-basic.mjs",
     "test:api": "node scripts/rest-happy-path-smoke.mjs",
+    "test:mcp": "node scripts/mcp-smoke.mjs",
     "track:status": "node scripts/track-status.mjs"
   },
   "packageManager": "pnpm@10.23.0",

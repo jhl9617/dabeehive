@@ -1,0 +1,44 @@
+MCP-012 validation evidence
+Date: 2026-05-06
+Branch: poc/MCP-012-smoke-test
+
+Commands:
+
+1. node -c scripts/mcp-smoke.mjs
+Result: PASS
+Notes: JavaScript syntax check completed with exit code 0.
+
+2. pnpm lint
+Result: PASS
+Output:
+> dabeehive-orchestrator-poc@ lint /Users/jongha/Documents/repository/dabeehive
+> node scripts/lint-basic.mjs
+basic lint passed
+
+3. rg -n '"test:mcp"|context\.search|resources/templates/list|prompts/list|implementation-plan|review-diff|issue://\{id\}|document://\{id\}|run://\{id\}' package.json scripts/mcp-smoke.mjs
+Result: PASS
+Notes: Confirmed root test:mcp command and MCP smoke coverage for context.search, resource templates, and prompts.
+
+4. pg_isready -h localhost -p 55432
+Result: FAIL, expected environment blocker
+Output:
+localhost:55432 - no response
+
+5. DATABASE_URL=postgresql://jongha@localhost:55432/dabeehive_tst_002 pnpm --filter @dabeehive/server exec next start --hostname 127.0.0.1 --port 18086
+Result: PASS
+Notes: Server started on http://127.0.0.1:18086 for runtime smoke.
+
+6. DABEEHIVE_MCP_BASE_URL=http://127.0.0.1:18086/api/mcp DABEEHIVE_MCP_TOKEN=demo-local-mcp-token pnpm test:mcp
+Result: FAIL, expected environment blocker
+Output:
+initialize failed with HTTP 401
+{
+  "error": "invalid_token",
+  "error_description": "Invalid token"
+}
+
+Server log:
+PrismaClientInitializationError: Can't reach database server at localhost:55432 during prisma.apiToken.findMany().
+
+Conclusion:
+Implementation and static validation passed. Full authenticated MCP smoke remains blocked by unavailable local PostgreSQL and seeded demo token lookup, so MCP-012 is recorded as implemented rather than verified.
