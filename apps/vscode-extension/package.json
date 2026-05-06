@@ -16,6 +16,7 @@
     "onCommand:dabeehive.clearApiToken",
     "onCommand:dabeehive.createIssue",
     "onCommand:dabeehive.startRun",
+    "onCommand:dabeehive.openRunConsole",
     "onView:dabeehive.views.issues",
     "onView:dabeehive.views.runs",
     "onView:dabeehive.views.approvals"
@@ -49,6 +50,11 @@
         "command": "dabeehive.startRun",
         "title": "Dabeehive: Start Run",
         "category": "Dabeehive"
+      },
+      {
+        "command": "dabeehive.openRunConsole",
+        "title": "Dabeehive: Open Run Console",
+        "category": "Dabeehive"
       }
     ],
     "menus": {
@@ -56,6 +62,11 @@
         {
           "command": "dabeehive.startRun",
           "when": "view == dabeehive.views.issues && viewItem == dabeehive.issue",
+          "group": "inline"
+        },
+        {
+          "command": "dabeehive.openRunConsole",
+          "when": "view == dabeehive.views.runs && viewItem == dabeehive.run",
           "group": "inline"
         }
       ]

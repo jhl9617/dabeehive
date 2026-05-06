@@ -57,6 +57,23 @@ export type OrchestratorRun = {
   updatedAt: string;
 };
 
+export type OrchestratorRunEvent = {
+  id: string;
+  runId: string;
+  type: string;
+  message: string | null;
+  metadata: Record<string, unknown> | null;
+  createdAt: string;
+};
+
+export type OrchestratorRunDetail = OrchestratorRun & {
+  inputContext: Record<string, unknown> | null;
+  outputSummary: string | null;
+  outputArtifacts: Record<string, unknown> | null;
+  errorMessage: string | null;
+  events: OrchestratorRunEvent[];
+};
+
 export type CreateRunInput = {
   projectId: string;
   issueId?: string | null;
@@ -131,6 +148,12 @@ export class OrchestratorClient {
 
   listRuns(): Promise<OrchestratorRun[]> {
     return this.request<OrchestratorRun[]>("/api/runs");
+  }
+
+  getRun(runId: string): Promise<OrchestratorRunDetail> {
+    return this.request<OrchestratorRunDetail>(
+      `/api/runs/${encodeURIComponent(runId)}`
+    );
   }
 
   createRun(input: CreateRunInput): Promise<OrchestratorRun> {

@@ -27,15 +27,44 @@ declare module "vscode" {
 
   export interface TreeItem {
     collapsibleState?: TreeItemCollapsibleState;
+    command?: Command;
     contextValue?: string;
     description?: string;
     label: string;
+  }
+
+  export interface Command {
+    arguments?: unknown[];
+    command: string;
+    title: string;
   }
 
   export enum TreeItemCollapsibleState {
     None = 0,
     Collapsed = 1,
     Expanded = 2
+  }
+
+  export enum ViewColumn {
+    Active = -1,
+    Beside = -2,
+    One = 1,
+    Two = 2,
+    Three = 3
+  }
+
+  export interface Webview {
+    html: string;
+  }
+
+  export interface WebviewOptions {
+    enableScripts?: boolean;
+  }
+
+  export interface WebviewPanel extends Disposable {
+    title: string;
+    webview: Webview;
+    reveal(viewColumn?: ViewColumn): void;
   }
 
   export interface StatusBarItem extends Disposable {
@@ -70,6 +99,13 @@ declare module "vscode" {
       alignment?: StatusBarAlignment,
       priority?: number
     ): StatusBarItem;
+
+    function createWebviewPanel(
+      viewType: string,
+      title: string,
+      showOptions: ViewColumn,
+      options?: WebviewOptions
+    ): WebviewPanel;
 
     function registerTreeDataProvider<T>(
       viewId: string,

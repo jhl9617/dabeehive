@@ -6,7 +6,9 @@ import type {
   OrchestratorApproval,
   OrchestratorIssue,
   OrchestratorProject,
-  OrchestratorRun
+  OrchestratorRun,
+  OrchestratorRunDetail,
+  OrchestratorRunEvent
 } from "./orchestratorClient";
 
 const VIEW_IDS = [
@@ -19,6 +21,7 @@ const DEFAULT_SERVER_URL = "http://127.0.0.1:3000";
 const REFRESH_COMMAND = "dabeehive.refresh";
 const CREATE_ISSUE_COMMAND = "dabeehive.createIssue";
 const START_RUN_COMMAND = "dabeehive.startRun";
+const OPEN_RUN_CONSOLE_COMMAND = "dabeehive.openRunConsole";
 const DEFAULT_AGENT_ROLE = "planner";
 const RUN_STATUS_ORDER = [
   "queued",
@@ -183,7 +186,12 @@ class RunsTreeProvider implements vscode.TreeDataProvider<RunsTreeNode> {
         label: `Run ${formatShortId(node.run.id)}`,
         description: formatRunDescription(node.run),
         collapsibleState: vscode.TreeItemCollapsibleState.None,
-        contextValue: "dabeehive.run"
+        contextValue: "dabeehive.run",
+        command: {
+          command: OPEN_RUN_CONSOLE_COMMAND,
+          title: "Open Run Console",
+          arguments: [node]
+        }
       };
     }
 
@@ -287,6 +295,11 @@ export function activate(context: ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(START_RUN_COMMAND, (argument) =>
       startRun(context, argument)
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(OPEN_RUN_CONSOLE_COMMAND, (argument) =>
+      openRunConsole(context, argument)
     )
   );
 
@@ -437,6 +450,38 @@ async function startRun(
   }
 }
 
+async function openRunConsole(
+  context: ExtensionContext,
+  argument: unknown
+): Promise<void> {
+  const selectedRun = getRunFromCommandArgument(argument);
+  const runId = selectedRun?.id ?? (await promptRequiredInput("Run ID"));
+
+  if (!runId) {
+    return;
+  }
+
+  const panel = vscode.window.createWebviewPanel(
+    "dabeehive.runConsole",
+    `Run ${formatShortId(runId)}`,
+    vscode.ViewColumn.Active,
+    {
+      enableScripts: false
+    }
+  );
+  panel.webview.html = renderRunConsoleLoadingHtml(runId);
+
+  try {
+    const client = await createOrchestratorClient(context);
+    const run = await client.getRun(runId);
+    panel.title = `Run ${formatShortId(run.id)}`;
+    panel.webview.html = renderRunConsoleHtml(run);
+  } catch {
+    panel.webview.html = renderRunConsoleErrorHtml(runId);
+    await vscode.window.showWarningMessage("Dabeehive run console failed to load.");
+  }
+}
+
 async function promptRequiredInput(prompt: string): Promise<string | undefined> {
   const input = await vscode.window.showInputBox({
     ignoreFocusOut: true,
@@ -475,6 +520,25 @@ function getIssueFromCommandArgument(argument: unknown): OrchestratorIssue | und
   }
 
   return candidate as OrchestratorIssue;
+}
+
+function getRunFromCommandArgument(argument: unknown): OrchestratorRun | undefined {
+  const run =
+    typeof argument === "object" && argument !== null && "run" in argument
+      ? (argument as { run?: unknown }).run
+      : argument;
+
+  if (typeof run !== "object" || run === null) {
+    return undefined;
+  }
+
+  const candidate = run as Partial<OrchestratorRun>;
+
+  if (typeof candidate.id !== "string") {
+    return undefined;
+  }
+
+  return candidate as OrchestratorRun;
 }
 
 async function refreshOrchestrator(
@@ -583,4 +647,241 @@ function formatApprovalDescription(approval: OrchestratorApproval): string {
 
 function formatApprovalType(type: string): string {
   return type.replace(/_/g, " ");
+}
+
+function renderRunConsoleLoadingHtml(runId: string): string {
+  return renderRunConsoleShell(
+    `Run ${escapeHtml(formatShortId(runId))}`,
+    `<p class="muted">Loading run events...</p>`
+  );
+}
+
+function renderRunConsoleErrorHtml(runId: string): string {
+  return renderRunConsoleShell(
+    `Run ${escapeHtml(formatShortId(runId))}`,
+    `<p class="error">Unable to load run details.</p>`
+  );
+}
+
+function renderRunConsoleHtml(run: OrchestratorRunDetail): string {
+  const modelLabel = [run.modelProvider, run.modelId]
+    .filter((value): value is string => Boolean(value))
+    .join(" / ");
+  const summaryRows = [
+    ["Status", run.status],
+    ["Agent", run.agentRole],
+    ["Project", formatShortId(run.projectId)],
+    ["Issue", run.issueId ? formatShortId(run.issueId) : "none"],
+    ["Model", modelLabel || "none"],
+    ["Started", formatDateTime(run.startedAt)],
+    ["Completed", formatDateTime(run.completedAt)],
+    ["Updated", formatDateTime(run.updatedAt)]
+  ];
+  const body = `
+    <dl class="summary">
+      ${summaryRows
+        .map(
+          ([label, value]) => `
+            <div>
+              <dt>${escapeHtml(label)}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>`
+        )
+        .join("")}
+    </dl>
+    ${renderRunMessage("Output summary", run.outputSummary)}
+    ${renderRunMessage("Error", run.errorMessage, "error")}
+    <section>
+      <h2>Events</h2>
+      ${renderRunEvents(run.events)}
+    </section>`;
+
+  return renderRunConsoleShell(`Run ${escapeHtml(formatShortId(run.id))}`, body);
+}
+
+function renderRunConsoleShell(title: string, body: string): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --border: color-mix(in srgb, currentColor 18%, transparent);
+      --muted: color-mix(in srgb, currentColor 62%, transparent);
+      --panel: color-mix(in srgb, currentColor 7%, transparent);
+      --error: #d13438;
+    }
+    body {
+      font-family: var(--vscode-font-family);
+      font-size: var(--vscode-font-size);
+      line-height: 1.45;
+      margin: 0;
+      padding: 20px;
+      color: var(--vscode-foreground);
+      background: var(--vscode-editor-background);
+    }
+    h1, h2, p, dl, dd {
+      margin: 0;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      background: var(--border);
+    }
+    .summary div, .event {
+      background: var(--vscode-editor-background);
+    }
+    .summary div {
+      padding: 10px;
+    }
+    dt {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+    }
+    dd {
+      overflow-wrap: anywhere;
+    }
+    .events {
+      display: grid;
+      gap: 8px;
+    }
+    .event {
+      border: 1px solid var(--border);
+      padding: 10px;
+    }
+    .event-header {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .event-type {
+      font-weight: 600;
+    }
+    .event-time, .muted {
+      color: var(--muted);
+    }
+    pre {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      overflow: auto;
+      padding: 8px;
+      white-space: pre-wrap;
+    }
+    .error {
+      color: var(--error);
+    }
+  </style>
+</head>
+<body>
+  <h1>${title}</h1>
+  ${body}
+</body>
+</html>`;
+}
+
+function renderRunEvents(events: OrchestratorRunEvent[]): string {
+  if (events.length === 0) {
+    return `<p class="muted">No events recorded.</p>`;
+  }
+
+  return `
+    <div class="events">
+      ${events
+        .map(
+          (event) => `
+            <article class="event">
+              <div class="event-header">
+                <span class="event-type">${escapeHtml(event.type)}</span>
+                <span class="event-time">${escapeHtml(formatDateTime(event.createdAt))}</span>
+              </div>
+              ${renderRunMessageBody(event.message)}
+              ${renderMetadata(event.metadata)}
+            </article>`
+        )
+        .join("")}
+    </div>`;
+}
+
+function renderRunMessage(
+  label: string,
+  message: string | null,
+  className = ""
+): string {
+  if (!message?.trim()) {
+    return "";
+  }
+
+  const classAttribute = className ? ` class="${escapeHtml(className)}"` : "";
+
+  return `
+    <section>
+      <h2>${escapeHtml(label)}</h2>
+      <p${classAttribute}>${escapeHtml(message)}</p>
+    </section>`;
+}
+
+function renderRunMessageBody(message: string | null): string {
+  if (!message?.trim()) {
+    return "";
+  }
+
+  return `<p>${escapeHtml(message)}</p>`;
+}
+
+function renderMetadata(metadata: Record<string, unknown> | null): string {
+  if (!metadata || Object.keys(metadata).length === 0) {
+    return "";
+  }
+
+  return `<pre>${escapeHtml(JSON.stringify(metadata, null, 2))}</pre>`;
+}
+
+function formatDateTime(value: string | null): string {
+  if (!value) {
+    return "none";
+  }
+
+  const timestamp = Date.parse(value);
+
+  if (Number.isNaN(timestamp)) {
+    return value;
+  }
+
+  return new Date(timestamp).toLocaleString();
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => {
+    switch (character) {
+      case "&":
+        return "&amp;";
+      case "<":
+        return "&lt;";
+      case ">":
+        return "&gt;";
+      case "\"":
+        return "&quot;";
+      default:
+        return "&#39;";
+    }
+  });
 }
