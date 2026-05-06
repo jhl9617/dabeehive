@@ -17,6 +17,7 @@
     "onCommand:dabeehive.createIssue",
     "onCommand:dabeehive.startRun",
     "onCommand:dabeehive.openRunConsole",
+    "onCommand:dabeehive.openApprovalPanel",
     "onView:dabeehive.views.issues",
     "onView:dabeehive.views.runs",
     "onView:dabeehive.views.approvals"
@@ -55,6 +56,11 @@
         "command": "dabeehive.openRunConsole",
         "title": "Dabeehive: Open Run Console",
         "category": "Dabeehive"
+      },
+      {
+        "command": "dabeehive.openApprovalPanel",
+        "title": "Dabeehive: Open Approval Panel",
+        "category": "Dabeehive"
       }
     ],
     "menus": {
@@ -67,6 +73,11 @@
         {
           "command": "dabeehive.openRunConsole",
           "when": "view == dabeehive.views.runs && viewItem == dabeehive.run",
+          "group": "inline"
+        },
+        {
+          "command": "dabeehive.openApprovalPanel",
+          "when": "view == dabeehive.views.approvals && viewItem == dabeehive.approval",
           "group": "inline"
         }
       ]

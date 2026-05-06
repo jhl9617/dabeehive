@@ -55,6 +55,9 @@ declare module "vscode" {
 
   export interface Webview {
     html: string;
+    onDidReceiveMessage(
+      listener: (message: unknown) => unknown
+    ): Disposable;
   }
 
   export interface WebviewOptions {

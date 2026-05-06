@@ -101,6 +101,14 @@ export type OrchestratorApproval = {
   updatedAt: string;
 };
 
+export type ApprovalResponseAction = "approve" | "reject" | "request_changes";
+
+export type RespondApprovalInput = {
+  action: ApprovalResponseAction;
+  respondedById?: string | null;
+  reason?: string | null;
+};
+
 export type OrchestratorClientOptions = {
   serverUrl: string;
   token?: string;
@@ -170,6 +178,25 @@ export class OrchestratorClient {
 
     return this.request<OrchestratorApproval[]>(
       `/api/approvals?${searchParams}`
+    );
+  }
+
+  getApproval(approvalId: string): Promise<OrchestratorApproval> {
+    return this.request<OrchestratorApproval>(
+      `/api/approvals/${encodeURIComponent(approvalId)}`
+    );
+  }
+
+  respondApproval(
+    approvalId: string,
+    input: RespondApprovalInput
+  ): Promise<OrchestratorApproval> {
+    return this.request<OrchestratorApproval>(
+      `/api/approvals/${encodeURIComponent(approvalId)}`,
+      {
+        method: "POST",
+        body: input
+      }
     );
   }
 

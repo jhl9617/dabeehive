@@ -3,6 +3,7 @@ import type { ExtensionContext, Thenable } from "vscode";
 
 import { OrchestratorClient } from "./orchestratorClient";
 import type {
+  ApprovalResponseAction,
   OrchestratorApproval,
   OrchestratorIssue,
   OrchestratorProject,
@@ -22,6 +23,7 @@ const REFRESH_COMMAND = "dabeehive.refresh";
 const CREATE_ISSUE_COMMAND = "dabeehive.createIssue";
 const START_RUN_COMMAND = "dabeehive.startRun";
 const OPEN_RUN_CONSOLE_COMMAND = "dabeehive.openRunConsole";
+const OPEN_APPROVAL_PANEL_COMMAND = "dabeehive.openApprovalPanel";
 const DEFAULT_AGENT_ROLE = "planner";
 const RUN_STATUS_ORDER = [
   "queued",
@@ -246,7 +248,12 @@ class ApprovalsTreeProvider
         label: formatApprovalLabel(node.approval),
         description: formatApprovalDescription(node.approval),
         collapsibleState: vscode.TreeItemCollapsibleState.None,
-        contextValue: "dabeehive.approval"
+        contextValue: "dabeehive.approval",
+        command: {
+          command: OPEN_APPROVAL_PANEL_COMMAND,
+          title: "Open Approval Panel",
+          arguments: [node]
+        }
       };
     }
 
@@ -300,6 +307,11 @@ export function activate(context: ExtensionContext): void {
   context.subscriptions.push(
     vscode.commands.registerCommand(OPEN_RUN_CONSOLE_COMMAND, (argument) =>
       openRunConsole(context, argument)
+    )
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(OPEN_APPROVAL_PANEL_COMMAND, (argument) =>
+      openApprovalPanel(context, argument)
     )
   );
 
@@ -482,6 +494,103 @@ async function openRunConsole(
   }
 }
 
+async function openApprovalPanel(
+  context: ExtensionContext,
+  argument: unknown
+): Promise<void> {
+  const selectedApproval = getApprovalFromCommandArgument(argument);
+  const approvalId =
+    selectedApproval?.id ?? (await promptRequiredInput("Approval ID"));
+
+  if (!approvalId) {
+    return;
+  }
+
+  const panel = vscode.window.createWebviewPanel(
+    "dabeehive.approvalPanel",
+    `Approval ${formatShortId(approvalId)}`,
+    vscode.ViewColumn.Active,
+    {
+      enableScripts: true
+    }
+  );
+  let approval: OrchestratorApproval | undefined;
+  panel.webview.html = renderApprovalPanelLoadingHtml(approvalId, createNonce());
+
+  let client: OrchestratorClient;
+
+  try {
+    client = await createOrchestratorClient(context);
+  } catch {
+    panel.webview.html = renderApprovalPanelErrorHtml(approvalId, createNonce());
+    await vscode.window.showWarningMessage("Dabeehive approval panel failed to load.");
+    return;
+  }
+
+  context.subscriptions.push(
+    panel.webview.onDidReceiveMessage(async (message) => {
+      const action = getApprovalActionFromMessage(message);
+
+      if (!action) {
+        return;
+      }
+
+      let reason: string | null | undefined;
+
+      if (action !== "approve") {
+        const reasonInput = await vscode.window.showInputBox({
+          ignoreFocusOut: true,
+          prompt: `${formatApprovalAction(action)} reason (optional)`
+        });
+
+        if (reasonInput === undefined) {
+          return;
+        }
+
+        reason = reasonInput.trim() || null;
+      }
+
+      try {
+        approval = await client.respondApproval(approvalId, {
+          action,
+          reason
+        });
+        panel.title = `Approval ${formatShortId(approval.id)}`;
+        panel.webview.html = renderApprovalPanelHtml(
+          approval,
+          createNonce(),
+          "Approval response saved."
+        );
+        await vscode.window.showInformationMessage(
+          `Dabeehive approval ${formatApprovalAction(action).toLowerCase()} submitted.`
+        );
+      } catch {
+        if (approval) {
+          panel.webview.html = renderApprovalPanelHtml(
+            approval,
+            createNonce(),
+            "Approval response failed.",
+            "error"
+          );
+        }
+
+        await vscode.window.showWarningMessage(
+          "Dabeehive approval response failed."
+        );
+      }
+    })
+  );
+
+  try {
+    approval = await client.getApproval(approvalId);
+    panel.title = `Approval ${formatShortId(approval.id)}`;
+    panel.webview.html = renderApprovalPanelHtml(approval, createNonce());
+  } catch {
+    panel.webview.html = renderApprovalPanelErrorHtml(approvalId, createNonce());
+    await vscode.window.showWarningMessage("Dabeehive approval panel failed to load.");
+  }
+}
+
 async function promptRequiredInput(prompt: string): Promise<string | undefined> {
   const input = await vscode.window.showInputBox({
     ignoreFocusOut: true,
@@ -539,6 +648,51 @@ function getRunFromCommandArgument(argument: unknown): OrchestratorRun | undefin
   }
 
   return candidate as OrchestratorRun;
+}
+
+function getApprovalFromCommandArgument(
+  argument: unknown
+): OrchestratorApproval | undefined {
+  const approval =
+    typeof argument === "object" && argument !== null && "approval" in argument
+      ? (argument as { approval?: unknown }).approval
+      : argument;
+
+  if (typeof approval !== "object" || approval === null) {
+    return undefined;
+  }
+
+  const candidate = approval as Partial<OrchestratorApproval>;
+
+  if (typeof candidate.id !== "string") {
+    return undefined;
+  }
+
+  return candidate as OrchestratorApproval;
+}
+
+function getApprovalActionFromMessage(
+  message: unknown
+): ApprovalResponseAction | undefined {
+  if (typeof message !== "object" || message === null) {
+    return undefined;
+  }
+
+  const candidate = (message as { type?: unknown; action?: unknown });
+
+  if (candidate.type !== "approvalResponse") {
+    return undefined;
+  }
+
+  if (
+    candidate.action === "approve" ||
+    candidate.action === "reject" ||
+    candidate.action === "request_changes"
+  ) {
+    return candidate.action;
+  }
+
+  return undefined;
 }
 
 async function refreshOrchestrator(
@@ -649,6 +803,24 @@ function formatApprovalType(type: string): string {
   return type.replace(/_/g, " ");
 }
 
+function formatApprovalAction(action: ApprovalResponseAction): string {
+  if (action === "approve") {
+    return "Approve";
+  }
+
+  if (action === "reject") {
+    return "Reject";
+  }
+
+  return "Request changes";
+}
+
+function createNonce(): string {
+  return Array.from({ length: 16 }, () =>
+    Math.floor(Math.random() * 36).toString(36)
+  ).join("");
+}
+
 function renderRunConsoleLoadingHtml(runId: string): string {
   return renderRunConsoleShell(
     `Run ${escapeHtml(formatShortId(runId))}`,
@@ -697,6 +869,213 @@ function renderRunConsoleHtml(run: OrchestratorRunDetail): string {
     </section>`;
 
   return renderRunConsoleShell(`Run ${escapeHtml(formatShortId(run.id))}`, body);
+}
+
+function renderApprovalPanelLoadingHtml(approvalId: string, nonce: string): string {
+  return renderApprovalPanelShell(
+    `Approval ${escapeHtml(formatShortId(approvalId))}`,
+    `<p class="muted">Loading approval...</p>`,
+    nonce
+  );
+}
+
+function renderApprovalPanelErrorHtml(approvalId: string, nonce: string): string {
+  return renderApprovalPanelShell(
+    `Approval ${escapeHtml(formatShortId(approvalId))}`,
+    `<p class="error">Unable to load approval details.</p>`,
+    nonce
+  );
+}
+
+function renderApprovalPanelHtml(
+  approval: OrchestratorApproval,
+  nonce: string,
+  notice?: string,
+  noticeClass = "notice"
+): string {
+  const summaryRows = [
+    ["Status", approval.status],
+    ["Type", formatApprovalType(approval.type)],
+    ["Risk", approval.riskScore === null ? "none" : String(approval.riskScore)],
+    ["Run", approval.runId ? formatShortId(approval.runId) : "none"],
+    ["Issue", approval.issueId ? formatShortId(approval.issueId) : "none"],
+    ["Requested", formatDateTime(approval.createdAt)],
+    ["Responded", formatDateTime(approval.respondedAt)],
+    ["Updated", formatDateTime(approval.updatedAt)]
+  ];
+  const body = `
+    ${notice ? `<p class="${escapeHtml(noticeClass)}">${escapeHtml(notice)}</p>` : ""}
+    <dl class="summary">
+      ${summaryRows
+        .map(
+          ([label, value]) => `
+            <div>
+              <dt>${escapeHtml(label)}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>`
+        )
+        .join("")}
+    </dl>
+    ${renderApprovalActions(approval)}
+    ${renderRunMessage("Required action", approval.requiredAction)}
+    ${renderRunMessage("Reason", approval.reason)}
+    ${renderRunMessage("Diff summary", approval.diffSummary)}
+    ${renderChangedFiles(approval.changedFiles)}
+  `;
+
+  return renderApprovalPanelShell(
+    `Approval ${escapeHtml(formatShortId(approval.id))}`,
+    body,
+    nonce
+  );
+}
+
+function renderApprovalPanelShell(
+  title: string,
+  body: string,
+  nonce: string
+): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --border: color-mix(in srgb, currentColor 18%, transparent);
+      --muted: color-mix(in srgb, currentColor 62%, transparent);
+      --panel: color-mix(in srgb, currentColor 7%, transparent);
+      --error: #d13438;
+      --ok: #107c10;
+    }
+    body {
+      font-family: var(--vscode-font-family);
+      font-size: var(--vscode-font-size);
+      line-height: 1.45;
+      margin: 0;
+      padding: 20px;
+      color: var(--vscode-foreground);
+      background: var(--vscode-editor-background);
+    }
+    h1, h2, p, dl, dd, ul {
+      margin: 0;
+    }
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    h2 {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 20px 0 10px;
+    }
+    button {
+      background: var(--vscode-button-background);
+      border: 0;
+      color: var(--vscode-button-foreground);
+      cursor: pointer;
+      font: inherit;
+      margin: 0;
+      padding: 6px 10px;
+    }
+    button:hover {
+      background: var(--vscode-button-hoverBackground);
+    }
+    button.secondary {
+      background: var(--vscode-button-secondaryBackground);
+      color: var(--vscode-button-secondaryForeground);
+    }
+    button.secondary:hover {
+      background: var(--vscode-button-secondaryHoverBackground);
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      background: var(--border);
+    }
+    .summary div {
+      background: var(--vscode-editor-background);
+      padding: 10px;
+    }
+    dt {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+    }
+    dd, li {
+      overflow-wrap: anywhere;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .notice {
+      color: var(--ok);
+      margin-bottom: 12px;
+    }
+    .error {
+      color: var(--error);
+    }
+    .muted {
+      color: var(--muted);
+    }
+    ul {
+      padding-left: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>${title}</h1>
+  ${body}
+  <script nonce="${nonce}">
+    const vscode = acquireVsCodeApi();
+    document.querySelectorAll("[data-approval-action]").forEach((button) => {
+      button.addEventListener("click", () => {
+        vscode.postMessage({
+          type: "approvalResponse",
+          action: button.getAttribute("data-approval-action")
+        });
+      });
+    });
+  </script>
+</body>
+</html>`;
+}
+
+function renderApprovalActions(approval: OrchestratorApproval): string {
+  if (approval.status !== "pending") {
+    return `<p class="muted">Approval is ${escapeHtml(approval.status)}.</p>`;
+  }
+
+  return `
+    <div class="actions">
+      <button type="button" data-approval-action="approve">Approve</button>
+      <button type="button" class="secondary" data-approval-action="request_changes">Request changes</button>
+      <button type="button" class="secondary" data-approval-action="reject">Reject</button>
+    </div>`;
+}
+
+function renderChangedFiles(changedFiles: string[]): string {
+  if (changedFiles.length === 0) {
+    return "";
+  }
+
+  return `
+    <section>
+      <h2>Changed files</h2>
+      <ul>
+        ${changedFiles.map((file) => `<li>${escapeHtml(file)}</li>`).join("")}
+      </ul>
+    </section>`;
 }
 
 function renderRunConsoleShell(title: string, body: string): string {
