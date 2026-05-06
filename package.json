@@ -5,6 +5,7 @@
     "format:check": "node scripts/lint-basic.mjs",
     "lint": "node scripts/lint-basic.mjs",
     "test:api": "node scripts/rest-happy-path-smoke.mjs",
+    "test:shared": "node scripts/shared-regression-tests.mjs",
     "test:mcp": "node scripts/mcp-smoke.mjs",
     "test:sdk": "node scripts/sdk-adapter-smoke.mjs",
     "test:extension-secrets": "node scripts/extension-secretstorage-audit.mjs",

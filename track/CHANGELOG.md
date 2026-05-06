@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | TST-011 | verified | Added dependency-free shared helper regression tests for Draft PR command planning/runner behavior, PR body normalization, and Git diff summary parsing/totals/omitted-file behavior, plus a root `pnpm test:shared` command and review evidence. | `pnpm test:shared`, root lint, SDK smoke, diff whitespace check, and MASTER status dry-run passed. |
 | 2026-05-06 | TST-010 | verified | Added a PoC demo script with prerequisites, baseline validation, server/REST/MCP/VS Code/SDK/UI walkthroughs, expected results, blocked steps, explicit out-of-scope items, and closing checklist for reviewers. | Root lint, demo script section checks, and MASTER status dry-run passed. |
 | 2026-05-06 | TST-009 | verified | Added a known issues document covering DB/Docker blockers, implemented-but-not-runtime-verified areas, residual security/workflow risks, explicit PoC exclusions, production readiness gaps, non-claimed acceptance areas, and revalidation steps. | Root lint, known issue section checks, and MASTER status dry-run passed. |
 | 2026-05-06 | TST-008 | verified | Added a filled final PoC acceptance checklist mapping PRD expectations to AGENTS PoC scope, MASTER task status, verified evidence, blocked DB-backed items, explicit out-of-scope items, and re-run steps for full DB-backed acceptance. | Root lint and checklist source checks passed. |

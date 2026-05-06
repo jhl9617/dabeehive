@@ -1,0 +1,75 @@
+# TST-011 Validation
+
+Date: 2026-05-06
+Task: TST-011
+
+## Commands
+
+### pnpm test:shared
+
+Result: Passed
+
+Output summary:
+
+```txt
+{
+  "tests": [
+    "draft-pr-command-planning",
+    "draft-pr-command-runner",
+    "pr-body-template",
+    "git-diff-summary"
+  ],
+  "result": "passed"
+}
+```
+
+### pnpm lint
+
+Result: Passed
+
+Output summary:
+
+```txt
+basic lint passed
+```
+
+### pnpm test:sdk
+
+Result: Passed
+
+Output summary:
+
+```txt
+SDK adapter smoke emitted dry-run adapter metadata, dangerous command denylist codes, normalized event types, and inferred validation commands.
+```
+
+### git diff --check
+
+Result: Passed
+
+Output summary:
+
+```txt
+No whitespace errors.
+```
+
+### MASTER dry-run
+
+Command:
+
+```sh
+pnpm track:status -- --task TST-011 --status verified --dry-run
+```
+
+Result: Passed
+
+Output summary:
+
+```txt
+dry-run: TST-011 in_progress -> verified
+total=132; not_started=0, planned=0, in_progress=0, blocked=2, implemented=6, verified=124, skipped=0
+```
+
+## Result
+
+TST-011 validation passed. The change adds test coverage only and does not introduce runtime product behavior, package dependencies, DB access, external integrations, deployment, automatic merge, or custom AI code editing behavior.

@@ -21,8 +21,8 @@ P3 = 후속 확장
 
 | 항목 | 값 |
 |---|---:|
-| 전체 작업 수 | 131 |
-| verified | 123 |
+| 전체 작업 수 | 132 |
+| verified | 124 |
 | implemented | 6 |
 | in_progress | 0 |
 | blocked | 2 |
@@ -249,3 +249,4 @@ P3 = 후속 확장
 | TST-008 | verified | P1 | Test | final acceptance checklist | PoC 수용 기준 체크리스트가 채워진다 |
 | TST-009 | verified | P1 | Test | known issues 문서화 | 남은 리스크와 미구현 범위가 명확하다 |
 | TST-010 | verified | P1 | Test | demo script 작성 | 데모 진행 순서와 예상 결과가 문서화된다 |
+| TST-011 | verified | P1 | Test | shared helper regression tests 작성 | Draft PR/PR body/diff summary helper 회귀 테스트가 실행 가능하다 |
