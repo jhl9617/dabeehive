@@ -22,11 +22,11 @@ P3 = 후속 확장
 | 항목 | 값 |
 |---|---:|
 | 전체 작업 수 | 131 |
-| verified | 85 |
+| verified | 86 |
 | implemented | 4 |
 | in_progress | 0 |
 | blocked | 2 |
-| not_started | 40 |
+| not_started | 39 |
 
 ---
 
@@ -86,7 +86,7 @@ P3 = 후속 확장
 | DB-009 | verified | P0 | DB | Artifact 모델 정의 | plan/diff/test_report/pr_url 저장이 가능하다 |
 | DB-010 | implemented | P1 | DB | Seed script 작성 | demo project/issue/document가 생성된다 |
 | DB-011 | blocked | P1 | DB | migration 실행 검증 | local DB에 migrate가 성공한다 |
-| DB-012 | not_started | P1 | DB | Prisma repository layer 작성 | 주요 모델 CRUD 함수가 lib 계층에 있다 |
+| DB-012 | verified | P1 | DB | Prisma repository layer 작성 | 주요 모델 CRUD 함수가 lib 계층에 있다 |
 
 ---
 

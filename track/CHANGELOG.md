@@ -4,6 +4,7 @@
 
 | Date | Task ID | Status | Summary | Validation |
 |---|---|---|---|---|
+| 2026-05-06 | DB-012 | verified | Added additive server DB repository helper layer for projects, issues, documents, agent runs, run events, approvals, and artifacts without refactoring existing routes. | Server typecheck, source checks, root lint, and MASTER status helper passed. |
 | 2026-05-06 | DB-011 | blocked | Confirmed the initial Prisma migration artifact and valid schema, then recorded that local migration execution is blocked because PostgreSQL at `localhost:55432` is unreachable. | Migration artifact check, Prisma schema validation, and root lint passed; `prisma migrate deploy` failed due unreachable local DB. |
 | 2026-05-06 | DB-010 | implemented | Confirmed the existing Prisma seed script contains demo project, issue, document, and related PoC data upserts; actual DB execution remains blocked by missing local PostgreSQL. | Seed syntax/source checks, Prisma schema validation, and root lint passed; `prisma db seed` failed because PostgreSQL at `localhost:55432` is unreachable. |
 | 2026-05-06 | SRV-007 | verified | Added root App Router error and not-found pages with shared state-page styling and recovery actions, without changing API error contracts. | Server typecheck, Next build, source checks, root lint, and MASTER status helper passed. |

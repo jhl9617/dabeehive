@@ -1,0 +1,50 @@
+DB-012 validation evidence
+Date: 2026-05-06 11:14:12 KST
+Branch: poc/DB-012-repository-layer
+
+Changes:
+- Added apps/server/src/lib/db/repositories.ts.
+- Added repository helpers for project, issue, document, agent run, run event, approval, and artifact models.
+- Existing routes were not refactored in this task.
+
+Command: pnpm --filter @dabeehive/server exec tsc --noEmit
+Result: PASS
+Summary:
+- Exited 0 with no compiler output.
+
+Command: rg "listProjects" apps/server/src/lib/db/repositories.ts
+Result: PASS
+Summary:
+- Project list helper is exported.
+
+Command: rg "createIssue" apps/server/src/lib/db/repositories.ts
+Result: PASS
+Summary:
+- Issue create helper is exported.
+
+Command: rg "appendRunEvent" apps/server/src/lib/db/repositories.ts
+Result: PASS
+Summary:
+- Run event append helper is exported.
+
+Command: rg "createApproval" apps/server/src/lib/db/repositories.ts
+Result: PASS
+Summary:
+- Approval create helper is exported.
+
+Command: rg "createArtifact" apps/server/src/lib/db/repositories.ts
+Result: PASS
+Summary:
+- Artifact create helper is exported.
+
+Command: pnpm lint
+Result: PASS
+Summary:
+- basic lint passed.
+
+Command: node scripts/track-status.mjs --task DB-012 --status verified
+Result: PASS
+Output summary:
+- updated: DB-012 in_progress -> verified
+- file: track/MASTER.md
+- total=131; not_started=39, planned=0, in_progress=0, blocked=2, implemented=4, verified=86, skipped=0
